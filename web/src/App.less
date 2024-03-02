@@ -1,0 +1,40 @@
+/* Imports */
+
+@import '../node_modules/normalize.css/normalize.css';
+
+/* Constants */
+
+@mobile-width: 600px;
+
+/* Fonts */
+
+* {
+    font-family: system-ui;
+}
+
+/* Layout */
+
+body {
+    background-color: #5c94fc;
+}
+
+#layout {
+    display: flex;
+    flex-direction: row;
+    @media (max-width: @mobile-width) {
+        flex-direction: column-reverse;
+    }
+    justify-content: center;
+    gap: 1rem;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#main, #nav {
+    background-color: #f7f7f7;
+}
+
+#main {
+    flex-grow: 1;
+}
