@@ -63,24 +63,28 @@ a {
         }
         &:nth-of-type(2) {
             justify-content: center;
-            gap: 1rem;
-            font-size: 1.3rem;
+            // gap: 1rem;
+            // font-size: 1.3rem;
+            h1 {
+                font-size: 1.3rem;
+                text-align: center;
+            }
         }
         &:nth-of-type(3) {
             justify-content: flex-end;
             gap: 0.5rem;
         }
-        a {
-            display: block;
-            color: @text-color;
-            &.selected {
-                color: #999;
-                &:hover {
-                    cursor: default;
-                    text-decoration: none;
-                }
-            }
-        }
+        // a {
+        //     display: block;
+        //     color: @text-color;
+        //     &.selected {
+        //         color: #999;
+        //         &:hover {
+        //             cursor: default;
+        //             text-decoration: none;
+        //         }
+        //     }
+        // }
         img {
             display: block;
             height: 1.5rem;
