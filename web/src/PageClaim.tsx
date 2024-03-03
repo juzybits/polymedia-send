@@ -37,38 +37,54 @@ export const PageClaim: React.FC = () =>
                     {
                         (!claimableAssets.balances.length && !claimableAssets.nfts.length)
                         ?
-                        <h1>Assets have already been claimed</h1>
+                        <>
+                            <h1>Assets have already been claimed</h1>
+                            <div>
+                                <p>
+                                The funds associated with this link are no longer available.
+                                </p>
+                            </div>
+                        </>
                         :
                         <>
                             <h1>Assets are ready to be claimed</h1>
                             <div>
-                                {currAcct && <button onClick={() => { void claimAssets() }}>Claim</button>}
+                                <p>
+                                The person who shared this link with you is attempting to send you the following funds.
+                                </p>
                             </div>
-                            {claimableAssets.balances.length &&
-                            <>
-                                <h3>Balances</h3>
-                                <div>
-                                    {claimableAssets.balances.map(asset =>
-                                        <div key={asset.coinType}>
-                                            {String(asset.amount)} {asset.coinType}
-                                        </div>
-                                    )}
-                                </div>
-                            </>
-                            }
-                            {claimableAssets.nfts.length &&
-                            <>
-                                <h3>Objects</h3>
-                                <div>
-                                    {claimableAssets.nfts.map(asset =>
-                                        <div key={asset.objectId}>
-                                            {asset.objectId}<br/>
-                                            {asset.type}<br/>
-                                        </div>
-                                    )}
-                                </div>
-                            </>
-                            }
+                            <div style={{marginBottom: '3rem'}}>
+                                {claimableAssets.balances.length &&
+                                <>
+                                    <h3>Balances</h3>
+                                    <div>
+                                        {claimableAssets.balances.map(asset =>
+                                            <div key={asset.coinType}>
+                                                {String(asset.amount)} {asset.coinType}
+                                            </div>
+                                        )}
+                                    </div>
+                                </>
+                                }
+                                {claimableAssets.nfts.length &&
+                                <>
+                                    <h3>Objects</h3>
+                                    <div>
+                                        {claimableAssets.nfts.map(asset =>
+                                            <div key={asset.objectId}>
+                                                {asset.objectId}<br/>
+                                                {asset.type}<br/>
+                                            </div>
+                                        )}
+                                    </div>
+                                </>
+                                }
+                            </div>
+                            <div>
+                                {currAcct &&
+                                <button className='btn' onClick={() => { void claimAssets() }}>CLAIM ASSETS</button>
+                                }
+                            </div>
                         </>
                     }
                 </div>

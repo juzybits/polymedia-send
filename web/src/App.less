@@ -7,30 +7,41 @@
 @mobile-width: 600px;
 @text-color: #000;
 
-/* Fonts */
+/* Common elements */
 
 * {
     font-family: system-ui;
-}
-
-/* Layout */
-
-* {
     margin: 0;
     padding: 0;
     border: 0;
 }
 
-body {
-    background-color: #4498dc;
-}
-
 a {
     text-decoration: none;
     &:hover {
-        text-decoration: underline;
         cursor: pointer;
     }
+}
+
+.btn {
+    cursor: pointer;
+    padding: 0.7rem 1.2rem;
+    display: inline-block;
+    color: white;
+    background-color: rgb(0, 119, 255);
+    border-radius: 1rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 1rem;
+    &:hover {
+        background-color: #2e8fff;
+    }
+}
+
+/* Layout */
+
+body {
+    background-color: #4498dc;
 }
 
 #layout {
@@ -51,6 +62,18 @@ a {
 #main {
     flex-grow: 1;
     padding-bottom: 3rem;
+    font-size: 1.1rem;
+    text-align: center;
+    overflow-wrap: break-word;
+    h1 {
+        font-size: 2rem;
+        text-align: center;
+        margin: 0;
+        padding-bottom: 3rem;
+    }
+    p {
+        padding-bottom: 3rem;
+    }
 }
 
 #nav {
@@ -58,7 +81,8 @@ a {
     justify-content: space-between;
     align-items: center;
     font-weight: 500;
-    padding: 2.5rem 0;
+    padding: 2.5rem 0 4rem;
+    user-select: none;
     > div {
         display: flex;
         flex: 1;

@@ -41,7 +41,14 @@ export const PageSend: React.FC = () =>
         <h1>Create a claim link</h1>
         <div className='content'>
             <div>
-                {currAcct && <button onClick={() => { void send() }}>Send</button>}
+                <p>
+                The funds can only be claimed via the link once.
+                </p>
+            </div>
+            <div>
+                {currAcct &&
+                <button className='btn' onClick={() => { void send() }}>CREATE LINK</button>
+                }
             </div>
         </div>
     </div>;
