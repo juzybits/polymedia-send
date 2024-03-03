@@ -11,7 +11,7 @@ import { getFullnodeUrl } from '@mysten/sui.js/client';
 import { NetworkName, shortenSuiAddress } from '@polymedia/suits';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
-import { BrowserRouter, Outlet, Route, Routes, useLocation } from 'react-router-dom';
+import { BrowserRouter, Link, Outlet, Route, Routes, useLocation } from 'react-router-dom';
 import './App.less';
 import { PageClaim } from './PageClaim';
 import { PageNotFound } from './PageNotFound';
@@ -112,7 +112,9 @@ const App: React.FC<{
             {/* middle section */}
             <div>
                 <h1>
-                    zkSend <i>anything</i>
+                    <Link to='/'>
+                        zkSend <i>anything</i>
+                    </Link>
                 </h1>
                 {/* <div>
                     <Link to='/' className={location.pathname == '/' ? 'selected' : ''}>
