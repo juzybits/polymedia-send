@@ -11,7 +11,7 @@ import { getFullnodeUrl } from '@mysten/sui.js/client';
 import { NetworkName, shortenSuiAddress } from '@polymedia/suits';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
-import { BrowserRouter, Link, Outlet, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Link, Outlet, Route, Routes, useLocation } from 'react-router-dom';
 import './App.less';
 import { PageClaim } from './PageClaim';
 import { PageNotFound } from './PageNotFound';
@@ -70,6 +70,7 @@ const App: React.FC<{
     network,
 }) =>
 {
+    const location = useLocation();
     const currAcct = useCurrentAccount();
     const { mutate: disconnect } = useDisconnectWallet();
     const [ showConnectModal, setShowConnectModal ] = useState(false);
@@ -100,14 +101,26 @@ const App: React.FC<{
     <div id='layout'>
 
         <nav id='nav'>
+            {/* left section */}
             <div>
-                <div><ConnectButton /></div>
+                <div>
+                    <ConnectButton />
+                </div>
             </div>
-
+            {/* middle section */}
             <div>
-                <div><Link to='/'>HOME</Link></div>
-                <div><Link to='/send'>SEND</Link></div>
+                <div>
+                    <Link to='/' className={location.pathname == '/' ? 'selected' : ''}>
+                        HOME
+                    </Link>
+                </div>
+                <div>
+                    <Link to='/send' className={location.pathname == '/send' ? 'selected' : ''}>
+                        SEND
+                    </Link>
+                </div>
             </div>
+            {/* right section */}
             <div>
                 <div>
                     <LinkExternal href='https://github.com/juzybits/polymedia-zksend' follow={true}>

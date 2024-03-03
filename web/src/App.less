@@ -51,31 +51,39 @@ a {
 #nav {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     padding: 1rem;
     font-weight: 500;
     > div {
         display: flex;
         flex: 1;
-        a {
-            display: block;
-            color: @text-color;
-            img {
-                display: block;
-                height: 1.5rem;
-            }
-        }
         font-size: 1.2rem;
         &:nth-of-type(1) {
             justify-content: flex-start;
         }
         &:nth-of-type(2) {
-            font-size: 1.3rem;
-            gap: 1rem;
             justify-content: center;
+            gap: 1rem;
+            font-size: 1.3rem;
         }
         &:nth-of-type(3) {
-            gap: 0.5rem;
             justify-content: flex-end;
+            gap: 0.5rem;
+        }
+        a {
+            display: block;
+            color: @text-color;
+            &.selected {
+                color: #999;
+                &:hover {
+                    cursor: default;
+                    text-decoration: none;
+                }
+            }
+        }
+        img {
+            display: block;
+            height: 1.5rem;
         }
     }
 }
