@@ -17,6 +17,7 @@ import { PageClaim } from './PageClaim';
 import { PageNotFound } from './PageNotFound';
 import { PageSend } from './PageSend';
 import { LinkExternal } from '@polymedia/webutils';
+import { PageHome } from './PageHome';
 
 /* AppWrapRouter */
 
@@ -25,7 +26,8 @@ export const AppWrapRouter: React.FC = () => {
     <BrowserRouter>
         <Routes>
             <Route path='/' element={<AppWrapSui />} >
-                <Route index element={<PageSend />} />
+                <Route index element={<PageHome />} />
+                <Route path='/send' element={<PageSend />} />
                 <Route path='/claim' element={<PageClaim />} />
                 <Route path='*' element={<PageNotFound />} />
             </Route>

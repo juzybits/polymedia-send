@@ -38,7 +38,7 @@ export const PageSend: React.FC = () =>
     };
 
     return <div id='page-send' className='page'>
-        <h1>zkSend any Sui coin</h1>
+        <h1>Create a claim link</h1>
         <div className='content'>
             <div>
                 {currAcct && <button onClick={() => { void send() }}>Send</button>}
