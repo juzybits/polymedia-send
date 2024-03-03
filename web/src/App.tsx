@@ -16,6 +16,7 @@ import './App.less';
 import { PageClaim } from './PageClaim';
 import { PageNotFound } from './PageNotFound';
 import { PageSend } from './PageSend';
+import { LinkExternal } from '@polymedia/webutils';
 
 /* AppWrapRouter */
 
@@ -80,13 +81,13 @@ const App: React.FC<{
     const ConnectButton: React.FC = () => {
         return !currAcct
         ?
-        <div onClick={() => { setShowConnectModal(true) }}>
+        <a onClick={() => { setShowConnectModal(true) }}>
             LOG IN
-        </div>
+        </a>
         :
-        <div onClick={() => { disconnect() }}>
-            {shortenSuiAddress(currAcct.address)}
-        </div>;
+        <a onClick={() => { disconnect() }}>
+            {shortenSuiAddress(currAcct.address, 3, 3)}
+        </a>;
     }
 
     return <>
@@ -99,8 +100,26 @@ const App: React.FC<{
     <div id='layout'>
 
         <nav id='nav'>
-            <ConnectButton />
-            <div><Link to='/'>HOME</Link></div>
+            <div>
+                <div><ConnectButton /></div>
+            </div>
+
+            <div>
+                <div><Link to='/'>HOME</Link></div>
+                <div><Link to='/send'>SEND</Link></div>
+            </div>
+            <div>
+                <div>
+                    <LinkExternal href='https://github.com/juzybits/polymedia-zksend' follow={true}>
+                        <img alt='github' src={GITHUB_LOGO} />
+                    </LinkExternal>
+                </div>
+                <div>
+                    <LinkExternal href='https://polymedia.app' follow={true}>
+                        <img alt='polymedia' src='https://assets.polymedia.app/img/all/logo-nomargin-transparent-512x512.webp' />
+                    </LinkExternal>
+                </div>
+            </div>
         </nav>
 
         <main id='main'>
@@ -110,3 +129,5 @@ const App: React.FC<{
     </div>
     </>;
 }
+
+const GITHUB_LOGO = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nOTgnIGhlaWdodD0nOTYnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zyc+PHBhdGggZmlsbC1ydWxlPSdldmVub2RkJyBjbGlwLXJ1bGU9J2V2ZW5vZGQnIGQ9J000OC44NTQgMEMyMS44MzkgMCAwIDIyIDAgNDkuMjE3YzAgMjEuNzU2IDEzLjk5MyA0MC4xNzIgMzMuNDA1IDQ2LjY5IDIuNDI3LjQ5IDMuMzE2LTEuMDU5IDMuMzE2LTIuMzYyIDAtMS4xNDEtLjA4LTUuMDUyLS4wOC05LjEyNy0xMy41OSAyLjkzNC0xNi40Mi01Ljg2Ny0xNi40Mi01Ljg2Ny0yLjE4NC01LjcwNC01LjQyLTcuMTctNS40Mi03LjE3LTQuNDQ4LTMuMDE1LjMyNC0zLjAxNS4zMjQtMy4wMTUgNC45MzQuMzI2IDcuNTIzIDUuMDUyIDcuNTIzIDUuMDUyIDQuMzY3IDcuNDk2IDExLjQwNCA1LjM3OCAxNC4yMzUgNC4wNzQuNDA0LTMuMTc4IDEuNjk5LTUuMzc4IDMuMDc0LTYuNi0xMC44MzktMS4xNDEtMjIuMjQzLTUuMzc4LTIyLjI0My0yNC4yODMgMC01LjM3OCAxLjk0LTkuNzc4IDUuMDE0LTEzLjItLjQ4NS0xLjIyMi0yLjE4NC02LjI3NS40ODYtMTMuMDM4IDAgMCA0LjEyNS0xLjMwNCAxMy40MjYgNS4wNTJhNDYuOTcgNDYuOTcgMCAwIDEgMTIuMjE0LTEuNjNjNC4xMjUgMCA4LjMzLjU3MSAxMi4yMTMgMS42MyA5LjMwMi02LjM1NiAxMy40MjctNS4wNTIgMTMuNDI3LTUuMDUyIDIuNjcgNi43NjMuOTcgMTEuODE2LjQ4NSAxMy4wMzggMy4xNTUgMy40MjIgNS4wMTUgNy44MjIgNS4wMTUgMTMuMiAwIDE4LjkwNS0xMS40MDQgMjMuMDYtMjIuMzI0IDI0LjI4MyAxLjc4IDEuNTQ4IDMuMzE2IDQuNDgxIDMuMzE2IDkuMTI2IDAgNi42LS4wOCAxMS44OTctLjA4IDEzLjUyNiAwIDEuMzA0Ljg5IDIuODUzIDMuMzE2IDIuMzY0IDE5LjQxMi02LjUyIDMzLjQwNS0yNC45MzUgMzMuNDA1LTQ2LjY5MUM5Ny43MDcgMjIgNzUuNzg4IDAgNDguODU0IDB6JyBmaWxsPScjMjQyOTJmJy8+PC9zdmc+';
