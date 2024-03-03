@@ -4,7 +4,7 @@
     "name": "@polymedia/zksend-web",
     "author": "@juzybits (https://polymedia.app)",
     "homepage": "https://zksend.polymedia.app",
-    "description": "Sui zkSend by Polymedia",
+    "description": "zkSend any Sui coin or object",
     "license": "Apache-2.0",
     "repository": {
         "type": "git",
