@@ -1,13 +1,16 @@
 import { useCurrentAccount, useSignTransactionBlock, useSuiClient } from '@mysten/dapp-kit';
 import { ZkSendLinkBuilder } from '@mysten/zksend';
+import { useOutletContext } from 'react-router-dom';
+import { AppContext } from './App';
 
 export const PageSend: React.FC = () =>
 {
     const currAcct = useCurrentAccount();
     const suiClient = useSuiClient();
     const { mutateAsync: signTransactionBlock } = useSignTransactionBlock();
+    const { openConnectModal } = useOutletContext<AppContext>();
 
-    const send = async () => {
+    const createLink = async () => {
         if (!currAcct) {
             return;
         }
@@ -46,8 +49,9 @@ export const PageSend: React.FC = () =>
                 </p>
             </div>
             <div>
-                {currAcct &&
-                <button className='btn' onClick={() => { void send() }}>CREATE LINK</button>
+                {!currAcct
+                ? <button className='btn' onClick={openConnectModal}>LOG IN</button>
+                : <button className='btn' onClick={() => void createLink()}>CREATE LINK</button>
                 }
             </div>
         </div>

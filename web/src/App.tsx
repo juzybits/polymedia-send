@@ -11,7 +11,7 @@ import { getFullnodeUrl } from '@mysten/sui.js/client';
 import { NetworkName, shortenSuiAddress } from '@polymedia/suits';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
-import { BrowserRouter, Link, Outlet, Route, Routes, useLocation } from 'react-router-dom';
+import { BrowserRouter, Link, Outlet, Route, Routes } from 'react-router-dom';
 import './App.less';
 import { PageClaim } from './PageClaim';
 import { PageNotFound } from './PageNotFound';
@@ -64,6 +64,7 @@ const AppWrapSui: React.FC = () => {
 
 export type AppContext = {
     network: NetworkName,
+    openConnectModal: () => void,
 };
 
 const App: React.FC<{
@@ -72,13 +73,13 @@ const App: React.FC<{
     network,
 }) =>
 {
-    const location = useLocation();
     const currAcct = useCurrentAccount();
     const { mutate: disconnect } = useDisconnectWallet();
     const [ showConnectModal, setShowConnectModal ] = useState(false);
 
     const appContext: AppContext = {
         network,
+        openConnectModal: () => { setShowConnectModal(true) },
     };
 
     const ConnectButton: React.FC = () => {

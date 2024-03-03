@@ -1,6 +1,8 @@
 import { useCurrentAccount } from '@mysten/dapp-kit';
 import { ZkSendLink } from '@mysten/zksend';
 import { useEffect, useState } from 'react';
+import { useOutletContext } from 'react-router-dom';
+import { AppContext } from './App';
 
 type ListClaimableAssetsReturnType = Awaited<ReturnType<InstanceType<typeof ZkSendLink>['listClaimableAssets']>>;
 
@@ -8,6 +10,7 @@ export const PageClaim: React.FC = () =>
 {
     const currAcct = useCurrentAccount();
     const [ claimableAssets, setClaimableAssets ] = useState<ListClaimableAssetsReturnType>();
+    const { openConnectModal } = useOutletContext<AppContext>();
 
     useEffect(() => {
         void loadClaimableAssets();
@@ -81,8 +84,9 @@ export const PageClaim: React.FC = () =>
                                 }
                             </div>
                             <div>
-                                {currAcct &&
-                                <button className='btn' onClick={() => { void claimAssets() }}>CLAIM ASSETS</button>
+                                {!currAcct
+                                ? <button className='btn' onClick={openConnectModal}>LOG IN</button>
+                                : <button className='btn' onClick={() => { void claimAssets() }}>CLAIM ASSETS</button>
                                 }
                             </div>
                         </>
