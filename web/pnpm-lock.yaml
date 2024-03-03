@@ -17,6 +17,9 @@ dependencies:
   '@polymedia/suits':
     specifier: ^0.0.30
     version: 0.0.30
+  '@polymedia/webutils':
+    specifier: ^0.0.38
+    version: 0.0.38(react-dom@18.2.0)(react@18.2.0)
   '@tanstack/react-query':
     specifier: ^5.24.6
     version: 5.24.6(react@18.2.0)
@@ -503,6 +506,17 @@ packages:
     resolution: {integrity: sha512-LRPDXw+l61AC26secajmubXQCLD/HdAyErtwmIl76yc8vGL09+zWdhO/onECoSdqXdWSuCd3BvMou7PXCYfGLw==}
     dependencies:
       '@mysten/sui.js': 0.50.1
+    dev: false
+
+  /@polymedia/webutils@0.0.38(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-NJubH9aqL5M8b0mq/1n93zLJyQRBg+1Ci+UJFZ8PjKmAyQyKCvW8qF6XYamhtWnunp8iQXGycrlNkdplgY4/tg==}
+    peerDependencies:
+      react: ^18.0.0
+      react-dom: ^18.0.0
+    dependencies:
+      '@polymedia/suits': 0.0.30
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
     dev: false
 
   /@radix-ui/primitive@1.0.1:

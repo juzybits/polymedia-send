@@ -69,7 +69,7 @@ const App: React.FC<{
     network,
 }) =>
 {
-    const currentAccount = useCurrentAccount();
+    const currAcct = useCurrentAccount();
     const { mutate: disconnect } = useDisconnectWallet();
     const [ showConnectModal, setShowConnectModal ] = useState(false);
 
@@ -78,14 +78,14 @@ const App: React.FC<{
     };
 
     const ConnectButton: React.FC = () => {
-        return !currentAccount
+        return !currAcct
         ?
         <div onClick={() => { setShowConnectModal(true) }}>
             LOG IN
         </div>
         :
         <div onClick={() => { disconnect() }}>
-            {shortenSuiAddress(currentAccount.address)}
+            {shortenSuiAddress(currAcct.address)}
         </div>;
     }
 
