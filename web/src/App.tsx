@@ -9,15 +9,15 @@ import {
 import '@mysten/dapp-kit/dist/index.css';
 import { getFullnodeUrl } from '@mysten/sui.js/client';
 import { NetworkName, shortenSuiAddress } from '@polymedia/suits';
+import { LinkExternal } from '@polymedia/webutils';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
 import { BrowserRouter, Link, Outlet, Route, Routes } from 'react-router-dom';
 import './App.less';
 import { PageClaim } from './PageClaim';
+import { PageHome } from './PageHome';
 import { PageNotFound } from './PageNotFound';
 import { PageSend } from './PageSend';
-import { LinkExternal } from '@polymedia/webutils';
-import { PageHome } from './PageHome';
 
 /* AppWrapRouter */
 

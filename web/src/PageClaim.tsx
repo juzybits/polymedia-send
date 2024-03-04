@@ -9,8 +9,8 @@ type ListClaimableAssetsReturnType = Awaited<ReturnType<InstanceType<typeof ZkSe
 export const PageClaim: React.FC = () =>
 {
     const currAcct = useCurrentAccount();
-    const [ claimableAssets, setClaimableAssets ] = useState<ListClaimableAssetsReturnType>();
     const { openConnectModal } = useOutletContext<AppContext>();
+    const [ claimableAssets, setClaimableAssets ] = useState<ListClaimableAssetsReturnType>();
 
     useEffect(() => {
         void loadClaimableAssets();
