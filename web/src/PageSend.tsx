@@ -1,5 +1,8 @@
 import { useCurrentAccount, useSignTransactionBlock, useSuiClient } from '@mysten/dapp-kit';
+import { CoinBalance } from '@mysten/sui.js/client';
 import { ZkSendLinkBuilder } from '@mysten/zksend';
+import { shortenSuiAddress } from '@polymedia/suits';
+import { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';
 
@@ -9,6 +12,20 @@ export const PageSend: React.FC = () =>
     const suiClient = useSuiClient();
     const { mutateAsync: signTransactionBlock } = useSignTransactionBlock();
     const { openConnectModal } = useOutletContext<AppContext>();
+    const [ userBalances, setUserBalances ] = useState<CoinBalance[]>([]);
+
+    useEffect(() => {
+        void loadUserBalances();
+    }, [currAcct]);
+
+    const loadUserBalances = async () => {
+        if (!currAcct) {
+            setUserBalances([]);
+        } else {
+            const newBalances = await suiClient.getAllBalances({ owner: currAcct.address });
+            setUserBalances(newBalances);
+        }
+    };
 
     const createLink = async () => {
         if (!currAcct) {
@@ -43,17 +60,26 @@ export const PageSend: React.FC = () =>
     return <div id='page-send' className='page'>
         <h1>Create a claim link</h1>
         <div className='content'>
+        {!currAcct
+        ? <>
+            <p>Connect your Sui wallet to create a zkSend link.</p>
+            <button className='btn' onClick={openConnectModal}>LOG IN</button>
+        </> : <>
+            <p>The funds can only be claimed via the link once.</p>
             <div>
-                <p>
-                The funds can only be claimed via the link once.
-                </p>
+                <h2>Your assets:</h2>
+                <div>
+                    {userBalances.map(bal => (
+                    <div key={bal.coinType}>
+                        <div>Type: {shortenSuiAddress(bal.coinType, 3, 3, '0x', '...')}</div>
+                        <div>Balance: {bal.totalBalance}</div>
+                    </div>
+                    ))}
+                </div>
             </div>
-            <div>
-                {!currAcct
-                ? <button className='btn' onClick={openConnectModal}>LOG IN</button>
-                : <button className='btn' onClick={() => void createLink()}>CREATE LINK</button>
-                }
-            </div>
+            <button className='btn' onClick={() => void createLink()}>CREATE LINK</button>
+        </>
+        }
         </div>
     </div>;
-}
+};

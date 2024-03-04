@@ -1,5 +1,6 @@
 import { useCurrentAccount } from '@mysten/dapp-kit';
 import { ZkSendLink } from '@mysten/zksend';
+import { shortenSuiAddress } from '@polymedia/suits';
 import { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';
@@ -63,7 +64,7 @@ export const PageClaim: React.FC = () =>
                                     <div>
                                         {claimableAssets.balances.map(asset =>
                                             <div key={asset.coinType}>
-                                                {String(asset.amount)} {asset.coinType}
+                                                {String(asset.amount)} {shortenSuiAddress(asset.coinType, 3, 3, '0x', '...')}
                                             </div>
                                         )}
                                     </div>
