@@ -15,7 +15,7 @@ export const PageSend: React.FC = () =>
     const [ userBalances, setUserBalances ] = useState<CoinBalance[]>([]);
 
     useEffect(() => {
-        void loadUserBalances();
+        loadUserBalances();
     }, [currAcct]);
 
     const loadUserBalances = async () => {
@@ -40,7 +40,7 @@ export const PageSend: React.FC = () =>
 
         // FUD
         const fudCoinType = '0x76cb819b01abed502bee8a702b4c2d547532c12f25001c9dea795a5e631c26f1::fud::FUD';
-        link.addClaimableBalance(fudCoinType, BigInt(99994));
+        link.addClaimableBalance(fudCoinType, BigInt(99_995));
 
         const url = link.getLink();
         console.debug('url: ', url);
@@ -77,7 +77,7 @@ export const PageSend: React.FC = () =>
                     ))}
                 </div>
             </div>
-            <button className='btn' onClick={() => void createLink()}>CREATE LINK</button>
+            <button className='btn' onClick={createLink}>CREATE LINK</button>
         </>
         }
         </div>

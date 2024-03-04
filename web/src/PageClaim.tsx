@@ -14,7 +14,7 @@ export const PageClaim: React.FC = () =>
     const [ claimableAssets, setClaimableAssets ] = useState<ListClaimableAssetsReturnType>();
 
     useEffect(() => {
-        void loadClaimableAssets();
+        loadClaimableAssets();
     }, []);
 
     const loadClaimableAssets = async () => {
@@ -87,7 +87,7 @@ export const PageClaim: React.FC = () =>
                             <div>
                                 {!currAcct
                                 ? <button className='btn' onClick={openConnectModal}>LOG IN</button>
-                                : <button className='btn' onClick={() => { void claimAssets() }}>CLAIM ASSETS</button>
+                                : <button className='btn' onClick={claimAssets}>CLAIM ASSETS</button>
                                 }
                             </div>
                         </>
