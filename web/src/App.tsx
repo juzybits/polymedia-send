@@ -9,7 +9,7 @@ import {
 import '@mysten/dapp-kit/dist/index.css';
 import { getFullnodeUrl } from '@mysten/sui.js/client';
 import { NetworkName, shortenSuiAddress } from '@polymedia/suits';
-import { LinkExternal } from '@polymedia/webutils';
+import { LinkExternal, NetworkSelector, isLocalhost, loadNetwork } from '@polymedia/webutils';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
 import { BrowserRouter, Link, Outlet, Route, Routes } from 'react-router-dom';
@@ -47,13 +47,12 @@ const { networkConfig } = createNetworkConfig({
 
 const queryClient = new QueryClient();
 const AppWrapSui: React.FC = () => {
-    // Sui zkSend is only supported on mainnet as of 2024-03-03
-    const [ network ] = useState<NetworkName>('mainnet');
+    const [network, setNetwork] = useState<NetworkName>(loadNetwork());
     return (
     <QueryClientProvider client={queryClient}>
         <SuiClientProvider networks={networkConfig} network={network}>
             <WalletProvider autoConnect={true}>
-                <App network={network} />
+                <App network={network} setNetwork={setNetwork} />
             </WalletProvider>
         </SuiClientProvider>
     </QueryClientProvider>
@@ -69,8 +68,10 @@ export type AppContext = {
 
 const App: React.FC<{
     network: NetworkName,
+    setNetwork: React.Dispatch<React.SetStateAction<NetworkName>>,
 }> = ({
     network,
+    setNetwork,
 }) =>
 {
     const currAcct = useCurrentAccount();
@@ -104,6 +105,12 @@ const App: React.FC<{
     <div id='layout'>
 
         <nav id='nav'>
+            <NetworkSelector
+                currentNetwork={network}
+                supportedNetworks={isLocalhost() ? undefined : ['mainnet', 'testnet']}
+                onSwitch={newNetwork => { setNetwork(newNetwork) }}
+            />
+
             {/* left section */}
             <div>
                 <div>
