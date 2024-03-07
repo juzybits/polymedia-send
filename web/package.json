@@ -24,17 +24,17 @@
         "@mysten/dapp-kit": "^0.12.2",
         "@mysten/sui.js": "^0.50.1",
         "@mysten/zksend": "^0.2.2",
-        "@polymedia/suits": "^0.0.31",
+        "@polymedia/suits": "^0.0.33",
         "@polymedia/webutils": "^0.0.40",
-        "@tanstack/react-query": "^5.24.8",
+        "@tanstack/react-query": "^5.25.0",
         "normalize.css": "^8.0.1",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
-        "react-router-dom": "^6.22.2"
+        "react-router-dom": "^6.22.3"
     },
     "devDependencies": {
-        "@types/react": "^18.2.62",
-        "@types/react-dom": "^18.2.19",
+        "@types/react": "^18.2.64",
+        "@types/react-dom": "^18.2.21",
         "@typescript-eslint/eslint-plugin": "^7.1.1",
         "@typescript-eslint/parser": "^7.1.1",
         "@vitejs/plugin-react-swc": "^3.6.0",
@@ -43,8 +43,8 @@
         "eslint-plugin-react-hooks": "^4.6.0",
         "eslint-plugin-react-refresh": "^0.4.5",
         "less": "^4.2.0",
-        "typescript": "^5.3.3",
-        "vite": "^5.1.4"
+        "typescript": "^5.4.2",
+        "vite": "^5.1.5"
     },
     "type": "module",
     "sideEffects": false
