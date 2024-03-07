@@ -1,126 +1,75 @@
-/* Imports */
+/* CSS reset */
 
 @import '../node_modules/normalize.css/normalize.css';
+
+* {
+    margin: 0;
+}
+
+h1, h2, h3, h4, h5 {
+    padding: 0;
+    margin: 0;
+}
 
 /* Constants */
 
 @mobile-width: 600px;
-@text-color: #000;
 
 /* Common elements */
 
 * {
     font-family: system-ui;
-    margin: 0;
-    padding: 0;
-    border: 0;
-}
-
-a {
-    text-decoration: none;
-    &:hover {
-        cursor: pointer;
-    }
-}
-
-.btn {
-    cursor: pointer;
-    padding: 0.7rem 1.2rem;
-    display: inline-block;
-    color: white;
-    background-color: rgb(0, 119, 255);
-    border-radius: 1rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    font-size: 1rem;
-    &:hover {
-        background-color: #2e8fff;
-    }
+    color: rgb(226 232 240);
 }
 
 /* Layout */
 
 body {
-    background-color: #4498dc;
+    background: linear-gradient(to bottom, rgb(15 23 42), rgb(36 49 79));
 }
 
 #layout {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    max-width: 800px;
+    max-width: 1000px;
     margin-left: auto;
     margin-right: auto;
-    background-color: #f7f7f7;
-    padding: 0rem 3rem;
-    @media (max-width: @mobile-width) {
-        padding: 0rem 1.5rem;
-    }
     min-height: 100vh;
 }
 
-#main {
-    flex-grow: 1;
-    padding-bottom: 3rem;
-    font-size: 1.1rem;
-    text-align: center;
-    overflow-wrap: break-word;
-    h1 {
-        font-size: 2rem;
-        text-align: center;
-        margin: 0;
-        padding-bottom: 3rem;
-    }
-    p {
-        padding-bottom: 3rem;
+main {
+    display: flex;
+    justify-content: center;
+    @media (max-width: @mobile-width) {
+        flex-direction: column-reverse;
     }
 }
 
-#nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-weight: 500;
-    padding: 2.5rem 0 4rem;
-    user-select: none;
-    > div {
+header, nav, #page {
+    padding: 1.5rem;
+}
+
+header {
+    h1 {
         display: flex;
-        flex: 1;
-        font-size: 1.1rem;
-        &:nth-of-type(1) {
-            justify-content: flex-start;
-        }
-        &:nth-of-type(2) {
-            justify-content: center;
-            // gap: 1rem;
-            // font-size: 1.3rem;
-            h1 {
-                font-size: 1.3rem;
-                text-align: center;
-                margin: 0;
-            }
-        }
-        &:nth-of-type(3) {
-            justify-content: flex-end;
-            gap: 0.6rem;
-        }
-        a {
-            display: block;
-            color: @text-color;
-            &:hover {
-                text-decoration: none;
-            }
-        //     &.selected {
-        //         color: #999;
-        //         &:hover {
-        //             cursor: default;
-        //             text-decoration: none;
-        //         }
-        //     }
-        }
+        align-items: center;
+        font-size: 1.5rem;
         img {
-            display: block;
-            height: 1.5rem;
+            height: 2rem;
+            padding-right: 0.5rem;
         }
+    }
+}
+
+#page {
+    flex-grow: 1;
+}
+
+nav {
+    min-width: 200px;
+    font-size: 1.2rem;
+    @media (max-width: @mobile-width) {
+        min-width: auto;
+    }
+    .logo {
+        height: 2rem;
     }
 }

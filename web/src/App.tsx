@@ -104,27 +104,32 @@ const App: React.FC<{
 
     <div id='layout'>
 
-        <nav id='nav'>
-            <NetworkSelector
-                currentNetwork={network}
-                supportedNetworks={isLocalhost() ? undefined : ['mainnet', 'testnet']}
-                onSwitch={newNetwork => { setNetwork(newNetwork) }}
-            />
+    <header>
+        <h1>
+        <img alt='polymedia' src='https://assets.polymedia.app/img/all/logo-nomargin-transparent-512x512.webp' className='logo' />
+        zkSend&nbsp;<i>anything</i>
+        </h1>
+    </header>
 
-            {/* left section */}
-            <div>
+    <main>
+
+        <nav>
+            <div className='nav-section'>
                 <div>
                     <ConnectButton />
                 </div>
             </div>
-            {/* middle section */}
-            <div>
-                <h1>
-                    <Link to='/'>
-                        zkSend <i>anything</i>
-                    </Link>
-                </h1>
-                {/* <div>
+
+            <div className='nav-section'>
+                <NetworkSelector
+                    currentNetwork={network}
+                    supportedNetworks={isLocalhost() ? undefined : ['mainnet', 'testnet']}
+                    onSwitch={newNetwork => { setNetwork(newNetwork) }}
+                />
+            </div>
+
+            <div className='nav-section'>
+                <div>
                     <Link to='/' className={location.pathname == '/' ? 'selected' : ''}>
                         HOME
                     </Link>
@@ -133,26 +138,28 @@ const App: React.FC<{
                     <Link to='/send' className={location.pathname == '/send' ? 'selected' : ''}>
                         SEND
                     </Link>
-                </div> */}
+                </div>
             </div>
-            {/* right section */}
-            <div>
+
+            {/* <div className='nav-section'>
                 <div>
                     <LinkExternal href='https://github.com/juzybits/polymedia-zksend' follow={true}>
-                        <img alt='github' src={GITHUB_LOGO} />
+                        <img alt='github' src={GITHUB_LOGO} className='logo' />
                     </LinkExternal>
                 </div>
                 <div>
                     <LinkExternal href='https://polymedia.app' follow={true}>
-                        <img alt='polymedia' src='https://assets.polymedia.app/img/all/logo-nomargin-transparent-512x512.webp' />
+                        <img alt='polymedia' src='https://assets.polymedia.app/img/all/logo-nomargin-transparent-512x512.webp' className='logo' />
                     </LinkExternal>
                 </div>
-            </div>
+            </div> */}
         </nav>
 
-        <main id='main'>
+        <div id='page'>
             <Outlet context={appContext} />
-        </main>
+        </div>
+
+    </main>
 
     </div>
     </>;
