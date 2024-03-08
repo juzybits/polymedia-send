@@ -87,11 +87,11 @@ const App: React.FC<{
     const ConnectButton: React.FC = () => {
         return !currAcct
         ?
-        <a onClick={() => { setShowConnectModal(true) }}>
-            Log In
+        <a id='btn-connect' onClick={() => { setShowConnectModal(true) }}>
+            LOG IN
         </a>
         :
-        <a onClick={() => { disconnect() }}>
+        <a id='btn-connect' onClick={() => { disconnect() }}>
             {shortenSuiAddress(currAcct.address, 3, 3)}
         </a>;
     }
@@ -107,24 +107,20 @@ const App: React.FC<{
 
     <header>
         <h1>
-        <img alt='polymedia' src='https://assets.polymedia.app/img/all/logo-nomargin-transparent-512x512.webp' className='logo' />
-        zkSend&nbsp;<i>anything</i>
+            <img alt='polymedia' src='https://assets.polymedia.app/img/all/logo-nomargin-transparent-512x512.webp' className='logo' />
+            zkSend
         </h1>
+        <NetworkSelector
+            currentNetwork={network}
+            supportedNetworks={isLocalhost() ? undefined : ['mainnet', 'testnet']}
+            onSwitch={newNetwork => { setNetwork(newNetwork) }}
+        />
+        <ConnectButton />
     </header>
 
     <main>
 
         <nav>
-            <div className='nav-section'>
-                <ConnectButton />
-
-                <NetworkSelector
-                    currentNetwork={network}
-                    supportedNetworks={isLocalhost() ? undefined : ['mainnet', 'testnet']}
-                    onSwitch={newNetwork => { setNetwork(newNetwork) }}
-                />
-            </div>
-
             <div className='nav-section'>
                 <Link to='/' className={location.pathname == '/' ? 'selected' : ''}>
                     Home
