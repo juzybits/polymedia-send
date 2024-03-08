@@ -71,11 +71,26 @@ header {
         }
     }
     #network-selector {
-        text-align: center;
         text-transform: uppercase;
         font-weight: 500;
-        .network-option .text:hover {
-            .header-highlight;
+        position: relative;
+        .network-options {
+            position: absolute;
+            min-width: 100%;
+            background-color: rgb(15 23 42);
+            padding: 0.1rem 0;
+            .network-option .text {
+                padding-top: 0.1rem;
+                padding-bottom: 0.1rem;
+            }
+        }
+        .network-option .text {
+            display: block;
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+            &:hover {
+                .header-highlight;
+            }
         }
     }
     #btn-connect {
