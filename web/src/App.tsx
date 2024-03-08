@@ -12,7 +12,7 @@ import { NetworkName, shortenSuiAddress } from '@polymedia/suits';
 import { LinkExternal, NetworkSelector, isLocalhost, loadNetwork } from '@polymedia/webutils';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
-import { BrowserRouter, Link, Outlet, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Link, Outlet, Route, Routes, useLocation } from 'react-router-dom';
 import './App.less';
 import { PageClaim } from './PageClaim';
 import { PageHome } from './PageHome';
@@ -77,6 +77,7 @@ const App: React.FC<{
     const currAcct = useCurrentAccount();
     const { mutate: disconnect } = useDisconnectWallet();
     const [ showConnectModal, setShowConnectModal ] = useState(false);
+    const location = useLocation();
 
     const appContext: AppContext = {
         network,
@@ -87,7 +88,7 @@ const App: React.FC<{
         return !currAcct
         ?
         <a onClick={() => { setShowConnectModal(true) }}>
-            LOG IN
+            Log In
         </a>
         :
         <a onClick={() => { disconnect() }}>
@@ -115,12 +116,8 @@ const App: React.FC<{
 
         <nav>
             <div className='nav-section'>
-                <div>
-                    <ConnectButton />
-                </div>
-            </div>
+                <ConnectButton />
 
-            <div className='nav-section'>
                 <NetworkSelector
                     currentNetwork={network}
                     supportedNetworks={isLocalhost() ? undefined : ['mainnet', 'testnet']}
@@ -129,16 +126,12 @@ const App: React.FC<{
             </div>
 
             <div className='nav-section'>
-                <div>
-                    <Link to='/' className={location.pathname == '/' ? 'selected' : ''}>
-                        HOME
-                    </Link>
-                </div>
-                <div>
-                    <Link to='/send' className={location.pathname == '/send' ? 'selected' : ''}>
-                        SEND
-                    </Link>
-                </div>
+                <Link to='/' className={location.pathname == '/' ? 'selected' : ''}>
+                    Home
+                </Link>
+                <Link to='/send' className={location.pathname == '/send' ? 'selected' : ''}>
+                    Send
+                </Link>
             </div>
 
             {/* <div className='nav-section'>

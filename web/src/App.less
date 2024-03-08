@@ -4,6 +4,7 @@
 
 * {
     margin: 0;
+    box-sizing: border-box;
 }
 
 h1, h2, h3, h4, h5 {
@@ -44,7 +45,7 @@ main {
 }
 
 header, nav, #page {
-    padding: 1.5rem;
+    padding: 1.7rem 2rem;
 }
 
 header {
@@ -64,8 +65,26 @@ header {
 }
 
 nav {
-    min-width: 200px;
-    font-size: 1.2rem;
+    min-width: 250px;
+    .nav-section {
+        font-size: 1.1rem;
+        a, span {
+            color: #ccc;
+            display: block;
+            padding: 0.6rem 0;
+            text-decoration: none;
+            &:hover {
+                cursor: pointer;
+                color: white;
+            }
+            &.selected {
+                color: rgb(56, 189, 248);
+            }
+        }
+    }
+    #network-selector {
+        text-transform: capitalize;
+    }
     @media (max-width: @mobile-width) {
         min-width: auto;
     }
