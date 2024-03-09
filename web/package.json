@@ -25,7 +25,7 @@
         "@mysten/sui.js": "^0.50.1",
         "@mysten/zksend": "^0.2.2",
         "@polymedia/suits": "^0.0.33",
-        "@polymedia/webutils": "^0.0.40",
+        "@polymedia/webutils": "^0.0.41",
         "@tanstack/react-query": "^5.25.0",
         "normalize.css": "^8.0.1",
         "react": "^18.2.0",
