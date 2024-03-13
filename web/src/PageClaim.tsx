@@ -37,62 +37,60 @@ export const PageClaim: React.FC = () =>
                 return <h1>Loading...</h1>;
             }
             return <>
-                <div className='content'>
-                    {
-                        (!claimableAssets.balances.length && !claimableAssets.nfts.length)
-                        ?
+            {
+                (!claimableAssets.balances.length && !claimableAssets.nfts.length)
+                ?
+                <>
+                    <h1>Assets have already been claimed</h1>
+                    <div>
+                        <p>
+                        The funds associated with this link are no longer available.
+                        </p>
+                    </div>
+                </>
+                :
+                <>
+                    <h1>Assets are ready to be claimed</h1>
+                    <div>
+                        <p>
+                        The person who shared this link with you is attempting to send you the following funds.
+                        </p>
+                    </div>
+                    <div style={{marginBottom: '3rem'}}>
+                        {claimableAssets.balances.length &&
                         <>
-                            <h1>Assets have already been claimed</h1>
+                            <h3>Balances</h3>
                             <div>
-                                <p>
-                                The funds associated with this link are no longer available.
-                                </p>
+                                {claimableAssets.balances.map(asset =>
+                                    <div key={asset.coinType}>
+                                        {String(asset.amount)} {shortenSuiAddress(asset.coinType, 3, 3, '0x', '...')}
+                                    </div>
+                                )}
                             </div>
                         </>
-                        :
+                        }
+                        {claimableAssets.nfts.length &&
                         <>
-                            <h1>Assets are ready to be claimed</h1>
+                            <h3>Objects</h3>
                             <div>
-                                <p>
-                                The person who shared this link with you is attempting to send you the following funds.
-                                </p>
-                            </div>
-                            <div style={{marginBottom: '3rem'}}>
-                                {claimableAssets.balances.length &&
-                                <>
-                                    <h3>Balances</h3>
-                                    <div>
-                                        {claimableAssets.balances.map(asset =>
-                                            <div key={asset.coinType}>
-                                                {String(asset.amount)} {shortenSuiAddress(asset.coinType, 3, 3, '0x', '...')}
-                                            </div>
-                                        )}
+                                {claimableAssets.nfts.map(asset =>
+                                    <div key={asset.objectId}>
+                                        {asset.objectId}<br/>
+                                        {asset.type}<br/>
                                     </div>
-                                </>
-                                }
-                                {claimableAssets.nfts.length &&
-                                <>
-                                    <h3>Objects</h3>
-                                    <div>
-                                        {claimableAssets.nfts.map(asset =>
-                                            <div key={asset.objectId}>
-                                                {asset.objectId}<br/>
-                                                {asset.type}<br/>
-                                            </div>
-                                        )}
-                                    </div>
-                                </>
-                                }
-                            </div>
-                            <div>
-                                {!currAcct
-                                ? <button className='btn' onClick={openConnectModal}>LOG IN</button>
-                                : <button className='btn' onClick={claimAssets}>CLAIM ASSETS</button>
-                                }
+                                )}
                             </div>
                         </>
-                    }
-                </div>
+                        }
+                    </div>
+                    <div>
+                        {!currAcct
+                        ? <button className='btn' onClick={openConnectModal}>LOG IN</button>
+                        : <button className='btn' onClick={claimAssets}>CLAIM ASSETS</button>
+                        }
+                    </div>
+                </>
+            }
             </>
         })()}
     </div>;

@@ -58,28 +58,26 @@ export const PageSend: React.FC = () =>
     };
 
     return <div id='page-send' className='page'>
-        <h1>Create a claim link</h1>
-        <div className='content'>
-        {!currAcct
-        ? <>
-            <p>Connect your Sui wallet to create a zkSend link.</p>
-            <button className='btn' onClick={openConnectModal}>LOG IN</button>
-        </> : <>
-            <p>The funds can only be claimed via the link once.</p>
+    <h1>Create a claim link</h1>
+    {!currAcct
+    ? <>
+        <p>Connect your Sui wallet to create a zkSend link.</p>
+        <button className='btn' onClick={openConnectModal}>LOG IN</button>
+    </> : <>
+        <p>The funds can only be claimed via the link once.</p>
+        <div>
+            <h2>Your assets:</h2>
             <div>
-                <h2>Your assets:</h2>
-                <div>
-                    {userBalances.map(bal => (
-                    <div key={bal.coinType}>
-                        <div>Type: {shortenSuiAddress(bal.coinType, 3, 3, '0x', '...')}</div>
-                        <div>Balance: {bal.totalBalance}</div>
-                    </div>
-                    ))}
+                {userBalances.map(bal => (
+                <div key={bal.coinType}>
+                    <p>Type: {shortenSuiAddress(bal.coinType, 3, 3, '0x', '...')}</p>
+                    <p>Balance: {bal.totalBalance}</p>
                 </div>
+                ))}
             </div>
-            <button className='btn' onClick={createLink}>CREATE LINK</button>
-        </>
-        }
         </div>
+        <button className='btn' onClick={createLink}>CREATE LINK</button>
+    </>
+    }
     </div>;
 };
