@@ -42,7 +42,9 @@ const { networkConfig } = createNetworkConfig({
     localnet: { url: getFullnodeUrl('localnet') },
     devnet: { url: getFullnodeUrl('devnet') },
     testnet: { url: getFullnodeUrl('testnet') },
-    mainnet: { url: getFullnodeUrl('mainnet') },
+    mainnet: { url: 'https://mainnet.suiet.app' },
+    // mainnet: { url: getFullnodeUrl('mainnet') },
+    // mainnet: { url: 'https://rpc-mainnet.suiscan.xyz' },
 });
 
 const queryClient = new QueryClient();
@@ -65,6 +67,8 @@ export type AppContext = {
     network: NetworkName,
     setNetwork: React.Dispatch<React.SetStateAction<NetworkName>>,
     openConnectModal: () => void,
+    inProgress: boolean,
+    setInProgress: React.Dispatch<React.SetStateAction<boolean>>,
 };
 
 const App: React.FC<{
@@ -75,12 +79,15 @@ const App: React.FC<{
     setNetwork,
 }) =>
 {
+    const [ inProgress, setInProgress ] = useState(false);
     const [ showConnectModal, setShowConnectModal ] = useState(false);
 
     const appContext: AppContext = {
         network,
         setNetwork,
         openConnectModal: () => { setShowConnectModal(true) },
+        inProgress,
+        setInProgress,
     };
 
     return <>
