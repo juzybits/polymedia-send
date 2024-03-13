@@ -16,6 +16,7 @@ module.exports = {
         '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
         '@typescript-eslint/no-floating-promises': 'off',
         '@typescript-eslint/no-misused-promises': 'off',
+        '@typescript-eslint/prefer-nullish-coalescing': [ 'error', { 'ignoreConditionalTests': true } ],
         'react-hooks/exhaustive-deps': 'off',
         'react/no-unescaped-entities': 'off',
         'react/prop-types': 'off',
