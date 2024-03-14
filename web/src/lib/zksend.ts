@@ -1,3 +1,6 @@
+// Forked from `sui/sdk/zksend/src/links.ts`.
+// Adds `ZkSendLinkBuilder.createMultiSendTransaction()`.
+
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -219,6 +222,45 @@ export class ZkSendLinkBuilder {
 		this.#coinsByType.set(coinType, coins.data);
 
 		return coins.data;
+	}
+
+	/* Added by Polymedia */
+
+	async estimateClaimGasFee(): Promise<bigint> {
+		return await this.#estimateClaimGasFee();
+	}
+
+	async createMultiSendTransaction(
+		txb: TransactionBlock,
+		gasEstimateFromDryRun: bigint,
+		fundingCoins: Map<string, string>,
+	) {
+		const baseGasAmount = gasEstimateFromDryRun * 2n;
+
+		// Ensure that rounded gas is not less than the calculated gas
+		const gasWithBuffer = baseGasAmount + 1013n;
+		// Ensure that gas amount ends in 987
+		const roundedGasAmount = gasWithBuffer - (gasWithBuffer % 1000n) - 13n;
+
+		const address = this.#keypair.toSuiAddress();
+		const objectsToTransfer = [...this.#objects].map((id) => txb.object(id));
+		const [gas] = txb.splitCoins(txb.gas, [roundedGasAmount]);
+		objectsToTransfer.push(gas);
+
+		txb.setSenderIfNotSet(this.#sender);
+
+		for (const [coinType, amount] of this.#balances) {
+			const fundCoin = fundingCoins.get(coinType);
+			if (!fundCoin) {
+				throw Error(`Funding coin missing for type ${coinType}`);
+			}
+			const [sendCoin] = txb.splitCoins(fundCoin, [amount]);
+			objectsToTransfer.push(sendCoin);
+		}
+
+		txb.transferObjects(objectsToTransfer, address);
+
+		return txb;
 	}
 }
 
