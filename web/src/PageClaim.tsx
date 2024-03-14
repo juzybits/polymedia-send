@@ -99,9 +99,7 @@ export const PageClaim: React.FC = () =>
         }
     };
 
-    return <div id='claim-page' className='page'>
-    <div className='content'>
-
+    return <div id='page-claim' className='page'>
     {errMsg &&
     <div className='error'>
         Something went wrong:<br/>{errMsg}
@@ -111,7 +109,7 @@ export const PageClaim: React.FC = () =>
 
         if (claimTxnDigest) {
             return <div className='success-box'>
-                <h1 className='section-title'>Success</h1>
+                <h1>Success</h1>
 
                 <p style={{paddingBottom: '1rem'}}>{claimableBalancePretty} ${coinInfo.symbol} was sent to <span style={{whiteSpace: 'nowrap'}}>{shortAddress}</span></p>
 
@@ -125,12 +123,12 @@ export const PageClaim: React.FC = () =>
 
         if (isCreator) {
             return <div className='success-box'>
-                <h1 className='section-title'>Success</h1>
+                <h1>Success</h1>
 
                 <p>Copy and share the link with the person you want to ${coinInfo.symbol}.</p>
 
                 <button className='btn' onClick={copyLink}>
-                    copy link
+                    COPY LINK
                 </button>
 
                 {copyMsg && <p style={{fontSize: '1.2rem', paddingBottom: '1.5rem'}}>{copyMsg}</p>}
@@ -160,12 +158,12 @@ export const PageClaim: React.FC = () =>
             if (errMsg) {
                 return null; // something went wrong on load
             }
-            return <h1 className='section-title'>loading...</h1>;
+            return <h1>loading...</h1>;
         }
 
         if (claimableBalance === BigInt(0)) {
             return <>
-                <h1 className='section-title'>${coinInfo.symbol} has already been claimed</h1>
+                <h1>${coinInfo.symbol} has already been claimed</h1>
                 <div>
                     <p>The ${coinInfo.symbol} in this link are no longer available.</p>
                 </div>
@@ -179,14 +177,14 @@ export const PageClaim: React.FC = () =>
                 (here is what the recipient will see)
             </div>}
 
-            <h1 className='section-title'>
+            <h1>
                 Found {claimableBalancePretty} ${coinInfo.symbol}
             </h1>
 
             {!currAcct &&
             <>
             <p>Enter the address where you want to send the ${coinInfo.symbol},<br/>or&nbsp;
-                <button className='btn' onClick={openConnectModal}>log in</button>
+                <button className='btn' onClick={openConnectModal}>LOG IN</button>
                 &nbsp;with your wallet to auto-fill.
             </p>
 
@@ -212,6 +210,5 @@ export const PageClaim: React.FC = () =>
             </button>}
         </>;
     })()}
-    </div>
     </div>;
 }

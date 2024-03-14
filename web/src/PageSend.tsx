@@ -104,52 +104,48 @@ export const PageSend: React.FC = () =>
     })();
 
     const disableSendBtn = amount === '' || amount === '.' || amountErr !== '' || inProgress;
-    return <>
-    <div id='send-page' className='page'>
-        <div className='content'>
-            <h1 className='section-title'>Create claim link</h1>
-            <p>Send coins to anyone simply by sharing a link.</p>
-            {!currAcct
-            ? <div>
-                <br/>
-                <p>Connect your Sui wallet to get started.</p>
-                <button onClick={openConnectModal} className='btn'>log in</button>
-            </div>
-            : <div>
-                <input type='text' inputMode='numeric' pattern={`^[0-9]*\\.?[0-9]{0,${coinInfo.decimals}}$`}
-                    value={amount} autoFocus disabled={inProgress}
-                    onChange={e => { setAmount(e.target.validity.valid ? e.target.value : amount) }}
-                    onKeyDown={e => { if (e.key === 'Enter' && !disableSendBtn) { createLink(); } }}
-                    placeholder='enter amount'
-                />
-
-                <p style={{padding: '0'}}>
-                    {typeof userBalance === 'undefined'
-                    ? <>Loading balance...</>
-                    : <>Your balance: {formatBigInt(BigInt(userBalance.totalBalance), coinInfo.decimals, 'compact')}</>}
-                </p>
-
-                <p style={{padding: '0'}}>
-                    Amount to send: {formatNumber(amountNum, 'compact')} {coinInfo.symbol}
-                </p>
-
-                {amountErr &&
-                <div className='error-box'>
-                    Error: {amountErr}
-                </div>}
-
-                {errMsg &&
-                <div className='error-box'>
-                    Something went wrong:<br/>{errMsg}
-                </div>}
-
-                <button
-                    className='btn'
-                    onClick={createLink}
-                    disabled={disableSendBtn}
-                >create link</button>
-            </div>}
+    return <div id='page-send' className='page'>
+        <h1>Create claim link</h1>
+        <p>Send coins to anyone simply by sharing a link.</p>
+        {!currAcct
+        ? <div>
+            <br/>
+            <p>Connect your Sui wallet to get started.</p>
+            <button onClick={openConnectModal} className='btn'>LOG IN</button>
         </div>
-    </div>
-    </>;
+        : <div>
+            <input type='text' inputMode='numeric' pattern={`^[0-9]*\\.?[0-9]{0,${coinInfo.decimals}}$`}
+                value={amount} autoFocus disabled={inProgress}
+                onChange={e => { setAmount(e.target.validity.valid ? e.target.value : amount) }}
+                onKeyDown={e => { if (e.key === 'Enter' && !disableSendBtn) { createLink(); } }}
+                placeholder='enter amount'
+            />
+
+            <p style={{padding: '0'}}>
+                {typeof userBalance === 'undefined'
+                ? <>Loading balance...</>
+                : <>Your balance: {formatBigInt(BigInt(userBalance.totalBalance), coinInfo.decimals, 'compact')}</>}
+            </p>
+
+            <p style={{padding: '0'}}>
+                Amount to send: {formatNumber(amountNum, 'compact')} {coinInfo.symbol}
+            </p>
+
+            {amountErr &&
+            <div className='error-box'>
+                Error: {amountErr}
+            </div>}
+
+            {errMsg &&
+            <div className='error-box'>
+                Something went wrong:<br/>{errMsg}
+            </div>}
+
+            <button
+                className='btn'
+                onClick={createLink}
+                disabled={disableSendBtn}
+            >CREATE LINK</button>
+        </div>}
+    </div>;
 };
