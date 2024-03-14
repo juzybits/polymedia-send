@@ -1,5 +1,6 @@
 // Forked from `sui/sdk/zksend/src/links.ts`.
 // Adds `ZkSendLinkBuilder.createMultiSendTransaction()`.
+/* eslint-disable */
 
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
@@ -224,16 +225,43 @@ export class ZkSendLinkBuilder {
 		return coins.data;
 	}
 
-	/* Added by Polymedia */
+	/* Start of Polymedia code */
+	/* eslint-enable */
 
-	async estimateClaimGasFee(): Promise<bigint> {
-		return await this.#estimateClaimGasFee();
+	static async createMultiSendLinks(
+		newLinkBuilder: () => ZkSendLinkBuilder,
+		coinType: string,
+		coinAmounts: bigint[],
+	): Promise<[TransactionBlock, ZkSendLinkBuilder[]]> {
+		const txb = new TransactionBlock();
+		const links: ZkSendLinkBuilder[] = [];
+
+		// Merge all Coin<coinType> into one
+		const l = newLinkBuilder(); // just so we can use the client and the sender
+		const paginatedCoins = await l.#client.getCoins({ owner: l.#sender, coinType });
+		const [firstCoin, ...otherCoins] = paginatedCoins.data;
+		if (otherCoins.length > 0) {
+			txb.mergeCoins(firstCoin.coinObjectId, otherCoins.map(c => txb.object(c.coinObjectId)));
+		}
+
+		let gasEstimateFromDryRun: bigint|undefined = undefined;
+		for (const amount of coinAmounts) {
+			const link = newLinkBuilder();
+			link.addClaimableBalance(coinType, amount);
+			if (typeof gasEstimateFromDryRun === 'undefined') {
+				gasEstimateFromDryRun = await link.#estimateClaimGasFee();
+			}
+			link.#createMultiSendTransaction(txb, gasEstimateFromDryRun, firstCoin.coinObjectId);
+			links.push(link);
+		}
+
+		return [ txb, links ];
 	}
 
-	async createMultiSendTransaction(
+	#createMultiSendTransaction(
 		txb: TransactionBlock,
 		gasEstimateFromDryRun: bigint,
-		fundingCoins: Map<string, string>,
+		fundingCoinId: string,
 	) {
 		const baseGasAmount = gasEstimateFromDryRun * 2n;
 
@@ -249,12 +277,8 @@ export class ZkSendLinkBuilder {
 
 		txb.setSenderIfNotSet(this.#sender);
 
-		for (const [coinType, amount] of this.#balances) {
-			const fundCoin = fundingCoins.get(coinType);
-			if (!fundCoin) {
-				throw Error(`Funding coin missing for type ${coinType}`);
-			}
-			const [sendCoin] = txb.splitCoins(fundCoin, [amount]);
+		for (const amount of this.#balances.values()) {
+			const [sendCoin] = txb.splitCoins(fundingCoinId, [amount]);
 			objectsToTransfer.push(sendCoin);
 		}
 
@@ -262,6 +286,8 @@ export class ZkSendLinkBuilder {
 
 		return txb;
 	}
+	/* eslint-disable */
+	/* End of Polymedia code */
 }
 
 export interface ZkSendLinkOptions {

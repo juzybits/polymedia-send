@@ -1,11 +1,11 @@
 import { useCurrentAccount, useSignTransactionBlock, useSuiClient } from '@mysten/dapp-kit';
-import { TransactionBlock } from '@mysten/sui.js/transactions';
 import { convertNumberToBigInt } from '@polymedia/suits';
 import { coinInfo } from './constants';
 import { ZkSendLinkBuilder } from './lib/zksend';
 
 const linkCount = 5;
 const linkAmount = convertNumberToBigInt(1, coinInfo.decimals);
+const linkAmounts = Array<bigint>(linkCount).fill(linkAmount);
 
 export const PageBulkSend: React.FC = () =>
 {
@@ -15,26 +15,21 @@ export const PageBulkSend: React.FC = () =>
 
     const createLinks = async () => {
         if (!currAcct) return;
-        const txb = new TransactionBlock();
 
-        const fundCoins = new Map<string, string>();
-        fundCoins.set(coinInfo.coinType, '0x01541c9b927b07236b3c0d7be730ef349b7ac9f72f2746ad115e3c3f56858677'); // testnet FUD
-        let gasEstimateFromDryRun: bigint|undefined = undefined;
-        for (let i = 1; i <= linkCount; i++) {
-            const link = new ZkSendLinkBuilder({
-                sender: currAcct.address,
-                host: window.location.origin,
-                path: '/claim',
-                client: suiClient,
-            });
-            console.debug(`link ${i}:`, link.getLink());
-            link.addClaimableBalance(coinInfo.coinType, linkAmount);
-            if (typeof gasEstimateFromDryRun === 'undefined') {
-                gasEstimateFromDryRun = await link.estimateClaimGasFee();
-            }
-            await link.createMultiSendTransaction(txb, gasEstimateFromDryRun, fundCoins);
+        const newLinkBuilder = () => new ZkSendLinkBuilder({
+            sender: currAcct.address,
+            host: window.location.origin,
+            path: '/claim',
+            client: suiClient,
+        });
+        const [ txb, links ] = await ZkSendLinkBuilder.createMultiSendLinks(
+            newLinkBuilder,
+            coinInfo.coinType,
+            linkAmounts
+        );
+        for (const link of links) {
+            console.log(link.getLink());
         }
-
         const signedTxb = await signTransactionBlock({ transactionBlock: txb });
         const resp = await suiClient.executeTransactionBlock({
             transactionBlock: signedTxb.transactionBlockBytes,
