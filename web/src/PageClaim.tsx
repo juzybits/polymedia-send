@@ -1,10 +1,10 @@
 import { useCurrentAccount, useDisconnectWallet, useSuiClient } from '@mysten/dapp-kit';
-import { ZkSendLink } from '@mysten/zksend';
 import { formatBigInt, makeSuiExplorerUrl, shortenSuiAddress, validateAndNormalizeSuiAddress } from '@polymedia/suits';
 import { useEffect, useState } from 'react';
 import { useLocation, useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';
 import { coinInfo } from './constants';
+import { ZkSendLink } from './lib/zksend';
 
 type ListClaimableAssetsReturnType = Awaited<ReturnType<InstanceType<typeof ZkSendLink>['listClaimableAssets']>>;
 

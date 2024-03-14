@@ -1,11 +1,11 @@
 import { useCurrentAccount, useSignTransactionBlock, useSuiClient } from '@mysten/dapp-kit';
 import { CoinBalance } from '@mysten/sui.js/client';
-import { ZkSendLinkBuilder } from '@mysten/zksend';
 import { formatBigInt, formatNumber } from '@polymedia/suits';
 import { useEffect, useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';
 import { coinInfo } from './constants';
+import { ZkSendLinkBuilder } from './lib/zksend';
 
 export const PageSend: React.FC = () =>
 {
