@@ -71,6 +71,8 @@ export type AppContext = {
     openConnectModal: () => void,
     inProgress: boolean,
     setInProgress: React.Dispatch<React.SetStateAction<boolean>>,
+    showMobileNav: boolean,
+    setShowMobileNav: React.Dispatch<React.SetStateAction<boolean>>,
 };
 
 const App: React.FC<{
@@ -83,6 +85,7 @@ const App: React.FC<{
 {
     const [ inProgress, setInProgress ] = useState(false);
     const [ showConnectModal, setShowConnectModal ] = useState(false);
+    const [ showMobileNav, setShowMobileNav ] = useState(false);
 
     const appContext: AppContext = {
         network,
@@ -90,6 +93,8 @@ const App: React.FC<{
         openConnectModal: () => { setShowConnectModal(true) },
         inProgress,
         setInProgress,
+        showMobileNav,
+        setShowMobileNav,
     };
 
     return <>
@@ -101,7 +106,7 @@ const App: React.FC<{
     <div id='layout'>
         <Header appContext={appContext} />
         <main>
-            <Nav />
+            <Nav appContext={appContext} />
             <div id='page'>
                 <Outlet context={appContext} />
             </div>
@@ -134,13 +139,21 @@ const Header: React.FC<{
         <button id='btn-connect' onClick={() => {!currAcct ? app.openConnectModal() : disconnect()}}>
             {!currAcct ? 'LOG IN' : shortenSuiAddress(currAcct.address, 3, 3)}
         </button>
+
+        <button id='btn-menu' onClick={() => { app.setShowMobileNav(!app.showMobileNav) }}>
+            {!app.showMobileNav ? 'MENU' : 'CLOSE'}
+        </button>
     </header>;
 }
 
-const Nav: React.FC = () =>
+const Nav: React.FC<{
+    appContext: AppContext,
+}> = ({
+    appContext: app,
+}) =>
 {
     const location = useLocation();
-    return <nav>
+    return <nav className={app.showMobileNav ? 'open' : 'closed'}>
         <Link to='/' className={location.pathname == '/' ? 'selected' : ''}>
             Home
         </Link>

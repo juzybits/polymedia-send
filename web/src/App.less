@@ -17,6 +17,7 @@ h1, h2, h3, h4, h5 {
 
 @mobile-width: 600px;
 @color-muted: #ccc;
+@color-text: rgb(226 232 240);
 @color-blue-1: rgb(82, 203, 255);
 @color-blue-2: rgb(42, 167, 221);
 @color-blue-3: rgb(27, 143, 192);
@@ -26,7 +27,7 @@ h1, h2, h3, h4, h5 {
 
 * {
     font-family: system-ui;
-    color: rgb(226 232 240);
+    color: @color-text;
 }
 
 body {
@@ -98,7 +99,7 @@ header {
             }
         }
     }
-    #btn-connect {
+    #btn-connect, #btn-menu {
         font-weight: 500;
         background-color: transparent;
         &:hover {
@@ -129,9 +130,6 @@ nav {
             color: @color-blue-1;
             border-color: @color-blue-1;
         }
-    }
-    @media (max-width: @mobile-width) {
-        min-width: auto;
     }
 }
 
