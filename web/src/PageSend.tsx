@@ -121,13 +121,13 @@ export const PageSend: React.FC = () =>
                 placeholder='enter amount'
             />
 
-            <p style={{padding: '0'}}>
+            <p>
                 {typeof userBalance === 'undefined'
                 ? <>Loading balance...</>
                 : <>Your balance: {formatBigInt(BigInt(userBalance.totalBalance), coinInfo.decimals, 'compact')}</>}
             </p>
 
-            <p style={{padding: '0'}}>
+            <p>
                 Amount to send: {formatNumber(amountNum, 'compact')} {coinInfo.symbol}
             </p>
 
