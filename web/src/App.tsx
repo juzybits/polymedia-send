@@ -141,19 +141,17 @@ const Nav: React.FC = () =>
 {
     const location = useLocation();
     return <nav>
-        <div className='nav-section'>
-            <Link to='/' className={location.pathname == '/' ? 'selected' : ''}>
-                Home
-            </Link>
-            <Link to='/send' className={location.pathname == '/send' ? 'selected' : ''}>
-                Send
-            </Link>
-            <Link to='/bulk' className={location.pathname == '/bulk' ? 'selected' : ''}>
-                Bulk
-            </Link>
-        </div>
+        <Link to='/' className={location.pathname == '/' ? 'selected' : ''}>
+            Home
+        </Link>
+        <Link to='/send' className={location.pathname == '/send' ? 'selected' : ''}>
+            Send
+        </Link>
+        <Link to='/bulk' className={location.pathname == '/bulk' ? 'selected' : ''}>
+            Bulk
+        </Link>
 
-        {/* <div className='nav-section'>
+        {/*
             <div>
                 <LinkExternal href='https://github.com/juzybits/polymedia-zksend' follow={true}>
                     <img alt='github' src={GITHUB_LOGO} className='logo' />
@@ -164,7 +162,7 @@ const Nav: React.FC = () =>
                     <img alt='polymedia' src='https://assets.polymedia.app/img/all/logo-nomargin-transparent-512x512.webp' className='logo' />
                 </LinkExternal>
             </div>
-        </div> */}
+        */}
     </nav>;
 }
 
