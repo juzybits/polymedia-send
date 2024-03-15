@@ -243,10 +243,8 @@ export class ZkSendLinkBuilder {
 	): Promise<[TransactionBlock, ZkSendLinkBuilder[]]> {
 		const txb = new TransactionBlock();
 
-		// Merge all Coin<coinType> into one
-		const l = newLinkBuilder(); // to use the client and sender chosen by the caller
-		const paginatedCoins = await l.#client.getCoins({ owner: l.#sender, coinType });
-		const [firstCoin, ...otherCoins] = paginatedCoins.data;
+		// Merge all Coin<coinType> into one. TODO: support SUI.
+		const [firstCoin, ...otherCoins] = await newLinkBuilder().#getCoinsByType(coinType);
 		if (otherCoins.length > 0) {
 			txb.mergeCoins(firstCoin.coinObjectId, otherCoins.map(c => txb.object(c.coinObjectId)));
 		}
