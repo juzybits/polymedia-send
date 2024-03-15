@@ -4,3 +4,9 @@ export const coinInfo = { // TODO support any coin
     decimals: 5,
     iconUrl: null,
 }
+// export const coinInfo = { // TODO support any coin
+//     coinType: '0x2::sui::SUI', // testnet
+//     symbol: 'SUI',
+//     decimals: 9,
+//     iconUrl: null,
+// }

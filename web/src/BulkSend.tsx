@@ -1,10 +1,10 @@
 import { useCurrentAccount, useSignTransactionBlock, useSuiClient } from '@mysten/dapp-kit';
 import { convertNumberToBigInt } from '@polymedia/suits';
 import { coinInfo } from './constants';
-import { ZkSendLinkBuilder } from './lib/zksend';
+import { ZkSendLinkBuilder, ZkSendLinkBuilderOptions } from './lib/zksend';
 
 const linkCount = 5;
-const linkAmount = convertNumberToBigInt(1, coinInfo.decimals);
+const linkAmount = convertNumberToBigInt(0.00069, coinInfo.decimals);
 const linkAmounts = Array<bigint>(linkCount).fill(linkAmount);
 
 export const PageBulkSend: React.FC = () =>
@@ -16,16 +16,16 @@ export const PageBulkSend: React.FC = () =>
     const createLinks = async () => {
         if (!currAcct) return;
 
-        const newLinkBuilder = () => new ZkSendLinkBuilder({
+        const linkOptions: ZkSendLinkBuilderOptions = {
             sender: currAcct.address,
             host: window.location.origin,
             path: '/claim',
             client: suiClient,
-        });
+        };
         const [ txb, links ] = await ZkSendLinkBuilder.createMultiSendLinks(
-            newLinkBuilder,
             coinInfo.coinType,
-            linkAmounts
+            linkAmounts,
+            linkOptions,
         );
         for (const link of links) {
             console.log(link.getLink());

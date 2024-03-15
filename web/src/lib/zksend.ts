@@ -232,14 +232,14 @@ export class ZkSendLinkBuilder {
 	 * Create multiple `ZkSendLinkBuilder` with a single `TransactionBlock`,
 	 * and making as few RPC calls as possible.
 	 *
-	 * @param newLinkBuilder a function to instantiate `ZkSendLinkBuilder`
 	 * @param coinType the type of coin that will be sent to the links
 	 * @param coinAmounts the amounts of coin that will be sent to each link
+	 * @param newLinkBuilder options to instantiate a new `ZkSendLinkBuilder`
 	 */
 	static async createMultiSendLinks(
-		newLinkBuilder: () => ZkSendLinkBuilder,
 		coinType: string,
 		coinAmounts: bigint[],
+		options: ZkSendLinkBuilderOptions,
 	): Promise<[TransactionBlock, ZkSendLinkBuilder[]]> {
 		const txb = new TransactionBlock();
 
@@ -249,7 +249,7 @@ export class ZkSendLinkBuilder {
 			fundingCoin = txb.gas;
 		} else {
 			// merge all coins into one
-			const [firstCoin, ...otherCoins] = await newLinkBuilder().#getCoinsByType(coinType);
+			const [firstCoin, ...otherCoins] = await new ZkSendLinkBuilder(options).#getCoinsByType(coinType);
 			if (otherCoins.length > 0) {
 				txb.mergeCoins(firstCoin.coinObjectId, otherCoins.map(c => c.coinObjectId));
 			}
@@ -260,7 +260,7 @@ export class ZkSendLinkBuilder {
 		const links: ZkSendLinkBuilder[] = [];
 		let gasEstimateFromDryRun: bigint|undefined = undefined;
 		for (const amount of coinAmounts) {
-			const link = newLinkBuilder();
+			const link = new ZkSendLinkBuilder(options);
 			link.addClaimableBalance(coinType, amount);
 			if (typeof gasEstimateFromDryRun === 'undefined') {
 				gasEstimateFromDryRun = await link.#estimateClaimGasFee();
