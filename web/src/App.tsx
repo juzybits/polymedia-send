@@ -121,29 +121,46 @@ const Header: React.FC<{
     appContext: app,
 }) =>
 {
-    const currAcct = useCurrentAccount();
-    const { mutate: disconnect } = useDisconnectWallet();
-
     return <header>
         <h1>
             <img alt='polymedia' src='https://assets.polymedia.app/img/all/logo-nomargin-transparent-512x512.webp' className='logo' />
             zkSend
         </h1>
 
-        <NetworkSelector
-            currentNetwork={app.network}
-            supportedNetworks={['mainnet', 'testnet']}
-            onSwitch={newNet => { app.setNetwork(newNet) }}
-        />
+        <BtnNetwork appContext={app} />
 
-        <button id='btn-connect' onClick={() => {!currAcct ? app.openConnectModal() : disconnect()}}>
-            {!currAcct ? 'LOG IN' : shortenSuiAddress(currAcct.address, 3, 3)}
-        </button>
+        <BtnConnect appContext={app} />
 
         <button id='btn-menu' onClick={() => { app.setShowMobileNav(!app.showMobileNav) }}>
             {!app.showMobileNav ? 'MENU' : 'CLOSE'}
         </button>
     </header>;
+}
+
+const BtnNetwork: React.FC<{
+    appContext: AppContext,
+}> = ({
+    appContext: app,
+}) =>
+{
+    return <NetworkSelector
+        currentNetwork={app.network}
+        supportedNetworks={['mainnet', 'testnet']}
+        onSwitch={newNet => { app.setNetwork(newNet) }}
+    />;
+}
+
+const BtnConnect: React.FC<{
+    appContext: AppContext,
+}> = ({
+    appContext: app,
+}) =>
+{
+    const currAcct = useCurrentAccount();
+    const { mutate: disconnect } = useDisconnectWallet();
+    return <button className='btn-connect' onClick={() => {!currAcct ? app.openConnectModal() : disconnect()}}>
+        {!currAcct ? 'LOG IN' : shortenSuiAddress(currAcct.address, 3, 3)}
+    </button>;
 }
 
 const Nav: React.FC<{

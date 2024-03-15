@@ -56,10 +56,6 @@ header, nav, #page {
     }
 }
 
-.header-highlight {
-    cursor: pointer;
-    color: @color-blue-1;
-}
 header {
     display: flex;
     justify-content: space-between;
@@ -76,36 +72,6 @@ header {
             box-sizing: content-box;
         }
     }
-    #network-selector {
-        text-transform: uppercase;
-        font-weight: 500;
-        position: relative;
-        .network-options {
-            position: absolute;
-            min-width: 100%;
-            background-color: rgb(15 23 42);
-            padding: 0.1rem 0;
-            .network-option .text {
-                padding-top: 0.1rem;
-                padding-bottom: 0.1rem;
-            }
-        }
-        .network-option .text {
-            display: block;
-            padding-left: 0.5rem;
-            padding-right: 0.5rem;
-            &:hover {
-                .header-highlight;
-            }
-        }
-    }
-    #btn-connect, #btn-menu {
-        font-weight: 500;
-        background-color: transparent;
-        &:hover {
-            .header-highlight;
-        }
-    }
 }
 
 nav {
@@ -115,12 +81,13 @@ nav {
     font-size: 1.1rem;
     min-width: 200px;
     user-select: none;
-    a, span {
+    a, button, span {
         display: block;
         padding: 0.2rem 0 0.2rem 0.6rem;
         border-left: 2px solid transparent;
         color: @color-muted;
         text-decoration: none;
+        text-align: left;
         &:hover {
             cursor: pointer;
             color: @color-blue-1;
@@ -130,6 +97,39 @@ nav {
             color: @color-blue-1;
             border-color: @color-blue-1;
         }
+    }
+}
+
+.network-selector {
+    text-transform: uppercase;
+    font-weight: 500;
+    position: relative;
+    .network-options {
+        position: absolute;
+        min-width: 100%;
+        background-color: rgb(15 23 42);
+        padding: 0.1rem 0;
+        .network-option .text {
+            padding-top: 0.1rem;
+            padding-bottom: 0.1rem;
+        }
+    }
+    .network-option .text {
+        display: block;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+        &:hover {
+            cursor: pointer;
+            color: @color-blue-1;
+        }
+    }
+}
+.btn-connect, #btn-menu {
+    font-weight: 500;
+    background-color: transparent;
+    &:hover {
+        cursor: pointer;
+        color: @color-blue-1;
     }
 }
 
@@ -174,5 +174,4 @@ nav {
         margin-bottom: @bottom-space;
         color: rgb(255, 115, 115);
     }
-
 }
