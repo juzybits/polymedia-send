@@ -1,5 +1,5 @@
 // Forked from `sui/sdk/zksend/src/links.ts`.
-// Adds `ZkSendLinkBuilder.createMultiSendTransaction()`.
+// Adds `createMultiSendLinks()` and `createMultiSendTransaction()` to `ZkSendLinkBuilder`.
 /* eslint-disable */
 
 // Copyright (c) Mysten Labs, Inc.
@@ -228,22 +228,31 @@ export class ZkSendLinkBuilder {
 	/* Start of Polymedia code */
 	/* eslint-enable */
 
+	/**
+	 * Create multiple `ZkSendLinkBuilder` with a single `TransactionBlock`,
+	 * and making as few RPC calls as possible.
+	 *
+	 * @param newLinkBuilder a function to instantiate `ZkSendLinkBuilder`
+	 * @param coinType the type of coin that will be sent to the links
+	 * @param coinAmounts the amounts of coin that will be sent to each link
+	 */
 	static async createMultiSendLinks(
 		newLinkBuilder: () => ZkSendLinkBuilder,
 		coinType: string,
 		coinAmounts: bigint[],
 	): Promise<[TransactionBlock, ZkSendLinkBuilder[]]> {
 		const txb = new TransactionBlock();
-		const links: ZkSendLinkBuilder[] = [];
 
 		// Merge all Coin<coinType> into one
-		const l = newLinkBuilder(); // just so we can use the client and the sender
+		const l = newLinkBuilder(); // to use the client and sender chosen by the caller
 		const paginatedCoins = await l.#client.getCoins({ owner: l.#sender, coinType });
 		const [firstCoin, ...otherCoins] = paginatedCoins.data;
 		if (otherCoins.length > 0) {
 			txb.mergeCoins(firstCoin.coinObjectId, otherCoins.map(c => txb.object(c.coinObjectId)));
 		}
 
+		// Create a link for each amount
+		const links: ZkSendLinkBuilder[] = [];
 		let gasEstimateFromDryRun: bigint|undefined = undefined;
 		for (const amount of coinAmounts) {
 			const link = newLinkBuilder();
@@ -258,13 +267,22 @@ export class ZkSendLinkBuilder {
 		return [ txb, links ];
 	}
 
+	/**
+	 * A modified version of `createSendTransaction()` that doesn't make any RPC calls,
+	 * as it doesn't need to estimate the gas or find a coin to pay for the transaction.
+	 *
+	 * @param txb a reusable TransactionBlock that is used by `createMultiSendLinks()` to create many links
+	 * @param gasEstimateFromDryRun to avoid calling `this.#estimateClaimGasFee()` and `SuiClient.dryRunTransactionBlock()`
+	 * @param fundingCoinId to avoid calling `this.#getCoinsByType` and `SuiClient.getCoins()`
+	 *
+	 * @see createSendTransaction
+	 */
 	#createMultiSendTransaction(
 		txb: TransactionBlock,
 		gasEstimateFromDryRun: bigint,
 		fundingCoinId: string,
 	) {
 		const baseGasAmount = gasEstimateFromDryRun * 2n;
-
 		// Ensure that rounded gas is not less than the calculated gas
 		const gasWithBuffer = baseGasAmount + 1013n;
 		// Ensure that gas amount ends in 987
