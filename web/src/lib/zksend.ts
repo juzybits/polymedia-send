@@ -243,13 +243,20 @@ export class ZkSendLinkBuilder {
 	): Promise<[TransactionBlock, ZkSendLinkBuilder[]]> {
 		const txb = new TransactionBlock();
 
-		// Merge all Coin<coinType> into one. TODO: support SUI.
-		const [firstCoin, ...otherCoins] = await newLinkBuilder().#getCoinsByType(coinType);
-		if (otherCoins.length > 0) {
-			txb.mergeCoins(firstCoin.coinObjectId, otherCoins.map(c => txb.object(c.coinObjectId)));
+		// find a Coin<coinType> to fund all links
+		let fundingCoin: TransactionObjectInput;
+		if (coinType === SUI_COIN_TYPE || coinType === SUI_TYPE_ARG) {
+			fundingCoin = txb.gas;
+		} else {
+			// merge all coins into one
+			const [firstCoin, ...otherCoins] = await newLinkBuilder().#getCoinsByType(coinType);
+			if (otherCoins.length > 0) {
+				txb.mergeCoins(firstCoin.coinObjectId, otherCoins.map(c => c.coinObjectId));
+			}
+			fundingCoin = firstCoin.coinObjectId;
 		}
 
-		// Create a link for each amount
+		// create a link for each amount
 		const links: ZkSendLinkBuilder[] = [];
 		let gasEstimateFromDryRun: bigint|undefined = undefined;
 		for (const amount of coinAmounts) {
@@ -258,7 +265,7 @@ export class ZkSendLinkBuilder {
 			if (typeof gasEstimateFromDryRun === 'undefined') {
 				gasEstimateFromDryRun = await link.#estimateClaimGasFee();
 			}
-			link.#createMultiSendTransaction(txb, gasEstimateFromDryRun, firstCoin.coinObjectId);
+			link.#createMultiSendTransaction(txb, gasEstimateFromDryRun, fundingCoin);
 			links.push(link);
 		}
 
@@ -278,7 +285,7 @@ export class ZkSendLinkBuilder {
 	#createMultiSendTransaction(
 		txb: TransactionBlock,
 		gasEstimateFromDryRun: bigint,
-		fundingCoinId: string,
+		fundingCoin: TransactionObjectInput,
 	) {
 		const baseGasAmount = gasEstimateFromDryRun * 2n;
 		// Ensure that rounded gas is not less than the calculated gas
@@ -294,7 +301,7 @@ export class ZkSendLinkBuilder {
 		txb.setSenderIfNotSet(this.#sender);
 
 		for (const amount of this.#balances.values()) {
-			const [sendCoin] = txb.splitCoins(fundingCoinId, [amount]);
+			const [sendCoin] = txb.splitCoins(txb.object(fundingCoin), [amount]);
 			objectsToTransfer.push(sendCoin);
 		}
 
