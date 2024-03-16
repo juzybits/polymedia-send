@@ -100,27 +100,15 @@ export const PageClaim: React.FC = () =>
     };
 
     return <div id='page-claim' className='page'>
+
     {errMsg &&
     <div className='error'>
         Something went wrong:<br/>{errMsg}
     </div>}
 
-    {(() => { // success messages
+    {(() => {
 
-        if (claimTxnDigest) {
-            return <div className='success-box'>
-                <h1>Success</h1>
-
-                <p style={{paddingBottom: '1rem'}}>{claimableBalancePretty} ${coinInfo.symbol} was sent to <span style={{whiteSpace: 'nowrap'}}>{shortAddress}</span></p>
-
-                <p>
-                    <a href={makeSuiExplorerUrl(network, 'txblock', claimTxnDigest)} rel='noopener noreferrer' target='_blank'>
-                        view transaction
-                    </a>
-                </p>
-            </div>;
-        }
-
+        // creation was successful
         if (isCreator) {
             return <div className='success-box'>
                 <h1>Success</h1>
@@ -131,13 +119,13 @@ export const PageClaim: React.FC = () =>
                     COPY LINK
                 </button>
 
-                {copyMsg && <p style={{fontSize: '1.2rem', paddingBottom: '1.5rem'}}>{copyMsg}</p>}
+                {copyMsg && <p>{copyMsg}</p>}
 
-                <p style={{paddingTop: '0.4rem'}}>
-                    <span style={{textDecoration: 'underline'}}>Save your link before leaving this page</span>
+                <p>
+                    <span>Save your link before leaving this page</span>
                 </p>
 
-                <p style={{fontSize: '1rem'}}>
+                <p>
                         We don't store claim links. If you don't share or save your link before leaving this page, the ${coinInfo.symbol} will be lost.
                 </p>
 
@@ -145,22 +133,30 @@ export const PageClaim: React.FC = () =>
             </div>;
         }
 
-        return null;
-    })()}
+        // claim was successful
+        if (claimTxnDigest) {
+            return <div className='success-box'>
+                <h1>Success</h1>
 
-    {(() => { // claim UI
+                <p>{claimableBalancePretty} ${coinInfo.symbol} was sent to <span style={{whiteSpace: 'nowrap'}}>{shortAddress}</span></p>
 
-        if (claimTxnDigest) { // already claimed
-            return null;
+                {/* <p>
+                    <a href={makeSuiExplorerUrl(network, 'txblock', claimTxnDigest)} rel='noopener noreferrer' target='_blank'>
+                        view transaction
+                    </a>
+                </p> */}
+            </div>;
         }
 
+        // assets are loading
         if (!claimableAssets) {
             if (errMsg) {
                 return null; // something went wrong on load
             }
-            return <h1>loading...</h1>;
+            return <h1>Loading...</h1>;
         }
 
+        // already claimed
         if (claimableBalance === BigInt(0)) {
             return <>
                 <h1>${coinInfo.symbol} has already been claimed</h1>
@@ -170,32 +166,28 @@ export const PageClaim: React.FC = () =>
             </>;
         }
 
+        // assets are ready to claim
         return <>
-            {isCreator && <div style={{
-                paddingBottom: '2rem',
-            }}>
-                (here is what the recipient will see)
-            </div>}
-
             <h1>
                 Found {claimableBalancePretty} ${coinInfo.symbol}
             </h1>
 
             {!currAcct &&
             <>
-            <p>Enter the address where you want to send the ${coinInfo.symbol},<br/>or&nbsp;
-                <button className='btn' onClick={openConnectModal}>LOG IN</button>
-                &nbsp;with your wallet to auto-fill.
-            </p>
+                <p>Enter the address where you want to send the ${coinInfo.symbol},<br/>or&nbsp;
+                    <button className='btn' onClick={openConnectModal}>LOG IN</button>
+                    &nbsp;with your wallet to auto-fill.
+                </p>
 
-            <input type='text' pattern='^0[xX][a-fA-F0-9]{1,64}$'
-                value={inputAddress} autoFocus disabled={inProgress}
-                onChange={e => { setInputAddress(e.target.validity.valid ? e.target.value : inputAddress) }}
-                placeholder='paste address'
-            />
+                <input type='text' pattern='^0[xX][a-fA-F0-9]{1,64}$'
+                    value={inputAddress} autoFocus disabled={inProgress}
+                    onChange={e => { setInputAddress(e.target.validity.valid ? e.target.value : inputAddress) }}
+                    placeholder='paste address'
+                />
             </>}
 
-            {cleanAddress && <p>
+            {cleanAddress &&
+            <p>
                 Recipient: {shortAddress}
             </p>}
 
@@ -209,6 +201,7 @@ export const PageClaim: React.FC = () =>
                 LOG OUT
             </button>}
         </>;
+
     })()}
     </div>;
 }

@@ -105,15 +105,21 @@ export const PageSend: React.FC = () =>
 
     const disableSendBtn = amount === '' || amount === '.' || amountErr !== '' || inProgress;
     return <div id='page-send' className='page'>
-        <h1>Create claim link</h1>
-        <p>Send coins to anyone simply by sharing a link.</p>
-        {!currAcct
-        ? <div>
-            <br/>
-            <p>Connect your Sui wallet to get started.</p>
-            <button onClick={openConnectModal} className='btn'>LOG IN</button>
-        </div>
-        : <div>
+
+    <h1>Send</h1>
+
+    <h2>Create a single claim link</h2>
+
+    <p>Send coins to anyone simply by sharing a link.</p>
+
+    {(() => {
+        if (!currAcct) {
+            return <div>
+                <p>Connect your Sui wallet to get started.</p>
+                <button onClick={openConnectModal} className='btn'>LOG IN</button>
+            </div>;
+        }
+        return <div>
             <input type='text' inputMode='numeric' pattern={`^[0-9]*\\.?[0-9]{0,${coinInfo.decimals}}$`}
                 value={amount} autoFocus disabled={inProgress}
                 onChange={e => { setAmount(e.target.validity.valid ? e.target.value : amount) }}
@@ -146,6 +152,8 @@ export const PageSend: React.FC = () =>
                 onClick={createLink}
                 disabled={disableSendBtn}
             >CREATE LINK</button>
-        </div>}
+        </div>
+    })()}
+
     </div>;
 };

@@ -41,7 +41,8 @@ export const PageBulkSend: React.FC = () =>
 
     return <>
     <div id='bulk-page' className='page'>
-        <h1>Create claim links in bulk</h1>
+        <h1>Bulk</h1>
+        <h2>Create multiple claim links</h2>
             <button
                 className='btn'
                 onClick={createLinks}
