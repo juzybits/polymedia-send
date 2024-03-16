@@ -7,7 +7,7 @@ settings:
 dependencies:
   '@mysten/dapp-kit':
     specifier: ^0.12.5
-    version: 0.12.5(@tanstack/react-query@5.28.2)(@types/react-dom@18.2.22)(@types/react@18.2.66)(react-dom@18.2.0)(react@18.2.0)
+    version: 0.12.5(@tanstack/react-query@5.28.4)(@types/react-dom@18.2.22)(@types/react@18.2.66)(react-dom@18.2.0)(react@18.2.0)
   '@mysten/sui.js':
     specifier: ^0.51.0
     version: 0.51.0
@@ -15,11 +15,11 @@ dependencies:
     specifier: ^0.0.35
     version: 0.0.35
   '@polymedia/webutils':
-    specifier: ^0.0.42
-    version: 0.0.42(react-dom@18.2.0)(react@18.2.0)
+    specifier: ^0.0.43
+    version: 0.0.43(react-dom@18.2.0)(react@18.2.0)
   '@tanstack/react-query':
-    specifier: ^5.28.2
-    version: 5.28.2(react@18.2.0)
+    specifier: ^5.28.4
+    version: 5.28.4(react@18.2.0)
   normalize.css:
     specifier: ^8.0.1
     version: 8.0.1
@@ -53,8 +53,8 @@ devDependencies:
     specifier: ^8.57.0
     version: 8.57.0
   eslint-plugin-react:
-    specifier: ^7.34.0
-    version: 7.34.0(eslint@8.57.0)
+    specifier: ^7.34.1
+    version: 7.34.1(eslint@8.57.0)
   eslint-plugin-react-hooks:
     specifier: ^4.6.0
     version: 4.6.0(eslint@8.57.0)
@@ -372,8 +372,8 @@ packages:
     resolution: {integrity: sha512-9TANp6GPoMtYzQdt54kfAyMmz1+osLlXdg2ENroU7zzrtflTLrrC/lgrIfaSe+Wu0b89GKccT7vxXA0MoAIO+Q==}
     dev: false
 
-  /@gql.tada/cli-utils@0.1.2:
-    resolution: {integrity: sha512-eydhCLeAKq8WVXtRAkYBbPFXvyACbHvs5oSlkx3qVMiLTaN8TGjzKpua69KKvPJ5jWVoS2d0Pt+YJU/nyx8Rwg==}
+  /@gql.tada/cli-utils@0.2.0:
+    resolution: {integrity: sha512-S/1KdJ08G9wKbsHUrBBT6GK38OtGaC82lY9MIFwkIziR9rf/N1PmDxWOThvMWJsaKQaEf5PhioRxquVCjeIbtw==}
     dependencies:
       '@urql/introspection': 1.0.3(graphql@16.8.1)
       graphql: 16.8.1
@@ -413,7 +413,7 @@ packages:
       bs58: 5.0.0
     dev: false
 
-  /@mysten/dapp-kit@0.12.5(@tanstack/react-query@5.28.2)(@types/react-dom@18.2.22)(@types/react@18.2.66)(react-dom@18.2.0)(react@18.2.0):
+  /@mysten/dapp-kit@0.12.5(@tanstack/react-query@5.28.4)(@types/react-dom@18.2.22)(@types/react@18.2.66)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-16jkaCSOWMisQ+K4cuY563HiB433Q4Dn0jnjrHyN7i29PU1s2ZeLEkZZ1aJ/N624d+F3ptCKxtvTp9GV2WCsIQ==}
     peerDependencies:
       '@tanstack/react-query': ^5.0.0
@@ -425,7 +425,7 @@ packages:
       '@radix-ui/react-dialog': 1.0.5(@types/react-dom@18.2.22)(@types/react@18.2.66)(react-dom@18.2.0)(react@18.2.0)
       '@radix-ui/react-dropdown-menu': 2.0.6(@types/react-dom@18.2.22)(@types/react@18.2.66)(react-dom@18.2.0)(react@18.2.0)
       '@radix-ui/react-slot': 1.0.2(@types/react@18.2.66)(react@18.2.0)
-      '@tanstack/react-query': 5.28.2(react@18.2.0)
+      '@tanstack/react-query': 5.28.4(react@18.2.0)
       '@vanilla-extract/css': 1.14.1
       '@vanilla-extract/dynamic': 2.1.0
       '@vanilla-extract/recipes': 0.5.2(@vanilla-extract/css@1.14.1)
@@ -451,7 +451,7 @@ packages:
       '@scure/bip39': 1.2.2
       '@suchipi/femver': 1.0.0
       bech32: 2.0.0
-      gql.tada: 1.3.4(graphql@16.8.1)
+      gql.tada: 1.3.5(graphql@16.8.1)
       graphql: 16.8.1
       superstruct: 1.0.4
       tweetnacl: 1.0.3
@@ -523,8 +523,8 @@ packages:
       '@mysten/sui.js': 0.51.0
     dev: false
 
-  /@polymedia/webutils@0.0.42(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-ARyktvi3MzQzsiXrUulUrbJuDJXPvYOB/2DpFveU/bVnwcpfg7eUQ25g/zfNG24SaqPKKm6AZlytsv/sm4CW1g==}
+  /@polymedia/webutils@0.0.43(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-HYNV/GcHzFEIXY/ClHpFNkRH+zjW+NiEUxbwJlNRq5n2NZAcLixGFUGiVGMX0DBfHLHIrV4vb7Soq2O0f3KJHw==}
     peerDependencies:
       react: ^18.0.0
       react-dom: ^18.0.0
@@ -1290,16 +1290,16 @@ packages:
     resolution: {integrity: sha512-myfUej5naTBWnqOCc/MdVOLVjXUXtIA+NpDrDBKJtLLg2shUjBu3cZmB/85RyitKc55+lUUyl7oRfLOvkr2hsw==}
     dev: true
 
-  /@tanstack/query-core@5.28.2:
-    resolution: {integrity: sha512-IvRjNUzoJ0Hn5OSpFkPtMY00zEm+EauCnSKOx/PJPOpME6ucM5hSisFdnIN9oU3WDw5lv6OFWDSpG0rM6lF9rw==}
+  /@tanstack/query-core@5.28.4:
+    resolution: {integrity: sha512-uQZqOFqLWUvXNIQZ63XdKzg22NtHzgCBUfDmjDHi3BoF+nUYeBNvMi/xFPtFrMhqRzG2Ir4mYaGsWZzmiEjXpA==}
     dev: false
 
-  /@tanstack/react-query@5.28.2(react@18.2.0):
-    resolution: {integrity: sha512-t3th5v5bzyeiw+fzwKwbGVT3ux2qW4wDJRrLy4YLok0qrrEQUYcZ3xsC7dlxkPbFInrIGJ8qLsm1A2sbyy2XZA==}
+  /@tanstack/react-query@5.28.4(react@18.2.0):
+    resolution: {integrity: sha512-BErcoB/QQG6YwLSUKnaGxF+lSc270RH2w3kMBpG0i4YzDCsFs2pdxPX1WVknQvFk9bNgukMb158hc2Zb4SdwSA==}
     peerDependencies:
       react: ^18.0.0
     dependencies:
-      '@tanstack/query-core': 5.28.2
+      '@tanstack/query-core': 5.28.4
       react: 18.2.0
     dev: false
 
@@ -1691,12 +1691,6 @@ packages:
       is-shared-array-buffer: 1.0.3
     dev: true
 
-  /asynciterator.prototype@1.0.0:
-    resolution: {integrity: sha512-wwHYEIS0Q80f5mosx3L/dfG5t5rjEa9Ft51GTaNt862EnpyGHpgz2RkZvLPp1oF5TnAiTohkEKVEu8pQPJI7Vg==}
-    dependencies:
-      has-symbols: 1.0.3
-    dev: true
-
   /available-typed-arrays@1.0.7:
     resolution: {integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==}
     engines: {node: '>= 0.4'}
@@ -1811,6 +1805,33 @@ packages:
 
   /csstype@3.1.3:
     resolution: {integrity: sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==}
+
+  /data-view-buffer@1.0.1:
+    resolution: {integrity: sha512-0lht7OugA5x3iJLOWFhWK/5ehONdprk0ISXqVFn/NFrDu+cuc8iADFrGQz5BnRK7LLU3JmkbXSxaqX+/mXYtUA==}
+    engines: {node: '>= 0.4'}
+    dependencies:
+      call-bind: 1.0.7
+      es-errors: 1.3.0
+      is-data-view: 1.0.1
+    dev: true
+
+  /data-view-byte-length@1.0.1:
+    resolution: {integrity: sha512-4J7wRJD3ABAzr8wP+OcIcqq2dlUKp4DVflx++hs5h5ZKydWMI6/D/fAot+yh6g2tHh8fLFTvNOaVN357NvSrOQ==}
+    engines: {node: '>= 0.4'}
+    dependencies:
+      call-bind: 1.0.7
+      es-errors: 1.3.0
+      is-data-view: 1.0.1
+    dev: true
+
+  /data-view-byte-offset@1.0.0:
+    resolution: {integrity: sha512-t/Ygsytq+R995EJ5PZlD4Cu56sWa8InXySaViRzw9apusqsOO2bQP+SbYzAhR0pFKoB+43lYy8rWban9JSuXnA==}
+    engines: {node: '>= 0.4'}
+    dependencies:
+      call-bind: 1.0.7
+      es-errors: 1.3.0
+      is-data-view: 1.0.1
+    dev: true
 
   /debug@4.3.4:
     resolution: {integrity: sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==}
@@ -1936,6 +1957,57 @@ packages:
       which-typed-array: 1.1.15
     dev: true
 
+  /es-abstract@1.23.0:
+    resolution: {integrity: sha512-vmuE7Uoevk2xkwu5Gwa7RfJk/ebVV6xRv7KuZNbUglmJHhWPMbLL20ztreVpBbdxBZijETx3Aml3NssX4SFMvQ==}
+    engines: {node: '>= 0.4'}
+    dependencies:
+      array-buffer-byte-length: 1.0.1
+      arraybuffer.prototype.slice: 1.0.3
+      available-typed-arrays: 1.0.7
+      call-bind: 1.0.7
+      data-view-buffer: 1.0.1
+      data-view-byte-length: 1.0.1
+      data-view-byte-offset: 1.0.0
+      es-define-property: 1.0.0
+      es-errors: 1.3.0
+      es-set-tostringtag: 2.0.3
+      es-to-primitive: 1.2.1
+      function.prototype.name: 1.1.6
+      get-intrinsic: 1.2.4
+      get-symbol-description: 1.0.2
+      globalthis: 1.0.3
+      gopd: 1.0.1
+      has-property-descriptors: 1.0.2
+      has-proto: 1.0.3
+      has-symbols: 1.0.3
+      hasown: 2.0.2
+      internal-slot: 1.0.7
+      is-array-buffer: 3.0.4
+      is-callable: 1.2.7
+      is-data-view: 1.0.1
+      is-negative-zero: 2.0.3
+      is-regex: 1.1.4
+      is-shared-array-buffer: 1.0.3
+      is-string: 1.0.7
+      is-typed-array: 1.1.13
+      is-weakref: 1.0.2
+      object-inspect: 1.13.1
+      object-keys: 1.1.1
+      object.assign: 4.1.5
+      regexp.prototype.flags: 1.5.2
+      safe-array-concat: 1.1.2
+      safe-regex-test: 1.0.3
+      string.prototype.trim: 1.2.8
+      string.prototype.trimend: 1.0.7
+      string.prototype.trimstart: 1.0.7
+      typed-array-buffer: 1.0.2
+      typed-array-byte-length: 1.0.1
+      typed-array-byte-offset: 1.0.2
+      typed-array-length: 1.0.5
+      unbox-primitive: 1.0.2
+      which-typed-array: 1.1.15
+    dev: true
+
   /es-define-property@1.0.0:
     resolution: {integrity: sha512-jxayLKShrEqqzJ0eumQbVhTYQM27CfT1T35+gCgDFoL82JLsXqTJ76zv6A0YLOgEnLUMvLzsDsGIrl8NFpT2gQ==}
     engines: {node: '>= 0.4'}
@@ -1948,14 +2020,13 @@ packages:
     engines: {node: '>= 0.4'}
     dev: true
 
-  /es-iterator-helpers@1.0.17:
-    resolution: {integrity: sha512-lh7BsUqelv4KUbR5a/ZTaGGIMLCjPGPqJ6q+Oq24YP0RdyptX1uzm4vvaqzk7Zx3bpl/76YLTTDj9L7uYQ92oQ==}
+  /es-iterator-helpers@1.0.18:
+    resolution: {integrity: sha512-scxAJaewsahbqTYrGKJihhViaM6DDZDDoucfvzNbK0pOren1g/daDQ3IAhzn+1G14rBG7w+i5N+qul60++zlKA==}
     engines: {node: '>= 0.4'}
     dependencies:
-      asynciterator.prototype: 1.0.0
       call-bind: 1.0.7
       define-properties: 1.2.1
-      es-abstract: 1.22.5
+      es-abstract: 1.23.0
       es-errors: 1.3.0
       es-set-tostringtag: 2.0.3
       function-bind: 1.1.2
@@ -2046,8 +2117,8 @@ packages:
       eslint: 8.57.0
     dev: true
 
-  /eslint-plugin-react@7.34.0(eslint@8.57.0):
-    resolution: {integrity: sha512-MeVXdReleBTdkz/bvcQMSnCXGi+c9kvy51IpinjnJgutl3YTHWsDdke7Z1ufZpGfDG8xduBDKyjtB9JH1eBKIQ==}
+  /eslint-plugin-react@7.34.1(eslint@8.57.0):
+    resolution: {integrity: sha512-N97CxlouPT1AHt8Jn0mhhN2RrADlUAsk1/atcT2KyA/l9Q/E6ll7OIGwNumFmWfZ9skV3XXccYS19h80rHtgkw==}
     engines: {node: '>=4'}
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8
@@ -2058,7 +2129,7 @@ packages:
       array.prototype.toreversed: 1.1.2
       array.prototype.tosorted: 1.1.3
       doctrine: 2.1.0
-      es-iterator-helpers: 1.0.17
+      es-iterator-helpers: 1.0.18
       eslint: 8.57.0
       estraverse: 5.3.0
       jsx-ast-utils: 3.3.5
@@ -2348,12 +2419,12 @@ packages:
       get-intrinsic: 1.2.4
     dev: true
 
-  /gql.tada@1.3.4(graphql@16.8.1):
-    resolution: {integrity: sha512-vnaWyLO6V5i8fL2I9EkXVecpNHrGDCuwfKSeyF+A4Q4s0XiFhQSYlGcHlJzDkt7M2Odw1Oe8QQX/cVOuofPbXA==}
+  /gql.tada@1.3.5(graphql@16.8.1):
+    resolution: {integrity: sha512-g5ZtNc72fuOHrrMgxnok6vhDoXMt6Q1RJefiuFzAusHMPR0L3/8a3Yyc2HSfEnHBt+tYBgIrvKmWDYIRNl80jg==}
     hasBin: true
     dependencies:
       '@0no-co/graphql.web': 1.0.4(graphql@16.8.1)
-      '@gql.tada/cli-utils': 0.1.2
+      '@gql.tada/cli-utils': 0.2.0
     transitivePeerDependencies:
       - graphql
     dev: false
@@ -2510,6 +2581,13 @@ packages:
     resolution: {integrity: sha512-hHrIjvZsftOsvKSn2TRYl63zvxsgE0K+0mYMoH6gD4omR5IWB2KynivBQczo3+wF1cCkjzvptnI9Q0sPU66ilw==}
     dependencies:
       hasown: 2.0.2
+    dev: true
+
+  /is-data-view@1.0.1:
+    resolution: {integrity: sha512-AHkaJrsUVW6wq6JS8y3JnM/GJF/9cf+k20+iDzlSaJrinEo5+7vRiteOSwBhHRiAyQATN1AmY4hwzxJKPmYf+w==}
+    engines: {node: '>= 0.4'}
+    dependencies:
+      is-typed-array: 1.1.13
     dev: true
 
   /is-date-object@1.0.5:
@@ -3123,7 +3201,7 @@ packages:
     dependencies:
       call-bind: 1.0.7
       define-properties: 1.2.1
-      es-abstract: 1.22.5
+      es-abstract: 1.23.0
       es-errors: 1.3.0
       get-intrinsic: 1.2.4
       globalthis: 1.0.3
