@@ -38,9 +38,9 @@ export const PageSend: React.FC = () =>
     };
 
     const loadUserCoinsInfo = async (balances: CoinBalance[]) => {
-        let newUserCoinsInfo: CoinInfo[] = [];
+        const newUserCoinsInfo: CoinInfo[] = [];
         for (const balance of balances) {
-            let coinInfo = await getCoinInfo(balance.coinType, suiClient);
+            const coinInfo = await getCoinInfo(balance.coinType, suiClient);
             newUserCoinsInfo.push(coinInfo);
         }
         setUserCoinsInfo(newUserCoinsInfo);
@@ -54,7 +54,7 @@ export const PageSend: React.FC = () =>
             <input className='dropdown-input'
                 type='text'
                 value={searchCoin}
-                onChange={(e) => setSearchCoin(e.target.value)}
+                onChange={(e) => { setSearchCoin(e.target.value) }}
                 disabled={inProgress}
                 onFocus={() => { setOpen(true) }}
                 placeholder={chosenBalance ? shortenSuiAddress(chosenBalance.coinType) : 'choose a coin'}

@@ -11,17 +11,18 @@ type ListClaimableAssetsReturnType = Awaited<ReturnType<InstanceType<typeof ZkSe
 export const PageClaim: React.FC = () =>
 {
     const location = useLocation();
+    const isCreator = location.state?.isCreator; // eslint-disable-line
+
     const currAcct = useCurrentAccount();
     const suiClient = useSuiClient();
     const { mutate: disconnect } = useDisconnectWallet();
-    const { inProgress, setInProgress, network, openConnectModal } = useOutletContext<AppContext>();
+
     const [ claimableAssets, setClaimableAssets ] = useState<ListClaimableAssetsReturnType>();
     const [ inputAddress, setInputAddress ] = useState('');
     const [ claimTxnDigest, setClaimTxnDigest ] = useState<string>();
-    const [ errMsg, setErrMsg ] = useState('');
 
-    const isCreator = location.state?.isCreator; // eslint-disable-line
-    // const createTxnDigest = !isCreator ? null : location.state?.createTxnDigest;
+    const { inProgress, setInProgress, openConnectModal } = useOutletContext<AppContext>();
+    const [ errMsg, setErrMsg ] = useState('');
 
     const claimAddress = currAcct ? currAcct.address : inputAddress;
     const cleanAddress = validateAndNormalizeSuiAddress(claimAddress);
@@ -122,14 +123,12 @@ export const PageClaim: React.FC = () =>
                 {copyMsg && <p>{copyMsg}</p>}
 
                 <p>
-                    <span>Save your link before leaving this page</span>
+                    <u><b>Save your link before leaving this page</b></u>
                 </p>
 
                 <p>
                         We don't store claim links. If you don't share or save your link before leaving this page, the ${coinInfo.symbol} will be lost.
                 </p>
-
-                {/* <p> <a href={makeSuiExplorerUrl(network, 'txblock', createTxnDigest)} rel='noopener noreferrer' target='_blank'>Transaction</a> </p> */}
             </div>;
         }
 
@@ -137,14 +136,7 @@ export const PageClaim: React.FC = () =>
         if (claimTxnDigest) {
             return <div className='success-box'>
                 <h1>Success</h1>
-
                 <p>{claimableBalancePretty} ${coinInfo.symbol} was sent to <span style={{whiteSpace: 'nowrap'}}>{shortAddress}</span></p>
-
-                {/* <p>
-                    <a href={makeSuiExplorerUrl(network, 'txblock', claimTxnDigest)} rel='noopener noreferrer' target='_blank'>
-                        view transaction
-                    </a>
-                </p> */}
             </div>;
         }
 
