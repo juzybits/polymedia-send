@@ -65,6 +65,7 @@ header {
         display: flex;
         align-items: center;
         font-size: 1.5rem;
+        font-weight: 200;
         img {
             height: 2rem;
             width: 2rem;
@@ -141,6 +142,8 @@ nav {
     }
     .network-option .text {
         display: block;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
         &:hover {
             cursor: pointer;
             color: @color-blue-1;
@@ -161,9 +164,15 @@ nav {
     flex-grow: 1;
     h1, h2, h3  {
         padding-bottom: @bottom-space;
+        font-weight: 500;
+    }
+    h3 {
+        font-size: 1.25rem;
     }
     p {
         padding-bottom: @bottom-space;
+        font-size: 1.1rem;
+        line-height: 1.5rem;
     }
     .btn {
         background-color: @color-blue-3;
