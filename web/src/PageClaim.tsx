@@ -1,5 +1,5 @@
 import { useCurrentAccount, useDisconnectWallet, useSuiClient } from '@mysten/dapp-kit';
-import { formatBigInt, makeSuiExplorerUrl, shortenSuiAddress, validateAndNormalizeSuiAddress } from '@polymedia/suits';
+import { formatBigInt, shortenSuiAddress, validateAndNormalizeSuiAddress } from '@polymedia/suits';
 import { useEffect, useState } from 'react';
 import { useLocation, useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';

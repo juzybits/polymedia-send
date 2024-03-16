@@ -1,40 +1,85 @@
 import { useCurrentAccount, useSignTransactionBlock, useSuiClient } from '@mysten/dapp-kit';
 import { CoinBalance } from '@mysten/sui.js/client';
-import { convertNumberToBigInt, formatBigInt, formatNumber } from '@polymedia/suits';
+import { convertNumberToBigInt, formatBigInt, formatNumber, shortenSuiAddress } from '@polymedia/suits';
 import { useEffect, useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';
-import { coinInfo } from './constants';
 import { ZkSendLinkBuilder } from './lib/zksend';
+import { CoinInfo, getCoinInfo } from './utils';
 
 export const PageSend: React.FC = () =>
 {
     const navigate = useNavigate();
+
     const currAcct = useCurrentAccount();
     const suiClient = useSuiClient();
     const { mutateAsync: signTransactionBlock } = useSignTransactionBlock();
-    const { inProgress, setInProgress, openConnectModal } = useOutletContext<AppContext>();
-    const [ userBalance, setUserBalance ] = useState<CoinBalance>();
+
+    const [ userBalances, setUserBalances ] = useState<CoinBalance[]>();
+    const [ userCoinsInfo, setUserCoinsInfo ] = useState<CoinInfo[]>();
+    const [ chosenBalance, setChosenBalance ] = useState<CoinBalance>();
     const [ amount, setAmount ] = useState('');
+
+    const { inProgress, setInProgress, openConnectModal } = useOutletContext<AppContext>();
     const [ errMsg, setErrMsg ] = useState('');
 
     useEffect(() => {
-        loadUserBalance();
+        loadUserBalances();
     }, [currAcct, suiClient]);
 
-    const loadUserBalance = async () => {
+    const loadUserBalances = async () => {
         if (!currAcct) {
-            setUserBalance(undefined);
+            setUserBalances(undefined);
         } else {
-            const newBalance = await suiClient.getBalance({
-                owner: currAcct.address,
-                coinType: coinInfo.coinType,
-            });
-            setUserBalance(newBalance);
+            const newUserBalances = await suiClient.getAllBalances({ owner: currAcct.address });
+            setUserBalances(newUserBalances);
+            loadUserCoinsInfo(newUserBalances);
         }
     };
 
-    const createLink = async () => {
+    const loadUserCoinsInfo = async (balances: CoinBalance[]) => {
+        let newUserCoinsInfo: CoinInfo[] = [];
+        for (const balance of balances) {
+            let coinInfo = await getCoinInfo(balance.coinType, suiClient);
+            newUserCoinsInfo.push(coinInfo);
+        }
+        setUserCoinsInfo(newUserCoinsInfo);
+    };
+
+    const SelectCoin: React.FC = () => {
+        const [ showCoins, setShowCoins ] = useState(false);
+        const [ searchCoin, setSearchCoin ] = useState(''); // TODO
+
+        return <div className='dropdown'>
+            <input className='dropdown-input'
+                type='text'
+                value={searchCoin}
+                onChange={(e) => setSearchCoin(e.target.value)}
+                onFocus={() => { setShowCoins(true) }}
+                placeholder='choose a coin'
+                spellCheck='false' autoCorrect='off' autoComplete='off'
+            />
+            {(() => {
+                if (!showCoins) {
+                    return null;
+                }
+                if (typeof userBalances === 'undefined') {
+                    return <div className='dropdown-options'>
+                        <div>Loading...</div>
+                    </div>
+                }
+                return <div className='dropdown-options'>
+                    {userBalances.map(bal =>
+                    <div className='dropdown-option' key={bal.coinType}
+                        onClick={() => { setChosenBalance(bal) }}>
+                        {shortenSuiAddress(bal.coinType)}
+                    </div>)}
+                </div>;
+            })()}
+        </div>;
+    }
+
+    const createLink = async (coinType: string, amountWithDec: bigint) => {
         setErrMsg('');
         if (!currAcct) return;
 
@@ -48,7 +93,7 @@ export const PageSend: React.FC = () =>
                 client: suiClient,
             });
 
-            link.addClaimableBalance(coinInfo.coinType, amountWithDec);
+            link.addClaimableBalance(coinType, amountWithDec);
 
             const url = link.getLink();
             console.debug('url: ', url);
@@ -84,33 +129,11 @@ export const PageSend: React.FC = () =>
         }
     };
 
-    // Validate amount
-    const amountNum = amount === '.' ? 0 : Number(amount);
-    const amountWithDec = convertNumberToBigInt(amountNum, coinInfo.decimals);
-    const amountErr = (() => {
-        if (amount === '' || amount === '.') {
-            return '';
-        }
-        if (amountNum === 0) {
-            return 'amount can\'t be 0';
-        }
-        if (userBalance) {
-            const userBalanceWithDec = BigInt(userBalance.totalBalance);
-            if (amountWithDec > userBalanceWithDec) {
-                return 'not enough balance';
-            }
-        }
-        return '';
-    })();
-
-    const disableSendBtn = amount === '' || amount === '.' || amountErr !== '' || inProgress;
     return <div id='page-send' className='page'>
 
     <h1>Send</h1>
 
     <h2>Create a single claim link</h2>
-
-    <p>Send coins to anyone simply by sharing a link.</p>
 
     {(() => {
         if (!currAcct) {
@@ -119,40 +142,84 @@ export const PageSend: React.FC = () =>
                 <button onClick={openConnectModal} className='btn'>LOG IN</button>
             </div>;
         }
-        return <div>
-            <input type='text' inputMode='numeric' pattern={`^[0-9]*\\.?[0-9]{0,${coinInfo.decimals}}$`}
-                value={amount} autoFocus disabled={inProgress}
-                onChange={e => { setAmount(e.target.validity.valid ? e.target.value : amount) }}
-                onKeyDown={e => { if (e.key === 'Enter' && !disableSendBtn) { createLink(); } }}
-                placeholder='enter amount'
-            />
 
-            <p>
-                {typeof userBalance === 'undefined'
-                ? <>Loading balance...</>
-                : <>Your balance: {formatBigInt(BigInt(userBalance.totalBalance), coinInfo.decimals, 'compact')}</>}
-            </p>
+        if (!userBalances) {
+            return <div>Loading balances...</div>;
+        }
 
-            <p>
-                Amount to send: {formatNumber(amountNum, 'compact')} {coinInfo.symbol}
-            </p>
+        return <>
+            <SelectCoin />
 
-            {amountErr &&
-            <div className='error-box'>
-                Error: {amountErr}
-            </div>}
+            {(() => {
+                if (!chosenBalance) {
+                    return <></>;
+                }
 
-            {errMsg &&
-            <div className='error-box'>
-                Something went wrong:<br/>{errMsg}
-            </div>}
+                if (!userCoinsInfo) {
+                    return <div>Loading coin info...</div>;
+                }
 
-            <button
-                className='btn'
-                onClick={createLink}
-                disabled={disableSendBtn}
-            >CREATE LINK</button>
-        </div>
+                const coinInfo = userCoinsInfo.find(info => info.coinType === chosenBalance.coinType);
+
+                if (!coinInfo) {
+                    return <div className='error-box'>
+                        Couldn't find coin info for ${shortenSuiAddress(chosenBalance.coinType)}
+                    </div>
+                }
+
+                // Validate amount
+                const amountNum = amount === '.' ? 0 : Number(amount);
+                const amountWithDec = convertNumberToBigInt(amountNum, coinInfo.decimals);
+                const amountErr = (() => {
+                    if (amount === '' || amount === '.') {
+                        return '';
+                    }
+                    if (amountNum === 0) {
+                        return 'amount can\'t be 0';
+                    }
+                    const userBalanceWithDec = BigInt(chosenBalance.totalBalance);
+                    if (amountWithDec > userBalanceWithDec) {
+                        return 'not enough balance';
+                    }
+                    return '';
+                })();
+
+                const disableSendBtn = amount === '' || amount === '.' || amountErr !== '' || inProgress;
+
+                return <>
+                <input type='text' inputMode='numeric' pattern={`^[0-9]*\\.?[0-9]{0,${coinInfo.decimals}}$`}
+                    value={amount} disabled={inProgress}
+                    onChange={e => { setAmount(e.target.validity.valid ? e.target.value : amount) }}
+                    onKeyDown={e => { if (e.key === 'Enter' && !disableSendBtn) { createLink(coinInfo.coinType, amountWithDec) } }}
+                    placeholder='enter amount'
+                />
+
+                <p>
+                    Your balance: {formatBigInt(BigInt(chosenBalance.totalBalance), coinInfo.decimals, 'compact')}
+                </p>
+
+                <p>
+                    Amount to send: {formatNumber(amountNum, 'compact')} {coinInfo.symbol}
+                </p>
+
+                {amountErr &&
+                <div className='error-box'>
+                    Error: {amountErr}
+                </div>}
+
+                {errMsg &&
+                <div className='error-box'>
+                    Something went wrong:<br/>{errMsg}
+                </div>}
+
+                <button
+                    className='btn'
+                    onClick={ () => { createLink(coinInfo.coinType, amountWithDec) }}
+                    disabled={disableSendBtn}
+                >CREATE LINK</button>
+                </>;
+            })()}
+        </>
     })()}
 
     </div>;
