@@ -1,6 +1,6 @@
 import { useCurrentAccount, useSignTransactionBlock, useSuiClient } from '@mysten/dapp-kit';
 import { CoinBalance } from '@mysten/sui.js/client';
-import { formatBigInt, formatNumber } from '@polymedia/suits';
+import { convertNumberToBigInt, formatBigInt, formatNumber } from '@polymedia/suits';
 import { useEffect, useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';
@@ -86,7 +86,7 @@ export const PageSend: React.FC = () =>
 
     // Validate amount
     const amountNum = amount === '.' ? 0 : Number(amount);
-    const amountWithDec = BigInt(amountNum * (10 ** coinInfo.decimals));
+    const amountWithDec = convertNumberToBigInt(amountNum, coinInfo.decimals);
     const amountErr = (() => {
         if (amount === '' || amount === '.') {
             return '';
