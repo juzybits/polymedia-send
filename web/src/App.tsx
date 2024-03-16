@@ -143,10 +143,14 @@ const BtnNetwork: React.FC<{
     appContext: app,
 }) =>
 {
+    const onSwitchNetwork = (newNet: NetworkName) => {
+        app.setNetwork(newNet);
+        app.setShowMobileNav(false);
+    };
     return <NetworkSelector
         currentNetwork={app.network}
         supportedNetworks={['mainnet', 'testnet']}
-        onSwitch={newNet => { app.setNetwork(newNet) }}
+        onSwitch={onSwitchNetwork}
     />;
 }
 
@@ -158,7 +162,11 @@ const BtnConnect: React.FC<{
 {
     const currAcct = useCurrentAccount();
     const { mutate: disconnect } = useDisconnectWallet();
-    return <button className='btn-connect' onClick={() => {!currAcct ? app.openConnectModal() : disconnect()}}>
+    const onClick = () => {
+        currAcct ? disconnect() : app.openConnectModal();
+        app.setShowMobileNav(false);
+    };
+    return <button className='btn-connect' onClick={onClick}>
         {!currAcct ? 'LOG IN' : shortenSuiAddress(currAcct.address, 3, 3)}
     </button>;
 }
@@ -169,6 +177,10 @@ const Nav: React.FC<{
     appContext: app,
 }) =>
 {
+    const closeMobileNav = () => {
+        app.setShowMobileNav(false);
+    };
+
     const location = useLocation();
     return <nav className={app.showMobileNav ? 'open' : ''}>
         {app.showMobileNav && <>
@@ -176,13 +188,13 @@ const Nav: React.FC<{
             <BtnConnect appContext={app} />
         </>}
 
-        <Link to='/' className={location.pathname == '/' ? 'selected' : ''}>
+        <Link to='/' className={location.pathname == '/' ? 'selected' : ''} onClick={closeMobileNav}>
             Home
         </Link>
-        <Link to='/send' className={location.pathname == '/send' ? 'selected' : ''}>
+        <Link to='/send' className={location.pathname == '/send' ? 'selected' : ''} onClick={closeMobileNav}>
             Send
         </Link>
-        <Link to='/bulk' className={location.pathname == '/bulk' ? 'selected' : ''}>
+        <Link to='/bulk' className={location.pathname == '/bulk' ? 'selected' : ''} onClick={closeMobileNav}>
             Bulk
         </Link>
 
