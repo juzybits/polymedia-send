@@ -47,20 +47,20 @@ export const PageSend: React.FC = () =>
     };
 
     const SelectCoin: React.FC = () => {
-        const [ showCoins, setShowCoins ] = useState(false);
+        const [ open, setOpen ] = useState(false);
         const [ searchCoin, setSearchCoin ] = useState(''); // TODO
 
-        return <div className='dropdown'>
+        return <div className={'dropdown' + (open ? ' open' : '')}>
             <input className='dropdown-input'
                 type='text'
                 value={searchCoin}
                 onChange={(e) => setSearchCoin(e.target.value)}
-                onFocus={() => { setShowCoins(true) }}
-                placeholder='choose a coin'
+                onFocus={() => { setOpen(true) }}
+                placeholder={chosenBalance ? shortenSuiAddress(chosenBalance.coinType) : 'choose a coin'}
                 spellCheck='false' autoCorrect='off' autoComplete='off'
             />
             {(() => {
-                if (!showCoins) {
+                if (!open) {
                     return null;
                 }
                 if (typeof userBalances === 'undefined') {
@@ -71,7 +71,7 @@ export const PageSend: React.FC = () =>
                 return <div className='dropdown-options'>
                     {userBalances.map(bal =>
                     <div className='dropdown-option' key={bal.coinType}
-                        onClick={() => { setChosenBalance(bal) }}>
+                        onClick={() => { setChosenBalance(bal); setOpen(false); }}>
                         {shortenSuiAddress(bal.coinType)}
                     </div>)}
                 </div>;

@@ -15,13 +15,19 @@ h1, h2, h3, h4, h5 {
 
 /* Constants */
 
-@mobile-width: 600px;
+@bottom-space: 1rem;
+@color-blue-1: rgb(176, 231, 255);
+@color-blue-2: rgb(82, 203, 255);
+@color-blue-3: rgb(42, 167, 221);
+@color-blue-4: rgb(27, 143, 192);
 @color-muted: #ccc;
 @color-text: rgb(226 232 240);
-@color-blue-1: rgb(82, 203, 255);
-@color-blue-2: rgb(42, 167, 221);
-@color-blue-3: rgb(27, 143, 192);
-@bottom-space: 1rem;
+@input-background: white;
+@input-color: black;
+@input-padding: 0.5em 1em;
+@input-width: 300px;
+@mobile-width: 600px;
+@radius: 1em;
 
 /* Common styles */
 
@@ -104,12 +110,12 @@ nav {
         text-decoration: none;
         &:hover {
             cursor: pointer;
-            color: @color-blue-1;
-            border-color: @color-blue-1;
+            color: @color-blue-2;
+            border-color: @color-blue-2;
         }
         &.selected {
-            color: @color-blue-1;
-            border-color: @color-blue-1;
+            color: @color-blue-2;
+            border-color: @color-blue-2;
         }
     }
     @media (max-width: @mobile-width) {
@@ -146,7 +152,7 @@ nav {
         padding-right: 0.5rem;
         &:hover {
             cursor: pointer;
-            color: @color-blue-1;
+            color: @color-blue-2;
         }
     }
 }
@@ -156,7 +162,7 @@ nav {
     background-color: transparent;
     &:hover {
         cursor: pointer;
-        color: @color-blue-1;
+        color: @color-blue-2;
     }
 }
 
@@ -175,8 +181,8 @@ nav {
         line-height: 1.5rem;
     }
     .btn {
-        background-color: @color-blue-3;
-        border-radius: 1em;
+        background-color: @color-blue-4;
+        border-radius: @radius;
         color: white;
         display: block;
         font-size: 1rem;
@@ -186,25 +192,63 @@ nav {
         text-decoration: none;
         user-select: none;
         &:hover {
-            background-color: @color-blue-2;
+            background-color: @color-blue-3;
             cursor: pointer;
         }
         &:disabled {
             background-color: grey;
-            color: #ccc;
+            color: @color-muted;
             cursor: default;
         }
     }
 
     input[type=text] {
-        padding: 0.5em 1em;
-        border-radius: 1em;
-        color: black;
+        background-color: @input-background;
+        border-radius: @radius;
+        color: @input-color;
         margin-bottom: @bottom-space;
+        outline: none;
+        padding: @input-padding;
+        width: @input-width;
     }
 
     .error-box {
         margin-bottom: @bottom-space;
         color: rgb(255, 115, 115);
+    }
+
+    .dropdown {
+        margin-bottom: @bottom-space;
+        width: @input-width;
+        .dropdown-input {
+            margin: 0;
+            &:hover {
+                cursor: pointer;
+            }
+        }
+        &.open {
+            .dropdown-input {
+                border-bottom-left-radius: 0;
+                border-bottom-right-radius: 0;
+                &:hover {
+                    cursor: default;
+                }
+            }
+        }
+        .dropdown-option {
+            background-color: @input-background;
+            color: @input-color;
+            padding: @input-padding;
+            &:hover {
+                background-color: @color-blue-1;
+                &:hover {
+                    cursor: pointer;
+                }
+            }
+            &:last-of-type {
+                border-bottom-left-radius: @radius;
+                border-bottom-right-radius: @radius;
+            }
+        }
     }
 }
