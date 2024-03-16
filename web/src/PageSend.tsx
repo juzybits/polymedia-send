@@ -55,6 +55,7 @@ export const PageSend: React.FC = () =>
                 type='text'
                 value={searchCoin}
                 onChange={(e) => setSearchCoin(e.target.value)}
+                disabled={inProgress}
                 onFocus={() => { setOpen(true) }}
                 placeholder={chosenBalance ? shortenSuiAddress(chosenBalance.coinType) : 'choose a coin'}
                 spellCheck='false' autoCorrect='off' autoComplete='off'
@@ -84,7 +85,6 @@ export const PageSend: React.FC = () =>
         if (!currAcct) return;
 
         setInProgress(true);
-        document.body.style.cursor = 'wait';
         try {
             const link = new ZkSendLinkBuilder({
                 sender: currAcct.address,
@@ -115,7 +115,6 @@ export const PageSend: React.FC = () =>
                     + `Txn errors: ${JSON.stringify(resp.errors)}`);
             } else {
                 const secret = url.split('#')[1];
-                document.body.style.cursor = 'default'; // need to do this before redirect
                 navigate('/claim#' + secret, {
                     state: { isCreator: true, /* createTxnDigest: resp.digest */ }
                 });
@@ -125,7 +124,6 @@ export const PageSend: React.FC = () =>
         }
         finally {
             setInProgress(false);
-            document.body.style.cursor = 'default';
         }
     };
 

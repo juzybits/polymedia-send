@@ -22,7 +22,9 @@ h1, h2, h3, h4, h5 {
 @color-blue-4: rgb(27, 143, 192);
 @color-muted: #ccc;
 @color-text: rgb(226 232 240);
+@input-background-muted: @color-muted;
 @input-background: white;
+@input-color-muted: rgb(93, 93, 93);
 @input-color: black;
 @input-padding: 0.5em 1em;
 @input-width: 300px;
@@ -210,6 +212,10 @@ nav {
         outline: none;
         padding: @input-padding;
         width: @input-width;
+        &:disabled {
+            background-color: @input-background-muted;
+            color: @input-color-muted;
+        }
     }
 
     .error-box {
@@ -224,6 +230,9 @@ nav {
             margin: 0;
             &:hover {
                 cursor: pointer;
+                &:disabled {
+                    cursor: default;
+                }
             }
         }
         &.open {
