@@ -72,6 +72,17 @@ header {
             box-sizing: content-box;
         }
     }
+    #btn-menu {
+        display: none;
+    }
+    @media (max-width: @mobile-width) {
+        #btn-menu {
+            display: block;
+        }
+        .network-selector, .btn-connect {
+            display: none;
+        }
+    }
 }
 
 nav {
@@ -84,10 +95,12 @@ nav {
     a, button, span {
         display: block;
         padding: 0.2rem 0 0.2rem 0.6rem;
-        border-left: 2px solid transparent;
+        border-style: solid;
+        border-color: transparent;
+        border-left-width: 2px;
         color: @color-muted;
-        text-decoration: none;
         text-align: left;
+        text-decoration: none;
         &:hover {
             cursor: pointer;
             color: @color-blue-1;
@@ -96,6 +109,18 @@ nav {
         &.selected {
             color: @color-blue-1;
             border-color: @color-blue-1;
+        }
+    }
+    @media (max-width: @mobile-width) {
+        display: none;
+        &.open {
+            display: flex;
+            align-items: center;
+            a, button, span {
+                border-left-width: 0;
+                border-bottom-width: 2px;
+                padding-left: 0;
+            }
         }
     }
 }
@@ -116,14 +141,13 @@ nav {
     }
     .network-option .text {
         display: block;
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
         &:hover {
             cursor: pointer;
             color: @color-blue-1;
         }
     }
 }
+
 .btn-connect, #btn-menu {
     font-weight: 500;
     background-color: transparent;

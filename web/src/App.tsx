@@ -107,9 +107,9 @@ const App: React.FC<{
         <Header appContext={appContext} />
         <main>
             <Nav appContext={appContext} />
-            <div id='page'>
+            {!showMobileNav && <div id='page'>
                 <Outlet context={appContext} />
-            </div>
+            </div>}
         </main>
     </div>
     </>;
@@ -170,7 +170,12 @@ const Nav: React.FC<{
 }) =>
 {
     const location = useLocation();
-    return <nav className={app.showMobileNav ? 'open' : 'closed'}>
+    return <nav className={app.showMobileNav ? 'open' : ''}>
+        {app.showMobileNav && <>
+            <BtnNetwork appContext={app} />
+            <BtnConnect appContext={app} />
+        </>}
+
         <Link to='/' className={location.pathname == '/' ? 'selected' : ''}>
             Home
         </Link>
