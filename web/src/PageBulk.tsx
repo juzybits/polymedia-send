@@ -1,6 +1,6 @@
 import { useCurrentAccount, useSignTransactionBlock, useSuiClient } from '@mysten/dapp-kit';
 import { convertNumberToBigInt } from '@polymedia/suits';
-import { coinInfo } from './constants';
+import { coinInfo } from './lib/constants';
 import { ZkSendLinkBuilder, ZkSendLinkBuilderOptions } from './lib/zksend';
 
 const linkCount = 5;

@@ -4,9 +4,9 @@ import { convertNumberToBigInt, formatBigInt, formatNumber } from '@polymedia/su
 import { useEffect, useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';
-import { ZkSendLinkBuilder } from './lib/zksend';
-import { CoinInfo, getCoinInfo } from './utils';
 import { SelectCoin } from './components/SelectCoin';
+import { CoinInfo, getCoinInfo } from './lib/coininfo';
+import { ZkSendLinkBuilder } from './lib/zksend';
 
 export const PageSend: React.FC = () =>
 {

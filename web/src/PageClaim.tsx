@@ -3,8 +3,8 @@ import { formatBigInt, shortenSuiAddress, validateAndNormalizeSuiAddress } from 
 import { useEffect, useState } from 'react';
 import { useLocation, useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';
+import { CoinInfo, getCoinInfo } from './lib/coininfo';
 import { ZkSendLink } from './lib/zksend';
-import { CoinInfo, getCoinInfo } from './utils';
 
 type ListClaimableAssetsReturnType = Awaited<ReturnType<InstanceType<typeof ZkSendLink>['listClaimableAssets']>>;
 type BalancesType = ListClaimableAssetsReturnType['balances'];
