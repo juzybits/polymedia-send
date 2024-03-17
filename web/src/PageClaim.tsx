@@ -28,37 +28,36 @@ export const PageClaim: React.FC = () =>
     const [ errMsg, setErrMsg ] = useState('');
 
     useEffect(() => {
-        loadZkSendLink();
-    }, []);
+        const initialize = async () => {
+            try {
+                const link = await loadZkSendLink();
+                setLink(link);
 
-    const loadZkSendLink = async () => {
-        const link = await ZkSendLink.fromUrl(window.location.href, {
-            client: suiClient,
-        });
-        setLink(link);
-        loadClaimableAssets(link)
-    };
+                const balances = await loadClaimableBalances(link);
+                setClaimableBalances(balances);
 
-    const loadClaimableAssets = async (link: ZkSendLink) => {
-        try {
-            const assets = await link.listClaimableAssets('0x123'); // dummy address, doesn't matter
-            console.debug('assets:', assets);
-            const newClaimableBalances = assets.balances.filter(bal => bal.amount > 0);
-            setClaimableBalances(newClaimableBalances);
-            loadClaimableCoinsInfo(newClaimableBalances);
-        } catch(err) {
-            setErrMsg(String(err));
+                const coinInfos = await loadClaimableCoinsInfo(balances);
+                setClaimableCoinsInfo(coinInfos);
+            } catch(err) {
+                setErrMsg(String(err));
+            }
         }
-    };
-
-    const loadClaimableCoinsInfo = async (balances: BalancesType) => {
-        const newClaimableCoinsInfo: CoinInfo[] = [];
-        for (const balance of balances) {
-            const coinInfo = await getCoinInfo(balance.coinType, suiClient);
-            newClaimableCoinsInfo.push(coinInfo);
+        const loadZkSendLink = async (): Promise<ZkSendLink> => {
+            const link = await ZkSendLink.fromUrl(window.location.href, { client: suiClient });
+            return link;
+        };
+        const loadClaimableBalances = async (link: ZkSendLink): Promise<BalancesType> => {
+            const assets = await link.listClaimableAssets('0x123'); // address doesn't matter
+            const balances = assets.balances.filter(bal => bal.amount > 0);
+            return balances;
+        };
+        const loadClaimableCoinsInfo = async (balances: BalancesType): Promise<CoinInfo[]> => {
+            const promises = balances.map(bal => getCoinInfo(bal.coinType, suiClient));
+            const infos = await Promise.all(promises);
+            return infos;
         }
-        setClaimableCoinsInfo(newClaimableCoinsInfo);
-    }
+        initialize();
+    }, [suiClient]);
 
     const claimAssets = async (link: ZkSendLink, recipientAddress: string) => {
         setErrMsg('');
