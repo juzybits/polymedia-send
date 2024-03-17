@@ -19,7 +19,7 @@ export const PageClaim: React.FC = () =>
     const { mutate: disconnect } = useDisconnectWallet();
 
     const [ link, setLink ] = useState<ZkSendLink>();
-    const [ claimableAssets, setClaimableAssets ] = useState<ListClaimableAssetsReturnType>();
+    const [ claimableBalances, setClaimableBalances ] = useState<BalancesType>();
     const [ claimableCoinsInfo, setClaimableCoinsInfo ] = useState<CoinInfo[]>();
     const [ inputAddress, setInputAddress ] = useState('');
     const [ claimTxnDigest, setClaimTxnDigest ] = useState<string>();
@@ -43,8 +43,9 @@ export const PageClaim: React.FC = () =>
         try {
             const assets = await link.listClaimableAssets('0x123'); // dummy address, doesn't matter
             console.debug('assets:', assets);
-            setClaimableAssets(assets);
-            loadClaimableCoinsInfo(assets.balances);
+            const newClaimableBalances = assets.balances.filter(bal => bal.amount > 0);
+            setClaimableBalances(newClaimableBalances);
+            loadClaimableCoinsInfo(newClaimableBalances);
         } catch(err) {
             setErrMsg(String(err));
         }
@@ -141,14 +142,12 @@ export const PageClaim: React.FC = () =>
         }
 
         // assets are loading
-        if (!link || !claimableAssets || !claimableCoinsInfo) {
+        if (!link || !claimableBalances || !claimableCoinsInfo) {
             if (errMsg) {
                 return null; // something went wrong on load
             }
             return <h1>Loading...</h1>;
         }
-
-        const claimableBalances = claimableAssets.balances.filter(bal => bal.amount > 0);
 
         // already claimed
         if (claimableBalances.length === 0) {
