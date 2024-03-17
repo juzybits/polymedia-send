@@ -173,16 +173,16 @@ export const PageClaim: React.FC = () =>
                     throw new Error('TODO this should never happen');
                 }
                 const claimableBalancePretty = formatBigInt(bal.amount, coinInfo.decimals, 'compact');
-                return <div key={bal.coinType}>
+                return <h2 key={bal.coinType}>
                     {claimableBalancePretty} {coinInfo.symbol}
-                </div>
+                </h2>
             })}
             </div>
 
             {!currAcct &&
             <>
-                <p>Enter the address where you want to send the assets,<br/>or&nbsp;
-                    <button className='btn' onClick={openConnectModal}>LOG IN</button>
+                <p>Enter the address where you want to send the assets, or&nbsp;
+                    <button className='txt-btn' onClick={openConnectModal} disabled={inProgress}>LOG IN</button>
                     &nbsp;with your wallet to auto-fill.
                 </p>
 

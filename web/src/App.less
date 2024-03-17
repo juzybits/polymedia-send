@@ -193,6 +193,7 @@ nav {
         padding: 0.6em 1em;
         text-decoration: none;
         user-select: none;
+        white-space: nowrap;
         &:hover {
             background-color: @color-blue-3;
             cursor: pointer;
@@ -201,6 +202,22 @@ nav {
             background-color: grey;
             color: @color-muted;
             cursor: default;
+        }
+    }
+    .txt-btn {
+        color: @color-blue-2;
+        background-color: transparent;
+        padding: 0 0.1em;
+        font-weight: 700;
+        cursor: pointer;
+        white-space: nowrap;
+        &:hover {
+            text-decoration: underline;
+        }
+        &:disabled {
+            cursor: default;
+            text-decoration: none;
+            color: @color-muted;
         }
     }
 
