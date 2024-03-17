@@ -7,7 +7,7 @@ const linkCount = 5;
 const linkAmount = convertNumberToBigInt(0.00069, coinInfo.decimals);
 const linkAmounts = Array<bigint>(linkCount).fill(linkAmount);
 
-export const PageBulkSend: React.FC = () =>
+export const PageBulk: React.FC = () =>
 {
     const currAcct = useCurrentAccount();
     const suiClient = useSuiClient();

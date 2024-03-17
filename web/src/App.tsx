@@ -14,7 +14,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
 import { BrowserRouter, Link, Outlet, Route, Routes, useLocation } from 'react-router-dom';
 import './App.less';
-import { PageBulkSend } from './BulkSend';
+import { PageBulk } from './PageBulk';
 import { PageClaim } from './PageClaim';
 import { PageHome } from './PageHome';
 import { PageNotFound } from './PageNotFound';
@@ -29,7 +29,7 @@ export const AppWrapRouter: React.FC = () => {
             <Route path='/' element={<AppWrapSui />} >
                 <Route index element={<PageHome />} />
                 <Route path='/send' element={<PageSend />} />
-                <Route path='/bulk' element={<PageBulkSend />} />
+                <Route path='/bulk' element={<PageBulk />} />
                 <Route path='/claim' element={<PageClaim />} />
                 <Route path='*' element={<PageNotFound />} />
             </Route>
