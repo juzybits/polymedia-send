@@ -15,27 +15,25 @@ export const PageSend: React.FC = () =>
     const suiClient = useSuiClient();
     const { mutateAsync: signTransactionBlock } = useSignTransactionBlock();
 
-    const [ userBalances, setUserBalances ] = useState<CoinBalance[]>();
-    const [ userCoinsInfo, setUserCoinsInfo ] = useState<CoinInfo[]>();
-    const [ chosenBalance, setChosenBalance ] = useState<CoinBalance>();
-    const [ amount, setAmount ] = useState('');
-
     const { inProgress, setInProgress, openConnectModal } = useOutletContext<AppContext>();
     const [ errMsg, setErrMsg ] = useState('');
+    const [ userBalances, setUserBalances ] = useState<CoinBalance[]>(); // loaded on wallet connect
+    const [ chosenBalance, setChosenBalance ] = useState<CoinBalance>(); // chosen by user (dropdown)
+    const [ coinInfo, setCoinInfo ] = useState<CoinInfo>(); // loaded based on chosenBalance
+    const [ amount, setAmount ] = useState(''); // chosen by user (numeric input)
 
     useEffect(() => {
         const initialize = async () => {
+            setUserBalances(undefined);
+            setChosenBalance(undefined);
+            setAmount('');
+            setErrMsg('');
             if (!currAcct) {
-                setUserBalances(undefined);
-                setUserCoinsInfo(undefined);
                 return;
             }
             try {
                 const balances = await loadUserBalances(currAcct.address);
                 setUserBalances(balances);
-
-                const coinInfos = await loadUserCoinsInfo(balances);
-                setUserCoinsInfo(coinInfos);
             } catch(err) {
                 setErrMsg(String(err));
             }
@@ -45,47 +43,24 @@ export const PageSend: React.FC = () =>
             const nonZeroBalances = balances.filter(bal => BigInt(bal.totalBalance) > 0n);
             return nonZeroBalances;
         };
-        const loadUserCoinsInfo = async (balances: CoinBalance[]): Promise<CoinInfo[]> => {
-            const promises = balances.map(bal => getCoinInfo(bal.coinType, suiClient));
-            const infos = await Promise.all(promises);
-            return infos;
-        }
         initialize();
     }, [currAcct, suiClient]);
 
-    const SelectCoin: React.FC = () => {
-        const [ open, setOpen ] = useState(false);
-        const [ searchCoin, setSearchCoin ] = useState(''); // TODO
-
-        return <div className={'dropdown' + (open ? ' open' : '')}>
-            <input className='dropdown-input'
-                type='text'
-                value={searchCoin}
-                onChange={(e) => { setSearchCoin(e.target.value) }}
-                disabled={inProgress}
-                onFocus={() => { setOpen(true) }}
-                placeholder={chosenBalance ? shortenSuiAddress(chosenBalance.coinType) : 'choose a coin'}
-                spellCheck='false' autoCorrect='off' autoComplete='off'
-            />
-            {(() => {
-                if (!open) {
-                    return null;
-                }
-                if (typeof userBalances === 'undefined') {
-                    return <div className='dropdown-options'>
-                        <div>Loading...</div>
-                    </div>
-                }
-                return <div className='dropdown-options'>
-                    {userBalances.map(bal =>
-                    <div className='dropdown-option' key={bal.coinType}
-                        onClick={() => { setChosenBalance(bal); setOpen(false); }}>
-                        {shortenSuiAddress(bal.coinType)}
-                    </div>)}
-                </div>;
-            })()}
-        </div>;
-    }
+    useEffect(() => {
+        const loadCoinInfo = async () => {
+            setCoinInfo(undefined);
+            if (!chosenBalance) {
+                return;
+            }
+            try {
+                const info = await getCoinInfo(chosenBalance.coinType, suiClient);
+                setCoinInfo(info);
+            } catch (err) {
+                setErrMsg(String(err));
+            }
+        };
+        loadCoinInfo();
+    }, [chosenBalance, suiClient]);
 
     const createLink = async (coinType: string, amountWithDec: bigint) => {
         setErrMsg('');
@@ -123,7 +98,7 @@ export const PageSend: React.FC = () =>
             } else {
                 const secret = url.split('#')[1];
                 navigate('/claim#' + secret, {
-                    state: { isCreator: true, /* createTxnDigest: resp.digest */ }
+                    state: { isCreator: true }
                 });
             }
         } catch (err) {
@@ -133,6 +108,40 @@ export const PageSend: React.FC = () =>
             setInProgress(false);
         }
     };
+
+    const SelectCoin: React.FC = () => {
+        const [ open, setOpen ] = useState(false);
+        const [ searchCoin, setSearchCoin ] = useState(''); // TODO
+
+        return <div className={'dropdown' + (open ? ' open' : '')}>
+            <input className='dropdown-input'
+                type='text'
+                value={searchCoin}
+                onChange={(e) => { setSearchCoin(e.target.value) }}
+                disabled={inProgress}
+                onFocus={() => { setOpen(true) }}
+                placeholder={chosenBalance ? shortenSuiAddress(chosenBalance.coinType) : 'choose a coin'}
+                spellCheck='false' autoCorrect='off' autoComplete='off'
+            />
+            {(() => {
+                if (!open) {
+                    return null;
+                }
+                if (typeof userBalances === 'undefined') {
+                    return <div className='dropdown-options'>
+                        <div>Loading...</div>
+                    </div>
+                }
+                return <div className='dropdown-options'>
+                    {userBalances.map(bal =>
+                    <div className='dropdown-option' key={bal.coinType}
+                        onClick={() => { setChosenBalance(bal); setOpen(false); }}>
+                        {shortenSuiAddress(bal.coinType)}
+                    </div>)}
+                </div>;
+            })()}
+        </div>;
+    }
 
     return <div id='page-send' className='page'>
 
@@ -160,16 +169,8 @@ export const PageSend: React.FC = () =>
                     return <></>;
                 }
 
-                if (!userCoinsInfo) {
-                    return <div>Loading coin info...</div>;
-                }
-
-                const coinInfo = userCoinsInfo.find(info => info.coinType === chosenBalance.coinType);
-
                 if (!coinInfo) {
-                    return <div className='error-box'>
-                        Couldn't find coin info for ${shortenSuiAddress(chosenBalance.coinType)}
-                    </div>
+                    return <div>Loading coin info...</div>;
                 }
 
                 // Validate amount
