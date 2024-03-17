@@ -5,8 +5,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';
 import { SelectCoin } from './components/SelectCoin';
-import { CoinInfo, getCoinInfo } from './lib/coininfo';
 import { ZkSendLinkBuilder } from './lib/zksend';
+import { useCoinBalances, useCoinInfo } from './lib/hooks';
 
 export const PageSend: React.FC = () =>
 {
@@ -17,54 +17,25 @@ export const PageSend: React.FC = () =>
     const { mutateAsync: signTransactionBlock } = useSignTransactionBlock();
 
     const { inProgress, setInProgress, openConnectModal } = useOutletContext<AppContext>();
-    const [ errMsg, setErrMsg ] = useState('');
-    const [ userBalances, setUserBalances ] = useState<CoinBalance[]>(); // loaded on wallet connect
+    const [ errMsg, setErrMsg ] = useState<string>();
     const [ chosenBalance, setChosenBalance ] = useState<CoinBalance>(); // chosen by user (dropdown)
-    const [ coinInfo, setCoinInfo ] = useState<CoinInfo>(); // loaded based on chosenBalance
     const [ amount, setAmount ] = useState(''); // chosen by user (numeric input)
 
+    const { userBalances, error: errBalances } = useCoinBalances(suiClient, currAcct);
+    const { coinInfo, error: errCoinInfo } = useCoinInfo(suiClient, chosenBalance);
+
     useEffect(() => {
-        const initialize = async () => {
-            setUserBalances(undefined);
+        const resetState = () => {
+            setInProgress(false);
+            setErrMsg(undefined);
             setChosenBalance(undefined);
             setAmount('');
-            setErrMsg('');
-            if (!currAcct) {
-                return;
-            }
-            try {
-                const balances = await loadUserBalances(currAcct.address);
-                setUserBalances(balances);
-            } catch(err) {
-                setErrMsg(String(err));
-            }
         }
-        const loadUserBalances = async (owner: string): Promise<CoinBalance[]> => {
-            const balances = await suiClient.getAllBalances({ owner });
-            const nonZeroBalances = balances.filter(bal => BigInt(bal.totalBalance) > 0n);
-            return nonZeroBalances;
-        };
-        initialize();
+        resetState();
     }, [currAcct, suiClient]);
 
-    useEffect(() => {
-        const loadCoinInfo = async () => {
-            setCoinInfo(undefined);
-            if (!chosenBalance) {
-                return;
-            }
-            try {
-                const info = await getCoinInfo(chosenBalance.coinType, suiClient);
-                setCoinInfo(info);
-            } catch (err) {
-                setErrMsg(String(err));
-            }
-        };
-        loadCoinInfo();
-    }, [chosenBalance, suiClient]);
-
     const createLink = async (coinType: string, amountWithDec: bigint) => {
-        setErrMsg('');
+        setErrMsg(undefined);
         if (!currAcct) return;
 
         setInProgress(true);
@@ -109,6 +80,8 @@ export const PageSend: React.FC = () =>
             setInProgress(false);
         }
     };
+
+    const error = errMsg ?? errBalances ?? errCoinInfo ?? null;
 
     return <div id='page-send' className='page'>
 
@@ -195,9 +168,9 @@ export const PageSend: React.FC = () =>
         </>
     })()}
 
-    {errMsg &&
+    {error &&
     <div className='error-box'>
-        Something went wrong:<br/>{errMsg}
+        Something went wrong:<br/>{error}
     </div>}
 
     </div>;
