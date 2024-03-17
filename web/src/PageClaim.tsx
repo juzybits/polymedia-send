@@ -18,14 +18,13 @@ export const PageClaim: React.FC = () =>
     const suiClient = useSuiClient();
     const { mutate: disconnect } = useDisconnectWallet();
 
-    const [ link, setLink ] = useState<ZkSendLink>();
-    const [ claimableBalances, setClaimableBalances ] = useState<BalancesType>();
-    const [ claimableCoinsInfo, setClaimableCoinsInfo ] = useState<CoinInfo[]>();
-    const [ inputAddress, setInputAddress ] = useState('');
-    const [ claimTxnDigest, setClaimTxnDigest ] = useState<string>();
-
     const { inProgress, setInProgress, openConnectModal } = useOutletContext<AppContext>();
     const [ errMsg, setErrMsg ] = useState('');
+    const [ link, setLink ] = useState<ZkSendLink>(); // loaded on init
+    const [ claimableBalances, setClaimableBalances ] = useState<BalancesType>(); // loaded on init
+    const [ claimableCoinsInfo, setClaimableCoinsInfo ] = useState<CoinInfo[]>(); // loaded on init
+    const [ chosenAddress, setChosenAddress ] = useState(''); // chosen by user
+    const [ claimSuccessful, setClaimSuccessful ] = useState<boolean>();
 
     useEffect(() => {
         const initialize = async () => {
@@ -68,7 +67,7 @@ export const PageClaim: React.FC = () =>
             if (resp.errors) {
                 setErrMsg(`Txn digest: ${resp.digest}\nTxn errors: ${JSON.stringify(resp.errors)}`);
             } else {
-                setClaimTxnDigest(resp.digest);
+                setClaimSuccessful(true);
                 window.scrollTo(0, 0);
             }
         } catch (err) {
@@ -99,7 +98,7 @@ export const PageClaim: React.FC = () =>
     return <div id='page-claim' className='page'>
 
     {errMsg &&
-    <div className='error'>
+    <div className='error-box'>
         Something went wrong:<br/>{errMsg}
     </div>}
 
@@ -128,12 +127,12 @@ export const PageClaim: React.FC = () =>
             </div>;
         }
 
-        const claimAddress = currAcct ? currAcct.address : inputAddress;
+        const claimAddress = currAcct ? currAcct.address : chosenAddress;
         const normalizedAddress = validateAndNormalizeSuiAddress(claimAddress);
         const shortAddress = shortenSuiAddress(normalizedAddress);
 
         // claim was successful
-        if (claimTxnDigest) {
+        if (claimSuccessful) {
             return <div className='success-box'>
                 <h1>Success</h1>
                 <p>Assets were sent to <span style={{whiteSpace: 'nowrap'}}>{shortAddress}</span></p>
@@ -167,13 +166,11 @@ export const PageClaim: React.FC = () =>
             <div>
             {claimableBalances.map(bal => {
                 const coinInfo = claimableCoinsInfo.find(info => info.coinType === bal.coinType);
-                if (!coinInfo) {
-                    throw new Error('TODO this should never happen');
+                if (!coinInfo) { // will never be undefined, otherwise an error would have been thrown already
+                    return null;
                 }
                 const claimableBalancePretty = formatBigInt(bal.amount, coinInfo.decimals, 'compact');
-                return <h2 key={bal.coinType}>
-                    {claimableBalancePretty} {coinInfo.symbol}
-                </h2>
+                return <h2 key={bal.coinType}>{claimableBalancePretty} {coinInfo.symbol}</h2>
             })}
             </div>
 
@@ -185,8 +182,8 @@ export const PageClaim: React.FC = () =>
                 </p>
 
                 <input type='text' pattern='^0[xX][a-fA-F0-9]{1,64}$'
-                    value={inputAddress} autoFocus disabled={inProgress}
-                    onChange={e => { setInputAddress(e.target.validity.valid ? e.target.value : inputAddress) }}
+                    value={chosenAddress} autoFocus disabled={inProgress}
+                    onChange={e => { setChosenAddress(e.target.validity.valid ? e.target.value : chosenAddress) }}
                     placeholder='paste address'
                 />
             </>}
