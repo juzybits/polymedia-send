@@ -68,7 +68,7 @@ export const PageSend: React.FC = () =>
 
         setInProgress(true);
         try {
-            const link = new ZkSendLinkBuilder({
+                const link = new ZkSendLinkBuilder({
                 sender: currAcct.address,
                 host: window.location.origin,
                 path: '/claim',
@@ -213,11 +213,6 @@ export const PageSend: React.FC = () =>
                     Error: {amountErr}
                 </div>}
 
-                {errMsg &&
-                <div className='error-box'>
-                    Something went wrong:<br/>{errMsg}
-                </div>}
-
                 <button
                     className='btn'
                     onClick={ () => { createLink(coinInfo.coinType, amountWithDec) }}
@@ -227,6 +222,11 @@ export const PageSend: React.FC = () =>
             })()}
         </>
     })()}
+
+    {errMsg &&
+    <div className='error-box'>
+        Something went wrong:<br/>{errMsg}
+    </div>}
 
     </div>;
 };
