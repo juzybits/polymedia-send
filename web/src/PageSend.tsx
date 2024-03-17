@@ -1,11 +1,12 @@
 import { useCurrentAccount, useSignTransactionBlock, useSuiClient } from '@mysten/dapp-kit';
 import { CoinBalance } from '@mysten/sui.js/client';
-import { convertNumberToBigInt, formatBigInt, formatNumber, shortenSuiAddress } from '@polymedia/suits';
+import { convertNumberToBigInt, formatBigInt, formatNumber } from '@polymedia/suits';
 import { useEffect, useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';
 import { ZkSendLinkBuilder } from './lib/zksend';
 import { CoinInfo, getCoinInfo } from './utils';
+import { SelectCoin } from './components/SelectCoin';
 
 export const PageSend: React.FC = () =>
 {
@@ -109,40 +110,6 @@ export const PageSend: React.FC = () =>
         }
     };
 
-    const SelectCoin: React.FC = () => {
-        const [ open, setOpen ] = useState(false);
-        const [ searchCoin, setSearchCoin ] = useState(''); // TODO
-
-        return <div className={'dropdown' + (open ? ' open' : '')}>
-            <input className='dropdown-input'
-                type='text'
-                value={searchCoin}
-                onChange={(e) => { setSearchCoin(e.target.value) }}
-                disabled={inProgress}
-                onFocus={() => { setOpen(true) }}
-                placeholder={chosenBalance ? shortenSuiAddress(chosenBalance.coinType) : 'choose a coin'}
-                spellCheck='false' autoCorrect='off' autoComplete='off'
-            />
-            {(() => {
-                if (!open) {
-                    return null;
-                }
-                if (typeof userBalances === 'undefined') {
-                    return <div className='dropdown-options'>
-                        <div>Loading...</div>
-                    </div>
-                }
-                return <div className='dropdown-options'>
-                    {userBalances.map(bal =>
-                    <div className='dropdown-option' key={bal.coinType}
-                        onClick={() => { setChosenBalance(bal); setOpen(false); }}>
-                        {shortenSuiAddress(bal.coinType)}
-                    </div>)}
-                </div>;
-            })()}
-        </div>;
-    }
-
     return <div id='page-send' className='page'>
 
     <h1>Send</h1>
@@ -162,7 +129,12 @@ export const PageSend: React.FC = () =>
         }
 
         return <>
-            <SelectCoin />
+            <SelectCoin
+                userBalances={userBalances}
+                chosenBalance={chosenBalance}
+                setChosenBalance={setChosenBalance}
+                inProgress={inProgress}
+            />
 
             {(() => {
                 if (!chosenBalance) {
