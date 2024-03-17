@@ -24,27 +24,34 @@ export const PageSend: React.FC = () =>
     const [ errMsg, setErrMsg ] = useState('');
 
     useEffect(() => {
-        loadUserBalances();
+        const initialize = async () => {
+            if (!currAcct) {
+                setUserBalances(undefined);
+                setUserCoinsInfo(undefined);
+                return;
+            }
+            try {
+                const balances = await loadUserBalances(currAcct.address);
+                setUserBalances(balances);
+
+                const coinInfos = await loadUserCoinsInfo(balances);
+                setUserCoinsInfo(coinInfos);
+            } catch(err) {
+                setErrMsg(String(err));
+            }
+        }
+        const loadUserBalances = async (owner: string): Promise<CoinBalance[]> => {
+            const balances = await suiClient.getAllBalances({ owner });
+            const nonZeroBalances = balances.filter(bal => BigInt(bal.totalBalance) > 0n);
+            return nonZeroBalances;
+        };
+        const loadUserCoinsInfo = async (balances: CoinBalance[]): Promise<CoinInfo[]> => {
+            const promises = balances.map(bal => getCoinInfo(bal.coinType, suiClient));
+            const infos = await Promise.all(promises);
+            return infos;
+        }
+        initialize();
     }, [currAcct, suiClient]);
-
-    const loadUserBalances = async () => {
-        if (!currAcct) {
-            setUserBalances(undefined);
-        } else {
-            const newUserBalances = await suiClient.getAllBalances({ owner: currAcct.address });
-            setUserBalances(newUserBalances);
-            loadUserCoinsInfo(newUserBalances);
-        }
-    };
-
-    const loadUserCoinsInfo = async (balances: CoinBalance[]) => {
-        const newUserCoinsInfo: CoinInfo[] = [];
-        for (const balance of balances) {
-            const coinInfo = await getCoinInfo(balance.coinType, suiClient);
-            newUserCoinsInfo.push(coinInfo);
-        }
-        setUserCoinsInfo(newUserCoinsInfo);
-    };
 
     const SelectCoin: React.FC = () => {
         const [ open, setOpen ] = useState(false);
