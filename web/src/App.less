@@ -30,6 +30,7 @@ h1, h2, h3, h4, h5 {
 @input-width: 300px;
 @mobile-width: 600px;
 @radius: 1em;
+@text-size: 1.1rem;
 
 /* Common styles */
 
@@ -178,9 +179,9 @@ nav {
         font-size: 1.25rem;
     }
     p {
-        padding-bottom: @bottom-space;
-        font-size: 1.1rem;
+        font-size: @text-size;
         line-height: 1.5rem;
+        padding-bottom: @bottom-space;
     }
     .btn {
         background-color: @color-blue-4;
@@ -246,6 +247,7 @@ nav {
         margin-bottom: @bottom-space;
         color: rgb(255, 115, 115);
         overflow-wrap: anywhere;
+        font-size: @text-size;
     }
 
     .dropdown {

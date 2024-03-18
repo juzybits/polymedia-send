@@ -9,6 +9,8 @@ import { useCoinBalances, useCoinInfo } from './lib/hooks';
 import { ZkSendLinkBuilder, ZkSendLinkBuilderOptions } from './lib/zksend';
 import { CoinInfo } from './lib/coininfo';
 
+const MAX_LINKS = 300;
+
 export const PageBulk: React.FC = () =>
 {
     const currAcct = useCurrentAccount();
@@ -104,7 +106,20 @@ export const PageBulk: React.FC = () =>
                 // Validate amounts
                 const linkValues = parseLinksAmounts(chosenAmounts);
                 const totalValue = linkValues.reduce((total, lv) => total + (lv.count * lv.value), 0);
-                const disableSendBtn = totalValue === 0 || inProgress;
+                const linkValuesErr = (() => {
+                    const totalLinks = linkValues.reduce((total, lv) => total + lv.count, 0);
+                    if (totalLinks > MAX_LINKS) {
+                        return `You can create up to ${MAX_LINKS} links at once`;
+                    }
+                    const totalValueWithDec = convertNumberToBigInt(totalValue, coinInfo.decimals);
+                    const userBalanceWithDec = BigInt(chosenBalance.totalBalance);
+                    if (totalValueWithDec > userBalanceWithDec) {
+                        return 'Not enough balance';
+                    }
+                    return '';
+                })();
+
+                const disableSendBtn = totalValue === 0 || linkValuesErr !== '' || inProgress;
 
                 return <>
 
@@ -120,21 +135,21 @@ export const PageBulk: React.FC = () =>
                     placeholder='Enter "[LINKS] x [AMOUNT]". For example: "50 x 1000, 25 x 5000".'
                 />
 
-                <div>
+                <p>
                     Total amount to send: {formatNumber(totalValue, 'compact')} {coinInfo.symbol}
-                    {linkValues.map((lv, idx) => <p key={idx}>
-                        {lv.count} links with {lv.value} {coinInfo.symbol}
-                    </p>)}
-                </div>
+                </p>
+                {linkValues.map((lv, idx) => <p key={idx}>
+                    {lv.count} link{lv.count > 1 ? 's' : ''} with {formatNumber(lv.value, 'compact')} {coinInfo.symbol}
+                </p>)}
 
                 <p>
                     Your balance: {formatBigInt(BigInt(chosenBalance.totalBalance), coinInfo.decimals, 'compact')}
                 </p>
 
-                {/* {amountsErr &&
+                {linkValuesErr &&
                 <div className='error-box'>
-                    Error: {amountsErr}
-                </div>} */}
+                    Error: {linkValuesErr}
+                </div>}
 
                 <button
                     className='btn'

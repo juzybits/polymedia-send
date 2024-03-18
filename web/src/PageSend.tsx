@@ -126,11 +126,11 @@ export const PageSend: React.FC = () =>
                         return '';
                     }
                     if (amountNum === 0) {
-                        return 'amount can\'t be 0';
+                        return 'Amount can\'t be 0';
                     }
                     const userBalanceWithDec = BigInt(chosenBalance.totalBalance);
                     if (amountWithDec > userBalanceWithDec) {
-                        return 'not enough balance';
+                        return 'Not enough balance';
                     }
                     return '';
                 })();
