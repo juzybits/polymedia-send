@@ -1,6 +1,6 @@
 import { useCurrentAccount, useSignTransactionBlock, useSuiClient } from '@mysten/dapp-kit';
 import { CoinBalance } from '@mysten/sui.js/client';
-import { formatBigInt, formatNumber } from '@polymedia/suits';
+import { convertNumberToBigInt, formatBigInt, formatNumber } from '@polymedia/suits';
 import { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';
@@ -33,7 +33,7 @@ export const PageBulk: React.FC = () =>
         resetState();
     }, [currAcct, suiClient]);
 
-    const createLinks = async (coinInfo: CoinInfo, amounts: bigint[]) => {
+    const createLinks = async (coinInfo: CoinInfo, linkValues: LinkValue[]) => {
         if (!currAcct) return;
 
         const options: ZkSendLinkBuilderOptions = {
@@ -42,6 +42,11 @@ export const PageBulk: React.FC = () =>
             path: '/claim',
             client: suiClient,
         };
+
+        const amounts = linkValues.flatMap(lv => Array(lv.count).fill(
+            convertNumberToBigInt(lv.value, coinInfo.decimals)
+        ));
+
         const [ txb, links ] = await ZkSendLinkBuilder.createMultiSendLinks(
             coinInfo.coinType,
             amounts,
@@ -97,11 +102,9 @@ export const PageBulk: React.FC = () =>
                 }
 
                 // Validate amounts
-                const amounts: bigint[] = []; // TODO;
-                const amountTotalNum = 123; // TODO
-                const amountsErr = ''; // TODO
-
-                const disableSendBtn = amountsErr !== '' || inProgress;
+                const linkValues = parseLinksAmounts(chosenAmounts);
+                const totalValue = linkValues.reduce((total, lv) => total + (lv.count * lv.value), 0);
+                const disableSendBtn = totalValue === 0 || inProgress;
 
                 return <>
 
@@ -110,26 +113,32 @@ export const PageBulk: React.FC = () =>
                 <textarea
                     value={chosenAmounts}
                     disabled={inProgress}
-                    onChange={e => { setChosenAmounts(e.target.value) }}
+                    onChange={e => {
+                        const newValue = e.target.value.replace(/\./g, '');
+                        setChosenAmounts(newValue);
+                    }}
                     placeholder='Enter "[LINKS] x [AMOUNT]". For example: "50 x 1000, 25 x 5000".'
                 />
 
-                <p>
-                    Total amount to send: {formatNumber(amountTotalNum, 'compact')} {coinInfo.symbol}
-                </p>
+                <div>
+                    Total amount to send: {formatNumber(totalValue, 'compact')} {coinInfo.symbol}
+                    {linkValues.map((lv, idx) => <p key={idx}>
+                        {lv.count} links with {lv.value} {coinInfo.symbol}
+                    </p>)}
+                </div>
 
                 <p>
                     Your balance: {formatBigInt(BigInt(chosenBalance.totalBalance), coinInfo.decimals, 'compact')}
                 </p>
 
-                {amountsErr &&
+                {/* {amountsErr &&
                 <div className='error-box'>
                     Error: {amountsErr}
-                </div>}
+                </div>} */}
 
                 <button
                     className='btn'
-                    onClick={ () => { createLinks(coinInfo, amounts) }}
+                    onClick={ () => { createLinks(coinInfo, linkValues) }}
                     disabled={disableSendBtn}
                 >CREATE LINKS</button>
                 </>;
@@ -144,3 +153,23 @@ export const PageBulk: React.FC = () =>
 
     </div>;
 };
+
+type LinkValue = {
+    count: number;
+    value: number;
+};
+
+const linksAmountsPattern = /(\d+)\s*[xX*]\s*(\d+)/gi;
+
+function parseLinksAmounts(input: string): LinkValue[] {
+    const linkValues: LinkValue[] = [];
+
+    let match;
+    while ((match = linksAmountsPattern.exec(input)) !== null) {
+        const count = parseInt(match[1], 10);
+        const value = parseInt(match[2], 10);
+        linkValues.push({ count, value });
+    }
+
+    return linkValues;
+}
