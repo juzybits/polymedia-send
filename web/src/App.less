@@ -221,7 +221,7 @@ nav {
         }
     }
 
-    input[type=text] {
+    input[type=text], textarea {
         background-color: @input-background;
         border-radius: @radius;
         color: @input-color;
@@ -229,10 +229,17 @@ nav {
         outline: none;
         padding: @input-padding;
         width: @input-width;
+        max-width: 100%;
         &:disabled {
             background-color: @input-background-muted;
             color: @input-color-muted;
         }
+    }
+
+    textarea {
+        width: 100%;
+        resize: vertical;
+        min-height: 5rem;
     }
 
     .error-box {
@@ -244,6 +251,7 @@ nav {
     .dropdown {
         margin-bottom: @bottom-space;
         width: @input-width;
+        max-width: 100%;
         .dropdown-input {
             margin: 0;
             &:hover {

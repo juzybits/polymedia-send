@@ -146,11 +146,11 @@ export const PageSend: React.FC = () =>
                 />
 
                 <p>
-                    Your balance: {formatBigInt(BigInt(chosenBalance.totalBalance), coinInfo.decimals, 'compact')}
+                    Amount to send: {formatNumber(amountNum, 'compact')} {coinInfo.symbol}
                 </p>
 
                 <p>
-                    Amount to send: {formatNumber(amountNum, 'compact')} {coinInfo.symbol}
+                    Your balance: {formatBigInt(BigInt(chosenBalance.totalBalance), coinInfo.decimals, 'compact')}
                 </p>
 
                 {amountErr &&
