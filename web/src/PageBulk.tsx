@@ -64,10 +64,10 @@ function downloadFile(filename: string, content: string, mime: string): void {
     URL.revokeObjectURL(url); // Free up memory by releasing the blob URL
 }
 
-function downloadCSV(filename: string, data: string[][]): void {
-    const content = data.map(row => row.join(',')).join('\n');
-    downloadFile(filename, content, 'text/csv;charset=utf-8;');
-}
+// function downloadCSV(filename: string, data: string[][]): void {
+//     const content = data.map(row => row.join(',')).join('\n');
+//     downloadFile(filename, content, 'text/csv;charset=utf-8;');
+// }
 
 function getCurrentDate(): string {
     const now = new Date();
@@ -95,6 +95,7 @@ export const PageBulk: React.FC = () =>
     const [ chosenBalance, setChosenBalance ] = useState<CoinBalance>(); // dropdown
     const [ chosenAmounts, setChosenAmounts ] = useState<string>(''); // textarea
     const [ txbAndLinks, setTxbAndLinks ] = useState<TxbAndLinks>();
+    const [ enableExecution, setEnableExecution ] = useState(false);
 
     const { userBalances, error: errBalances } = useCoinBalances(suiClient, currAcct);
     const { coinInfo, error: errCoinInfo } = useCoinInfo(suiClient, chosenBalance);
@@ -136,7 +137,7 @@ export const PageBulk: React.FC = () =>
         }
     };
 
-    const executeTxn = async (txb: TransactionBlock) => {
+    const executeTxb = async (txb: TransactionBlock) => {
         const signedTxb = await signTransactionBlock({ transactionBlock: txb });
         const resp = await suiClient.executeTransactionBlock({
             transactionBlock: signedTxb.transactionBlockBytes,
@@ -241,23 +242,42 @@ export const PageBulk: React.FC = () =>
         }
         if (txbAndLinks) {
             const count = txbAndLinks.links.length;
+            const allLinksStr = txbAndLinks.links.reduce((txt, link) => txt + link.getLink() + '\n', '');
             return <>
                 <p>Your {count === 1 ? 'link is' : `${count} links are`} ready.</p>
                 <p>Copy or download the links before sending the assets.</p>
 
                 <button className='btn' onClick={() => {
                     const filename = `zksend_${count}_links_${getCurrentDate()}.csv`;
-                    const csvRows = txbAndLinks.links.map(link => [link.getLink()]);
-                    downloadCSV(filename, csvRows);
-                }}>Download</button>
+                    // const csvRows = txbAndLinks.links.map(link => [link.getLink()]);
+                    downloadFile(filename, allLinksStr, 'text/csv;charset=utf-8;');
+                    setEnableExecution(true);
+                }}>
+                    Download
+                </button>
 
-                <button className='btn'>Copy</button>
+                <button className='btn' onClick={async () => {
+                    try {
+                        await navigator.clipboard.writeText(allLinksStr);
+                        // showCopyMessage('👍 Link copied');
+                        setEnableExecution(true);
+                    } catch (error) {
+                        // showCopyMessage("❌ Oops, didn't work. Please copy the page URL manually.");
+                    }
+                }}>
+                    Copy
+                </button>
+
+                {enableExecution &&
+                <button className='btn' onClick={() => { executeTxb(txbAndLinks.txb) }}>
+                    Create links
+                </button>}
 
                 <textarea
                     readOnly
-                    style={{height: '15rem', whiteSpace: 'pre-wrap'}}
+                    style={{height: '15rem', overflowWrap: 'normal'}}
                     onClick={(e: React.MouseEvent<HTMLTextAreaElement>) => { e.currentTarget.select() }}
-                    value={txbAndLinks.links.reduce((txt, link) => txt + link.getLink() + '\n', '')}
+                    value={allLinksStr}
                 />
             </>;
         }
