@@ -18,8 +18,8 @@ export const PageSend: React.FC = () =>
 
     const { inProgress, setInProgress, openConnectModal } = useOutletContext<AppContext>();
     const [ errMsg, setErrMsg ] = useState<string>();
-    const [ chosenBalance, setChosenBalance ] = useState<CoinBalance>(); // chosen by user (dropdown)
-    const [ amount, setAmount ] = useState(''); // chosen by user (numeric input)
+    const [ chosenBalance, setChosenBalance ] = useState<CoinBalance>(); // dropdown
+    const [ chosenAmount, setChosenAmount ] = useState(''); // numeric input
 
     const { userBalances, error: errBalances } = useCoinBalances(suiClient, currAcct);
     const { coinInfo, error: errCoinInfo } = useCoinInfo(suiClient, chosenBalance);
@@ -29,7 +29,7 @@ export const PageSend: React.FC = () =>
             setInProgress(false);
             setErrMsg(undefined);
             setChosenBalance(undefined);
-            setAmount('');
+            setChosenAmount('');
         }
         resetState();
     }, [currAcct, suiClient]);
@@ -119,10 +119,10 @@ export const PageSend: React.FC = () =>
                 }
 
                 // Validate amount
-                const amountNum = amount === '.' ? 0 : Number(amount);
+                const amountNum = chosenAmount === '.' ? 0 : Number(chosenAmount);
                 const amountWithDec = convertNumberToBigInt(amountNum, coinInfo.decimals);
                 const amountErr = (() => {
-                    if (amount === '' || amount === '.') {
+                    if (chosenAmount === '' || chosenAmount === '.') {
                         return '';
                     }
                     if (amountNum === 0) {
@@ -135,12 +135,12 @@ export const PageSend: React.FC = () =>
                     return '';
                 })();
 
-                const disableSendBtn = amount === '' || amount === '.' || amountErr !== '' || inProgress;
+                const disableSendBtn = chosenAmount === '' || chosenAmount === '.' || amountErr !== '' || inProgress;
 
                 return <>
                 <input type='text' inputMode='numeric' pattern={`^[0-9]*\\.?[0-9]{0,${coinInfo.decimals}}$`}
-                    value={amount} disabled={inProgress}
-                    onChange={e => { setAmount(e.target.validity.valid ? e.target.value : amount) }}
+                    value={chosenAmount} disabled={inProgress}
+                    onChange={e => { setChosenAmount(e.target.validity.valid ? e.target.value : chosenAmount) }}
                     onKeyDown={e => { if (e.key === 'Enter' && !disableSendBtn) { createLink(coinInfo.coinType, amountWithDec) } }}
                     placeholder='enter amount'
                 />

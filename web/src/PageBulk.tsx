@@ -19,8 +19,8 @@ export const PageBulk: React.FC = () =>
 
     const { inProgress, setInProgress, openConnectModal } = useOutletContext<AppContext>();
     const [ errMsg, setErrMsg ] = useState<string>();
-    const [ chosenBalance, setChosenBalance ] = useState<CoinBalance>(); // chosen by user (dropdown)
-    const [ chosenAmounts, setChosenAmounts ] = useState<string>(''); // chosen by user (textarea)
+    const [ chosenBalance, setChosenBalance ] = useState<CoinBalance>(); // dropdown
+    const [ chosenAmounts, setChosenAmounts ] = useState<string>(''); // textarea
 
     const { userBalances, error: errBalances } = useCoinBalances(suiClient, currAcct);
     const { coinInfo, error: errCoinInfo } = useCoinInfo(suiClient, chosenBalance);
@@ -123,7 +123,7 @@ export const PageBulk: React.FC = () =>
 
                 return <>
 
-                <p>You can create up to 300 links with one transaction.</p>
+                <p>You can create up to {MAX_LINKS} links with one transaction.</p>
 
                 <textarea
                     value={chosenAmounts}
