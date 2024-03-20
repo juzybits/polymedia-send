@@ -8,8 +8,81 @@ import { SelectCoin } from './components/SelectCoin';
 import { useCoinBalances, useCoinInfo } from './lib/hooks';
 import { ZkSendLinkBuilder, ZkSendLinkBuilderOptions } from './lib/zksend';
 import { CoinInfo } from './lib/coininfo';
+import { TransactionBlock } from '@mysten/sui.js/transactions';
+
+/* Constants */
 
 const MAX_LINKS = 300;
+
+/* Types */
+
+type TxbAndLinks = {
+    txb: TransactionBlock,
+    links: ZkSendLinkBuilder[],
+};
+
+type LinkValue = {
+    count: number;
+    value: number;
+};
+
+/* Functions */
+
+const linksAmountsPattern = /(\d+)\s*[xX*]\s*(\d+)/gi;
+
+function parseLinksAmounts(input: string): LinkValue[] {
+    const linkValues: LinkValue[] = [];
+
+    let match;
+    while ((match = linksAmountsPattern.exec(input)) !== null) {
+        const count = parseInt(match[1], 10);
+        const value = parseInt(match[2], 10);
+        linkValues.push({ count, value });
+    }
+
+    return linkValues;
+}
+
+function downloadFile(filename: string, content: string, mime: string): void {
+    // Create a Blob with the file contents
+    const blob = new Blob([ content ], { type: mime });
+
+    // Create a URL for the blob
+    const url = URL.createObjectURL(blob);
+
+    // Create an anchor (<a>) element and set its attributes for download
+    const downloadLink = document.createElement('a');
+    downloadLink.href = url;
+    downloadLink.setAttribute('download', filename);
+
+    // Trigger the download by clicking the anchor element
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+
+    // Cleanup
+    document.body.removeChild(downloadLink); // Remove the anchor element
+    URL.revokeObjectURL(url); // Free up memory by releasing the blob URL
+}
+
+function downloadCSV(filename: string, data: string[][]): void {
+    const content = data.map(row => row.join(',')).join('\n');
+    downloadFile(filename, content, 'text/csv;charset=utf-8;');
+}
+
+function getCurrentDate(): string {
+    const now = new Date();
+
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // JavaScript months are 0-based.
+    const day = String(now.getDate()).padStart(2, '0');
+    // const hours = String(now.getHours()).padStart(2, '0');
+    // const minutes = String(now.getMinutes()).padStart(2, '0');
+    // const seconds = String(now.getSeconds()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+}
+
+/* React */
 
 export const PageBulk: React.FC = () =>
 {
@@ -21,6 +94,7 @@ export const PageBulk: React.FC = () =>
     const [ errMsg, setErrMsg ] = useState<string>();
     const [ chosenBalance, setChosenBalance ] = useState<CoinBalance>(); // dropdown
     const [ chosenAmounts, setChosenAmounts ] = useState<string>(''); // textarea
+    const [ txbAndLinks, setTxbAndLinks ] = useState<TxbAndLinks>();
 
     const { userBalances, error: errBalances } = useCoinBalances(suiClient, currAcct);
     const { coinInfo, error: errCoinInfo } = useCoinInfo(suiClient, chosenBalance);
@@ -54,9 +128,15 @@ export const PageBulk: React.FC = () =>
             amounts,
             options,
         );
+
+        setTxbAndLinks({ txb, links });
+
         for (const link of links) {
-            console.log(link.getLink());
+            console.debug(link.getLink());
         }
+    };
+
+    const executeTxn = async (txb: TransactionBlock) => {
         const signedTxb = await signTransactionBlock({ transactionBlock: txb });
         const resp = await suiClient.executeTransactionBlock({
             transactionBlock: signedTxb.transactionBlockBytes,
@@ -86,79 +166,101 @@ export const PageBulk: React.FC = () =>
             return <div>Loading balances...</div>;
         }
 
-        return <>
-            <SelectCoin
-                userBalances={userBalances}
-                chosenBalance={chosenBalance}
-                setChosenBalance={setChosenBalance}
-                inProgress={inProgress}
-            />
-
-            {(() => {
-                if (!chosenBalance) {
-                    return <></>;
-                }
-
-                if (!coinInfo) {
-                    return <div>Loading coin info...</div>;
-                }
-
-                // Validate amounts
-                const linkValues = parseLinksAmounts(chosenAmounts);
-                const totalValue = linkValues.reduce((total, lv) => total + (lv.count * lv.value), 0);
-                const linkValuesErr = (() => {
-                    const totalLinks = linkValues.reduce((total, lv) => total + lv.count, 0);
-                    if (totalLinks > MAX_LINKS) {
-                        return `You can create up to ${MAX_LINKS} links at once`;
-                    }
-                    const totalValueWithDec = convertNumberToBigInt(totalValue, coinInfo.decimals);
-                    const userBalanceWithDec = BigInt(chosenBalance.totalBalance);
-                    if (totalValueWithDec > userBalanceWithDec) {
-                        return 'Not enough balance';
-                    }
-                    return '';
-                })();
-
-                const disableSendBtn = totalValue === 0 || linkValuesErr !== '' || inProgress;
-
-                return <>
-
-                <p>You can create up to {MAX_LINKS} links with one transaction.</p>
-
-                <textarea
-                    value={chosenAmounts}
-                    disabled={inProgress}
-                    onChange={e => {
-                        const newValue = e.target.value.replace(/\./g, '');
-                        setChosenAmounts(newValue);
-                    }}
-                    placeholder='Enter "[LINKS] x [AMOUNT]". For example: "50 x 1000, 25 x 5000".'
+        if (!txbAndLinks) {
+            return <>
+                <SelectCoin
+                    userBalances={userBalances}
+                    chosenBalance={chosenBalance}
+                    setChosenBalance={setChosenBalance}
+                    inProgress={inProgress}
                 />
 
-                <p>
-                    Total amount to send: {formatNumber(totalValue, 'compact')} {coinInfo.symbol}
-                </p>
-                {linkValues.map((lv, idx) => <p key={idx}>
-                    {lv.count} link{lv.count > 1 ? 's' : ''} with {formatNumber(lv.value, 'compact')} {coinInfo.symbol}
-                </p>)}
+                {(() => {
+                    if (!chosenBalance) {
+                        return null;
+                    }
 
-                <p>
-                    Your balance: {formatBigInt(BigInt(chosenBalance.totalBalance), coinInfo.decimals, 'compact')}
-                </p>
+                    if (!coinInfo) {
+                        return <div>Loading coin info...</div>;
+                    }
 
-                {linkValuesErr &&
-                <div className='error-box'>
-                    Error: {linkValuesErr}
-                </div>}
+                    // Validate amounts
+                    const linkValues = parseLinksAmounts(chosenAmounts);
+                    const totalValue = linkValues.reduce((total, lv) => total + (lv.count * lv.value), 0);
+                    const linkValuesErr = (() => {
+                        const totalLinks = linkValues.reduce((total, lv) => total + lv.count, 0);
+                        if (totalLinks > MAX_LINKS) {
+                            return `You can create up to ${MAX_LINKS} links at once`;
+                        }
+                        const totalValueWithDec = convertNumberToBigInt(totalValue, coinInfo.decimals);
+                        const userBalanceWithDec = BigInt(chosenBalance.totalBalance);
+                        if (totalValueWithDec > userBalanceWithDec) {
+                            return 'Not enough balance';
+                        }
+                        return '';
+                    })();
 
-                <button
-                    className='btn'
-                    onClick={ () => { createLinks(coinInfo, linkValues) }}
-                    disabled={disableSendBtn}
-                >CREATE LINKS</button>
-                </>;
-            })()}
-        </>
+                    const disableSendBtn = totalValue === 0 || linkValuesErr !== '' || inProgress;
+                    return <>
+                        <p>You can create up to {MAX_LINKS} links with one transaction.</p>
+
+                        <textarea
+                            value={chosenAmounts}
+                            disabled={inProgress}
+                            onChange={e => {
+                                const newValue = e.target.value.replace(/\./g, '');
+                                setChosenAmounts(newValue);
+                            }}
+                            placeholder='Enter "[LINKS] x [AMOUNT]". For example: "50 x 1000, 25 x 5000".'
+                        />
+
+                        <p>
+                            Total amount to send: {formatNumber(totalValue, 'compact')} {coinInfo.symbol}
+                        </p>
+                        {linkValues.map((lv, idx) => <p key={idx}>
+                            {lv.count} link{lv.count > 1 ? 's' : ''} with {formatNumber(lv.value, 'compact')} {coinInfo.symbol}
+                        </p>)}
+
+                        <p>
+                            Your balance: {formatBigInt(BigInt(chosenBalance.totalBalance), coinInfo.decimals, 'compact')}
+                        </p>
+
+                        {linkValuesErr &&
+                        <div className='error-box'>
+                            Error: {linkValuesErr}
+                        </div>}
+
+                        <button
+                            className='btn'
+                            onClick={ () => { createLinks(coinInfo, linkValues) }}
+                            disabled={disableSendBtn}
+                        >CREATE LINKS</button>
+                    </>;
+                })()}
+            </>
+        }
+        if (txbAndLinks) {
+            const count = txbAndLinks.links.length;
+            return <>
+                <p>Your {count === 1 ? 'link is' : `${count} links are`} ready.</p>
+                <p>Copy or download the links before sending the assets.</p>
+
+                <button className='btn' onClick={() => {
+                    const filename = `zksend_${count}_links_${getCurrentDate()}.csv`;
+                    const csvRows = txbAndLinks.links.map(link => [link.getLink()]);
+                    downloadCSV(filename, csvRows);
+                }}>Download</button>
+
+                <button className='btn'>Copy</button>
+
+                <textarea
+                    readOnly
+                    style={{height: '15rem', whiteSpace: 'pre-wrap'}}
+                    onClick={(e: React.MouseEvent<HTMLTextAreaElement>) => { e.currentTarget.select() }}
+                    value={txbAndLinks.links.reduce((txt, link) => txt + link.getLink() + '\n', '')}
+                />
+            </>;
+        }
     })()}
 
     {error &&
@@ -168,23 +270,3 @@ export const PageBulk: React.FC = () =>
 
     </div>;
 };
-
-type LinkValue = {
-    count: number;
-    value: number;
-};
-
-const linksAmountsPattern = /(\d+)\s*[xX*]\s*(\d+)/gi;
-
-function parseLinksAmounts(input: string): LinkValue[] {
-    const linkValues: LinkValue[] = [];
-
-    let match;
-    while ((match = linksAmountsPattern.exec(input)) !== null) {
-        const count = parseInt(match[1], 10);
-        const value = parseInt(match[2], 10);
-        linkValues.push({ count, value });
-    }
-
-    return linkValues;
-}
