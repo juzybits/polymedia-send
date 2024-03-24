@@ -22,9 +22,12 @@ export const SelectCoin: React.FC<{
             type='text'
             value={searchCoin}
             onChange={(e) => { setSearchCoin(e.target.value) }}
-            disabled={inProgress}
+            disabled={inProgress || userBalances.length === 0}
             onFocus={() => { setOpen(true) }}
-            placeholder={chosenBalance ? shortenSuiAddress(chosenBalance.coinType) : 'choose a coin'}
+            placeholder={ chosenBalance
+                ? shortenSuiAddress(chosenBalance.coinType)
+                : (userBalances.length > 0 ? 'choose a coin' : 'no coins found')
+            }
             spellCheck='false' autoCorrect='off' autoComplete='off'
         />
         {(() => {
