@@ -1,87 +1,14 @@
 import { useCurrentAccount, useSignTransactionBlock, useSuiClient } from '@mysten/dapp-kit';
 import { CoinBalance } from '@mysten/sui.js/client';
+import { TransactionBlock } from '@mysten/sui.js/transactions';
 import { convertNumberToBigInt, formatBigInt, formatNumber } from '@polymedia/suits';
 import { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';
 import { SelectCoin } from './components/SelectCoin';
+import { CoinInfo } from './lib/coininfo';
 import { useCoinBalances, useCoinInfo } from './lib/hooks';
 import { ZkSendLinkBuilder, ZkSendLinkBuilderOptions } from './lib/zksend';
-import { CoinInfo } from './lib/coininfo';
-import { TransactionBlock } from '@mysten/sui.js/transactions';
-
-/* Constants */
-
-const MAX_LINKS = 300;
-
-/* Types */
-
-type PendingLinks = {
-    txb: TransactionBlock,
-    links: ZkSendLinkBuilder[],
-    coinInfo: CoinInfo,
-};
-
-type LinkValue = {
-    count: number;
-    value: number;
-};
-
-/* Functions */
-
-const linksAmountsPattern = /(\d+)\s*[xX*]\s*(\d+)/gi;
-
-function parseLinksAmounts(input: string): LinkValue[] {
-    const linkValues: LinkValue[] = [];
-
-    let match;
-    while ((match = linksAmountsPattern.exec(input)) !== null) {
-        const count = parseInt(match[1], 10);
-        const value = parseInt(match[2], 10);
-        linkValues.push({ count, value });
-    }
-
-    return linkValues;
-}
-
-function downloadFile(filename: string, content: string, mime: string): void {
-    // Create a Blob with the file contents
-    const blob = new Blob([ content ], { type: mime });
-
-    // Create a URL for the blob
-    const url = URL.createObjectURL(blob);
-
-    // Create an anchor (<a>) element and set its attributes for download
-    const downloadLink = document.createElement('a');
-    downloadLink.href = url;
-    downloadLink.setAttribute('download', filename);
-
-    // Trigger the download by clicking the anchor element
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-
-    // Cleanup
-    document.body.removeChild(downloadLink); // Remove the anchor element
-    URL.revokeObjectURL(url); // Free up memory by releasing the blob URL
-}
-
-// function downloadCSV(filename: string, data: string[][]): void {
-//     const content = data.map(row => row.join(',')).join('\n');
-//     downloadFile(filename, content, 'text/csv;charset=utf-8;');
-// }
-
-function getCurrentDate(): string {
-    const now = new Date();
-
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0'); // JavaScript months are 0-based.
-    const day = String(now.getDate()).padStart(2, '0');
-    // const hours = String(now.getHours()).padStart(2, '0');
-    // const minutes = String(now.getMinutes()).padStart(2, '0');
-    // const seconds = String(now.getSeconds()).padStart(2, '0');
-
-    return `${year}-${month}-${day}`;
-}
 
 /* React */
 
@@ -252,7 +179,7 @@ export const PageBulk: React.FC = () =>
                 <button className='btn' onClick={() => {
                     const filename = `zksend_${symbol}_${count}_links_${getCurrentDate()}.csv`;
                     // const csvRows = txbAndLinks.links.map(link => [link.getLink()]);
-                    downloadFile(filename, allLinksStr, 'text/csv;charset=utf-8;');
+                    downloadFile(filename, allLinksStr, MIME_CSV);
                     setEnableExecution(true);
                 }}>
                     Download
@@ -293,3 +220,77 @@ export const PageBulk: React.FC = () =>
 
     </div>;
 };
+
+/* Constants */
+
+const MAX_LINKS = 300;
+const MIME_CSV = 'text/csv;charset=utf-8;';
+
+/* Types */
+
+type PendingLinks = {
+    txb: TransactionBlock,
+    links: ZkSendLinkBuilder[],
+    coinInfo: CoinInfo,
+};
+
+type LinkValue = {
+    count: number;
+    value: number;
+};
+
+/* Functions */
+
+const linksAmountsPattern = /(\d+)\s*[xX*]\s*(\d+)/gi;
+
+function parseLinksAmounts(input: string): LinkValue[] {
+    const linkValues: LinkValue[] = [];
+
+    let match;
+    while ((match = linksAmountsPattern.exec(input)) !== null) {
+        const count = parseInt(match[1]);
+        const value = parseInt(match[2]);
+        linkValues.push({ count, value });
+    }
+
+    return linkValues;
+}
+
+function downloadFile(filename: string, content: string, mime: string): void {
+    // Create a Blob with the file contents
+    const blob = new Blob([ content ], { type: mime });
+
+    // Create a URL for the blob
+    const url = URL.createObjectURL(blob);
+
+    // Create an anchor (<a>) element and set its attributes for download
+    const downloadLink = document.createElement('a');
+    downloadLink.href = url;
+    downloadLink.setAttribute('download', filename);
+
+    // Trigger the download by clicking the anchor element
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+
+    // Cleanup
+    document.body.removeChild(downloadLink); // Remove the anchor element
+    URL.revokeObjectURL(url); // Free up memory by releasing the blob URL
+}
+
+// function downloadCSV(filename: string, data: string[][]): void {
+//     const content = data.map(row => row.join(',')).join('\n');
+//     downloadFile(filename, content, 'text/csv;charset=utf-8;');
+// }
+
+function getCurrentDate(): string {
+    const now = new Date();
+
+    // const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // JavaScript months are 0-based.
+    const day = String(now.getDate()).padStart(2, '0');
+    // const hours = String(now.getHours()).padStart(2, '0');
+    // const minutes = String(now.getMinutes()).padStart(2, '0');
+    // const seconds = String(now.getSeconds()).padStart(2, '0');
+
+    return `${month}-${day}`;
+}
