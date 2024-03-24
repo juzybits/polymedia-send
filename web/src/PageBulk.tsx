@@ -23,7 +23,7 @@ export const PageBulk: React.FC = () =>
     const [ chosenBalance, setChosenBalance ] = useState<CoinBalance>(); // dropdown
     const [ chosenAmounts, setChosenAmounts ] = useState<string>(''); // textarea
     const [ pendingLinks, setPendingLinks ] = useState<PendingLinks>();
-    const [ enableExecution, setEnableExecution ] = useState(false);
+    const [ allowCreate, setAllowCreate ] = useState(false);
 
     const { userBalances, error: errBalances } = useCoinBalances(suiClient, currAcct);
     const { coinInfo, error: errCoinInfo } = useCoinInfo(suiClient, chosenBalance);
@@ -38,7 +38,7 @@ export const PageBulk: React.FC = () =>
         resetState();
     }, [currAcct, suiClient]);
 
-    const createLinks = async (coinInfo: CoinInfo, linkValues: LinkValue[]) => {
+    const prepareLinks = async (coinInfo: CoinInfo, linkValues: LinkValue[]) => {
         if (!currAcct) return;
 
         const options: ZkSendLinkBuilderOptions = {
@@ -65,7 +65,7 @@ export const PageBulk: React.FC = () =>
         }
     };
 
-    const executeTxb = async (txb: TransactionBlock) => {
+    const createLinks = async (txb: TransactionBlock) => {
         const resp = await signAndExecuteTxb({
             transactionBlock: txb,
             options: { showEffects: true }
@@ -159,9 +159,9 @@ export const PageBulk: React.FC = () =>
 
                         <button
                             className='btn'
-                            onClick={ () => { createLinks(coinInfo, linkValues) }}
+                            onClick={ () => { prepareLinks(coinInfo, linkValues) }}
                             disabled={disableSendBtn}
-                        >CREATE LINKS</button>
+                        >PREPARE LINKS</button>
                     </>;
                 })()}
             </>
@@ -178,26 +178,26 @@ export const PageBulk: React.FC = () =>
                     const filename = `zksend_${symbol}_${count}_links_${getCurrentDate()}.csv`;
                     // const csvRows = txbAndLinks.links.map(link => [link.getLink()]);
                     downloadFile(filename, allLinksStr, MIME_CSV);
-                    setEnableExecution(true);
+                    setAllowCreate(true);
                 }}>
-                    Download
+                    DOWNLOAD
                 </button>
 
                 <button className='btn' onClick={async () => {
                     try {
                         await navigator.clipboard.writeText(allLinksStr);
                         // showCopyMessage('👍 Link copied');
-                        setEnableExecution(true);
+                        setAllowCreate(true);
                     } catch (error) {
                         // showCopyMessage("❌ Oops, didn't work. Please copy the page URL manually.");
                     }
                 }}>
-                    Copy
+                    COPY
                 </button>
 
-                {enableExecution &&
-                <button className='btn' onClick={() => { executeTxb(pendingLinks.txb) }}>
-                    Create links
+                {allowCreate &&
+                <button className='btn' onClick={() => { createLinks(pendingLinks.txb) }}>
+                    CREATE LINKS
                 </button>}
 
                 <textarea
