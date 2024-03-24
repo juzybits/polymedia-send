@@ -1,12 +1,12 @@
-import { useCurrentAccount, useSignTransactionBlock, useSuiClient } from '@mysten/dapp-kit';
+import { useCurrentAccount, useSignAndExecuteTransactionBlock, useSuiClient } from '@mysten/dapp-kit';
 import { CoinBalance } from '@mysten/sui.js/client';
 import { convertNumberToBigInt, formatBigInt, formatNumber } from '@polymedia/suits';
 import { useEffect, useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';
 import { SelectCoin } from './components/SelectCoin';
-import { ZkSendLinkBuilder } from './lib/zksend';
 import { useCoinBalances, useCoinInfo } from './lib/hooks';
+import { ZkSendLinkBuilder } from './lib/zksend';
 
 export const PageSend: React.FC = () =>
 {
@@ -14,7 +14,7 @@ export const PageSend: React.FC = () =>
 
     const currAcct = useCurrentAccount();
     const suiClient = useSuiClient();
-    const { mutateAsync: signTransactionBlock } = useSignTransactionBlock();
+    const { mutateAsync: signAndExecuteTxb } = useSignAndExecuteTransactionBlock();
 
     // const [ walletNotSupported, setWalletNotSupported ] = useState(false); // TODO
     const { inProgress, setInProgress, openConnectModal } = useOutletContext<AppContext>();
@@ -54,13 +54,9 @@ export const PageSend: React.FC = () =>
             console.debug('url: ', url);
 
             const txb = await link.createSendTransaction();
-            const signedTxb = await signTransactionBlock({
+            const resp = await signAndExecuteTxb({
                 transactionBlock: txb,
-            });
-            const resp = await suiClient.executeTransactionBlock({
-                transactionBlock: signedTxb.transactionBlockBytes,
-                signature: signedTxb.signature,
-                options: { showEffects: true },
+                options: { showEffects: true }
             });
             console.debug('resp:', resp);
 

@@ -1,4 +1,4 @@
-import { useCurrentAccount, useSignTransactionBlock, useSuiClient } from '@mysten/dapp-kit';
+import { useCurrentAccount, useSignAndExecuteTransactionBlock, useSuiClient } from '@mysten/dapp-kit';
 import { CoinBalance } from '@mysten/sui.js/client';
 import { TransactionBlock } from '@mysten/sui.js/transactions';
 import { convertNumberToBigInt, formatBigInt, formatNumber } from '@polymedia/suits';
@@ -16,7 +16,7 @@ export const PageBulk: React.FC = () =>
 {
     const currAcct = useCurrentAccount();
     const suiClient = useSuiClient();
-    const { mutateAsync: signTransactionBlock } = useSignTransactionBlock();
+    const { mutateAsync: signAndExecuteTxb } = useSignAndExecuteTransactionBlock();
 
     const { inProgress, setInProgress, openConnectModal } = useOutletContext<AppContext>();
     const [ errMsg, setErrMsg ] = useState<string>();
@@ -66,11 +66,9 @@ export const PageBulk: React.FC = () =>
     };
 
     const executeTxb = async (txb: TransactionBlock) => {
-        const signedTxb = await signTransactionBlock({ transactionBlock: txb });
-        const resp = await suiClient.executeTransactionBlock({
-            transactionBlock: signedTxb.transactionBlockBytes,
-            signature: signedTxb.signature,
-            options: { showEffects: true },
+        const resp = await signAndExecuteTxb({
+            transactionBlock: txb,
+            options: { showEffects: true }
         });
         console.debug('resp:', resp);
     };
