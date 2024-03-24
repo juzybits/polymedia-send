@@ -193,15 +193,17 @@ export const PageClaim: React.FC = () =>
                 Recipient: {shortAddress}
             </p>}
 
-            {normalizedAddress &&
-            <button className='btn' onClick={() => { claimAssets(link, normalizedAddress) }} disabled={inProgress}>
-                CLAIM ASSETS
-            </button>}
+            <div className='btn-group'>
+                {normalizedAddress &&
+                <button className='btn' onClick={() => { claimAssets(link, normalizedAddress) }} disabled={inProgress}>
+                    CLAIM ASSETS
+                </button>}
 
-            {currAcct &&
-            <button className='btn' disabled={inProgress} onClick={() => {disconnect()}}>
-                LOG OUT
-            </button>}
+                {currAcct &&
+                <button className='btn' disabled={inProgress} onClick={() => {disconnect()}}>
+                    LOG OUT
+                </button>}
+            </div>
         </>;
 
     })()}

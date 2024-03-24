@@ -33,6 +33,9 @@ export const PageBulk: React.FC = () =>
             setInProgress(false);
             setChosenBalance(undefined);
             setChosenAmounts('');
+            setPendingLinks(undefined);
+            setAllowCreate(false);
+            setCreateResult(undefined);
         }
         resetState();
     }, [currAcct, suiClient]);
@@ -65,6 +68,8 @@ export const PageBulk: React.FC = () =>
     };
 
     const createLinks = async (txb: TransactionBlock) => {
+        setCreateResult(undefined);
+        setInProgress(true);
         try {
             const resp = await signAndExecuteTxb({
                 transactionBlock: txb,
@@ -81,6 +86,8 @@ export const PageBulk: React.FC = () =>
             setCreateResult({ resp, errMsg });
         } catch (err) {
             setCreateResult({ resp: null, errMsg: String(err) });
+        } finally {
+            setInProgress(false);
         }
     };
 
@@ -143,25 +150,26 @@ export const PageBulk: React.FC = () =>
                         <p>You can create up to {MAX_LINKS} links with one transaction.</p>
 
                         <textarea
+                            placeholder='Enter "[LINKS] x [AMOUNT]". For example: "50 x 1000, 25 x 5000".'
                             value={chosenAmounts}
                             disabled={inProgress}
                             onChange={e => {
                                 const newValue = e.target.value.replace(/\./g, '');
                                 setChosenAmounts(newValue);
                             }}
-                            placeholder='Enter "[LINKS] x [AMOUNT]". For example: "50 x 1000, 25 x 5000".'
                         />
-
-                        <p>
-                            Total amount to send: {formatNumber(totalValue, 'compact')} {coinInfo.symbol}
-                        </p>
-                        {linkValues.map((lv, idx) => <p key={idx}>
-                            {lv.count} link{lv.count > 1 ? 's' : ''} with {formatNumber(lv.value, 'compact')} {coinInfo.symbol}
-                        </p>)}
 
                         <p>
                             Your balance: {formatBigInt(BigInt(chosenBalance.totalBalance), coinInfo.decimals, 'compact')}
                         </p>
+
+                        <p>
+                            Total amount to send: {formatNumber(totalValue, 'compact')} {coinInfo.symbol}
+                        </p>
+
+                        {linkValues.map((lv, idx) => <p key={idx}>
+                            {lv.count} link{lv.count > 1 ? 's' : ''} with {formatNumber(lv.value, 'compact')} {coinInfo.symbol}
+                        </p>)}
 
                         {linkValuesErr &&
                         <div className='error-box'>
@@ -177,55 +185,67 @@ export const PageBulk: React.FC = () =>
                 })()}
             </>
         }
+
         if (pendingLinks) {
             const symbol = pendingLinks.coinInfo.symbol.toLowerCase();
             const count = pendingLinks.links.length;
             const allLinksStr = pendingLinks.links.reduce((txt, link) => txt + link.getLink() + '\n', '');
-            const alreadyCreated = createResult && createResult.resp && !createResult.errMsg;
             return <>
-                {createResult
-                ?
-                    createResult.errMsg
-                    ? <p className='error-box'>{createResult.errMsg}</p>
-                    : <p>Your links have been created. Don't lose them!</p>
-                : <>
-                    <p>Your links are ready to be created.</p>
-                    <p>Copy or download the links before sending the assets.</p>
-                </>
-                }
 
-                <button className='btn' onClick={() => {
-                    const filename = `zksend_${symbol}_${count}_links_${getCurrentDate()}.csv`;
-                    // const csvRows = txbAndLinks.links.map(link => [link.getLink()]);
-                    downloadFile(filename, allLinksStr, MIME_CSV);
-                    setAllowCreate(true);
-                }}>
-                    DOWNLOAD
-                </button>
-
-                <button className='btn' onClick={async () => {
-                    try {
-                        await navigator.clipboard.writeText(allLinksStr);
-                        // showCopyMessage('👍 Link copied');
-                        setAllowCreate(true);
-                    } catch (error) {
-                        // showCopyMessage("❌ Oops, didn't work. Please copy the page URL manually.");
+                {(() => {
+                    if (!allowCreate) {
+                        return <>
+                            <p>Your zkSend links are almost ready.</p>
+                            <p>Copy or download the claim URLs before sending the assets.</p>
+                        </>;
                     }
-                }}>
-                    COPY
-                </button>
 
-                {allowCreate && !alreadyCreated &&
-                <button className='btn' onClick={() => { createLinks(pendingLinks.txb) }}>
-                    CREATE LINKS
-                </button>}
+                    if (createResult && !createResult.errMsg) {
+                        return <p>Your links have been created. Don't lose them!</p>;
+                    }
+
+                    return <>
+                        <button className='btn' disabled={inProgress} onClick={() => {
+                            createLinks(pendingLinks.txb)
+                        }}>
+                            🚀 CREATE LINKS
+                        </button>
+
+                        {createResult?.errMsg &&
+                        <div className='error-box'>{createResult.errMsg}</div>}
+                    </>;
+                })()}
 
                 <textarea
                     readOnly
-                    style={{height: '15rem', overflowWrap: 'normal'}}
-                    onClick={(e: React.MouseEvent<HTMLTextAreaElement>) => { e.currentTarget.select() }}
                     value={allLinksStr}
+                    disabled={inProgress}
+                    style={{overflowWrap: 'normal'}}
+                    onClick={(e: React.MouseEvent<HTMLTextAreaElement>) => { e.currentTarget.select() }}
                 />
+
+                <div className='btn-group'>
+                    <button className='btn' disabled={inProgress} onClick={async () => {
+                        try {
+                            await navigator.clipboard.writeText(allLinksStr);
+                            // showCopyMessage('👍 Link copied');
+                            setAllowCreate(true);
+                        } catch (error) {
+                            // showCopyMessage("❌ Oops, didn't work. Please copy the page URL manually.");
+                        }
+                    }}>
+                        📑 COPY
+                    </button>
+
+                    <button className='btn' disabled={inProgress} onClick={() => {
+                        const filename = `zksend_${symbol}_${count}_links_${getCurrentDate()}.csv`;
+                        // const csvRows = txbAndLinks.links.map(link => [link.getLink()]);
+                        downloadFile(filename, allLinksStr, MIME_CSV);
+                        setAllowCreate(true);
+                    }}>
+                        📥 DOWNLOAD
+                    </button>
+                </div>
             </>;
         }
         return null;

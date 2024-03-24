@@ -1,17 +1,4 @@
-/* CSS reset */
-
 @import '../node_modules/normalize.css/normalize.css';
-
-* {
-    margin: 0;
-    border: 0;
-    box-sizing: border-box;
-}
-
-h1, h2, h3, h4, h5 {
-    padding: 0;
-    margin: 0;
-}
 
 /* Constants */
 
@@ -32,12 +19,22 @@ h1, h2, h3, h4, h5 {
 @radius: 1em;
 @text-size: 1.1rem;
 
-/* Common styles */
+/* Resets */
 
 * {
+    margin: 0;
+    border: 0;
+    box-sizing: border-box;
     font-family: system-ui;
     color: @color-text;
 }
+
+h1, h2, h3, h4, h5 {
+    padding: 0;
+    margin: 0;
+}
+
+/* Components */
 
 body {
     background: linear-gradient(to bottom, rgb(15 23 42), rgb(36 49 79));
@@ -187,7 +184,6 @@ nav {
         background-color: @color-blue-4;
         border-radius: @radius;
         color: white;
-        display: block;
         font-size: 1rem;
         font-weight: 600;
         margin-bottom: @bottom-space;
@@ -220,6 +216,10 @@ nav {
             text-decoration: none;
             color: @color-muted;
         }
+    }
+    .btn-group {
+        display: flex;
+        gap: 1rem;
     }
 
     input[type=text], textarea {
