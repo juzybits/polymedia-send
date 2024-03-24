@@ -1,5 +1,5 @@
 import { useCurrentAccount, useSignAndExecuteTransactionBlock, useSuiClient } from '@mysten/dapp-kit';
-import { CoinBalance } from '@mysten/sui.js/client';
+import { CoinBalance, SuiTransactionBlockResponse } from '@mysten/sui.js/client';
 import { TransactionBlock } from '@mysten/sui.js/transactions';
 import { convertNumberToBigInt, formatBigInt, formatNumber } from '@polymedia/suits';
 import { useEffect, useState } from 'react';
@@ -19,11 +19,11 @@ export const PageBulk: React.FC = () =>
     const { mutateAsync: signAndExecuteTxb } = useSignAndExecuteTransactionBlock();
 
     const { inProgress, setInProgress, openConnectModal } = useOutletContext<AppContext>();
-    const [ errMsg, setErrMsg ] = useState<string>();
     const [ chosenBalance, setChosenBalance ] = useState<CoinBalance>(); // dropdown
     const [ chosenAmounts, setChosenAmounts ] = useState<string>(''); // textarea
     const [ pendingLinks, setPendingLinks ] = useState<PendingLinks>();
     const [ allowCreate, setAllowCreate ] = useState(false);
+    const [ createResult, setCreateResult ] = useState<CreateResult>();
 
     const { userBalances, error: errBalances } = useCoinBalances(suiClient, currAcct);
     const { coinInfo, error: errCoinInfo } = useCoinInfo(suiClient, chosenBalance);
@@ -31,7 +31,6 @@ export const PageBulk: React.FC = () =>
     useEffect(() => {
         const resetState = () => {
             setInProgress(false);
-            setErrMsg(undefined);
             setChosenBalance(undefined);
             setChosenAmounts('');
         }
@@ -66,14 +65,26 @@ export const PageBulk: React.FC = () =>
     };
 
     const createLinks = async (txb: TransactionBlock) => {
-        const resp = await signAndExecuteTxb({
-            transactionBlock: txb,
-            options: { showEffects: true }
-        });
-        console.debug('resp:', resp);
+        try {
+            const resp = await signAndExecuteTxb({
+                transactionBlock: txb,
+                options: { showEffects: true }
+            });
+            console.debug('resp:', resp);
+
+            let errMsg: string|null = null;
+            if (resp.errors || resp.effects?.status.status !== 'success') {
+                errMsg = `Txn digest: ${resp.digest}\n`
+                + `Txn status: ${resp.effects?.status.status}\n`
+                + `Txn errors: ${JSON.stringify(resp.errors)}`;
+            }
+            setCreateResult({ resp, errMsg });
+        } catch (err) {
+            setCreateResult({ resp: null, errMsg: String(err) });
+        }
     };
 
-    const error = errMsg ?? errBalances ?? errCoinInfo ?? null;
+    const error = errBalances ?? errCoinInfo ?? null;
 
     return <div id='bulk-page' className='page'>
 
@@ -170,9 +181,18 @@ export const PageBulk: React.FC = () =>
             const symbol = pendingLinks.coinInfo.symbol.toLowerCase();
             const count = pendingLinks.links.length;
             const allLinksStr = pendingLinks.links.reduce((txt, link) => txt + link.getLink() + '\n', '');
+            const alreadyCreated = createResult && createResult.resp && !createResult.errMsg;
             return <>
-                <p>Your {count === 1 ? 'link is' : `${count} links are`} ready.</p>
-                <p>Copy or download the links before sending the assets.</p>
+                {createResult
+                ?
+                    createResult.errMsg
+                    ? <p className='error-box'>{createResult.errMsg}</p>
+                    : <p>Your links have been created. Don't lose them!</p>
+                : <>
+                    <p>Your links are ready to be created.</p>
+                    <p>Copy or download the links before sending the assets.</p>
+                </>
+                }
 
                 <button className='btn' onClick={() => {
                     const filename = `zksend_${symbol}_${count}_links_${getCurrentDate()}.csv`;
@@ -195,7 +215,7 @@ export const PageBulk: React.FC = () =>
                     COPY
                 </button>
 
-                {allowCreate &&
+                {allowCreate && !alreadyCreated &&
                 <button className='btn' onClick={() => { createLinks(pendingLinks.txb) }}>
                     CREATE LINKS
                 </button>}
@@ -230,6 +250,11 @@ type PendingLinks = {
     txb: TransactionBlock,
     links: ZkSendLinkBuilder[],
     coinInfo: CoinInfo,
+};
+
+type CreateResult = {
+    resp: SuiTransactionBlockResponse|null,
+    errMsg: string|null,
 };
 
 type LinkValue = {
