@@ -16,9 +16,10 @@ const MAX_LINKS = 300;
 
 /* Types */
 
-type TxbAndLinks = {
+type PendingLinks = {
     txb: TransactionBlock,
     links: ZkSendLinkBuilder[],
+    coinInfo: CoinInfo,
 };
 
 type LinkValue = {
@@ -94,7 +95,7 @@ export const PageBulk: React.FC = () =>
     const [ errMsg, setErrMsg ] = useState<string>();
     const [ chosenBalance, setChosenBalance ] = useState<CoinBalance>(); // dropdown
     const [ chosenAmounts, setChosenAmounts ] = useState<string>(''); // textarea
-    const [ txbAndLinks, setTxbAndLinks ] = useState<TxbAndLinks>();
+    const [ pendingLinks, setPendingLinks ] = useState<PendingLinks>();
     const [ enableExecution, setEnableExecution ] = useState(false);
 
     const { userBalances, error: errBalances } = useCoinBalances(suiClient, currAcct);
@@ -130,7 +131,7 @@ export const PageBulk: React.FC = () =>
             options,
         );
 
-        setTxbAndLinks({ txb, links });
+        setPendingLinks({ txb, links, coinInfo });
 
         for (const link of links) {
             console.debug(link.getLink());
@@ -167,7 +168,7 @@ export const PageBulk: React.FC = () =>
             return <div>Loading balances...</div>;
         }
 
-        if (!txbAndLinks) {
+        if (!pendingLinks) {
             return <>
                 <SelectCoin
                     userBalances={userBalances}
@@ -240,15 +241,16 @@ export const PageBulk: React.FC = () =>
                 })()}
             </>
         }
-        if (txbAndLinks) {
-            const count = txbAndLinks.links.length;
-            const allLinksStr = txbAndLinks.links.reduce((txt, link) => txt + link.getLink() + '\n', '');
+        if (pendingLinks) {
+            const symbol = pendingLinks.coinInfo.symbol.toLowerCase();
+            const count = pendingLinks.links.length;
+            const allLinksStr = pendingLinks.links.reduce((txt, link) => txt + link.getLink() + '\n', '');
             return <>
                 <p>Your {count === 1 ? 'link is' : `${count} links are`} ready.</p>
                 <p>Copy or download the links before sending the assets.</p>
 
                 <button className='btn' onClick={() => {
-                    const filename = `zksend_${count}_links_${getCurrentDate()}.csv`;
+                    const filename = `zksend_${symbol}_${count}_links_${getCurrentDate()}.csv`;
                     // const csvRows = txbAndLinks.links.map(link => [link.getLink()]);
                     downloadFile(filename, allLinksStr, 'text/csv;charset=utf-8;');
                     setEnableExecution(true);
@@ -269,7 +271,7 @@ export const PageBulk: React.FC = () =>
                 </button>
 
                 {enableExecution &&
-                <button className='btn' onClick={() => { executeTxb(txbAndLinks.txb) }}>
+                <button className='btn' onClick={() => { executeTxb(pendingLinks.txb) }}>
                     Create links
                 </button>}
 
@@ -281,6 +283,7 @@ export const PageBulk: React.FC = () =>
                 />
             </>;
         }
+        return null;
     })()}
 
     {error &&
