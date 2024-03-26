@@ -12,13 +12,13 @@
     },
     "keywords": [],
     "scripts": {
-        "build": "tsc && vite build",
+        "build": "vite build",
         "clean": "rm -rf dist/ node_modules/ .wrangler/",
-        "deploy-dev": "pnpm build && wrangler pages deploy dist/ --project-name polymedia-zksend --branch dev",
-        "deploy-prod": "pnpm build && wrangler pages deploy dist/ --project-name polymedia-zksend --branch main",
+        "deploy-dev": "pnpm build && wrangler pages deploy dist/ --project-name polymedia-send --branch dev",
+        "deploy-prod": "pnpm build && wrangler pages deploy dist/ --project-name polymedia-send --branch main",
         "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
         "preview": "pnpm build && vite preview",
-        "serve": "vite"
+        "dev": "vite"
     },
     "dependencies": {
         "@mysten/dapp-kit": "^0.12.5",
