@@ -4,9 +4,10 @@ import { convertNumberToBigInt, formatBigInt, formatNumber } from '@polymedia/su
 import { useEffect, useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';
-import { SelectCoin } from './components/SelectCoin';
-import { useCoinBalances, useCoinInfo } from './lib/hooks';
+import { SelectCoin } from './lib/SelectCoin';
 import { ZkSendLinkBuilder } from './lib/zksend';
+import { useCoinBalances } from './lib/useCoinBalances';
+import { useCoinInfo } from './lib/useCoinInfo';
 
 export const PageSend: React.FC = () =>
 {

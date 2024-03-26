@@ -5,9 +5,10 @@ import { convertNumberToBigInt, formatBigInt, formatNumber } from '@polymedia/su
 import { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';
-import { SelectCoin } from './components/SelectCoin';
-import { CoinInfo } from './lib/coininfo';
-import { useCoinBalances, useCoinInfo } from './lib/hooks';
+import { SelectCoin } from './lib/SelectCoin';
+import { CoinInfo } from './lib/getCoinInfo';
+import { useCoinBalances } from './lib/useCoinBalances';
+import { useCoinInfo } from './lib/useCoinInfo';
 import { ZkSendLinkBuilder, ZkSendLinkBuilderOptions } from './lib/zksend';
 
 /* React */
