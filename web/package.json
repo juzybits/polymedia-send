@@ -16,9 +16,10 @@
         "clean": "rm -rf dist/ node_modules/ .wrangler/",
         "deploy-dev": "pnpm build && wrangler pages deploy dist/ --project-name polymedia-send --branch dev",
         "deploy-prod": "pnpm build && wrangler pages deploy dist/ --project-name polymedia-send --branch main",
+        "dev": "vite",
         "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
         "preview": "pnpm build && vite preview",
-        "dev": "vite"
+        "tunnel": "lt --port 1234 --subdomain poly"
     },
     "dependencies": {
         "@mysten/dapp-kit": "^0.12.5",
@@ -42,6 +43,7 @@
         "eslint-plugin-react-hooks": "^4.6.0",
         "eslint-plugin-react-refresh": "^0.4.6",
         "less": "^4.2.0",
+        "localtunnel": "^2.0.2",
         "typescript": "^5.4.3",
         "vite": "^5.2.2"
     },
