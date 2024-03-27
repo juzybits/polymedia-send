@@ -79,6 +79,7 @@ export const PageSend: React.FC = () =>
         }
     };
 
+    const isMobile = /mobile/i.test(navigator.userAgent);
     const error = errMsg ?? errBalances ?? errCoinInfo ?? null;
 
     return <div id='page-send' className='page'>
@@ -88,6 +89,10 @@ export const PageSend: React.FC = () =>
     <h2>Create a single claim link</h2>
 
     {(() => {
+        if (isMobile) {
+            return <p>Please use a desktop wallet to create links.</p>;
+        }
+
         if (!currAcct) {
             return <div>
                 <p>Connect your Sui wallet to get started.</p>

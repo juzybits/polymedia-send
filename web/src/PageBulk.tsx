@@ -92,6 +92,7 @@ export const PageBulk: React.FC = () =>
         }
     };
 
+    const isMobile = /mobile/i.test(navigator.userAgent);
     const error = errBalances ?? errCoinInfo ?? null;
 
     return <div id='bulk-page' className='page'>
@@ -101,6 +102,10 @@ export const PageBulk: React.FC = () =>
     <h2>Create multiple claim links</h2>
 
     {(() => {
+        if (isMobile) {
+            return <p>Please use a desktop wallet to create links.</p>;
+        }
+
         if (!currAcct) {
             return <div>
                 <p>Connect your Sui wallet to get started.</p>
