@@ -124,7 +124,7 @@ const Header: React.FC<{
     return <header>
         <h1>
             <img alt='polymedia' src='https://assets.polymedia.app/img/all/logo-nomargin-transparent-512x512.webp' className='logo' />
-            zkSend
+            Send
         </h1>
 
         <BtnNetwork appContext={app} />
@@ -169,7 +169,7 @@ const Nav: React.FC<{
 
         {/*
             <div>
-                <LinkExternal href='https://github.com/juzybits/polymedia-zksend' follow={true}>
+                <LinkExternal href='https://github.com/juzybits/polymedia-send' follow={true}>
                     <img alt='github' src={GITHUB_LOGO} className='logo' />
                 </LinkExternal>
             </div>

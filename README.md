@@ -1,4 +1,4 @@
-# Polymedia zkSend
+# Polymedia Send
 
 zkSend any Sui coin or object.
 
@@ -7,5 +7,5 @@ zkSend any Sui coin or object.
 ```
 cd web/
 pnpm install
-pnpm serve
+pnpm dev
 ```

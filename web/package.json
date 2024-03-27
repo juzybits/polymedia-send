@@ -1,14 +1,14 @@
 {
     "private": true,
     "version": "0.0.0",
-    "name": "@polymedia/zksend-web",
+    "name": "@polymedia/send-web",
     "author": "@juzybits (https://polymedia.app)",
-    "homepage": "https://zksend.polymedia.app",
+    "homepage": "https://send.polymedia.app",
     "description": "zkSend any Sui coin or object",
     "license": "Apache-2.0",
     "repository": {
         "type": "git",
-        "url": "https://github.com/juzybits/polymedia-zksend"
+        "url": "https://github.com/juzybits/polymedia-send"
     },
     "keywords": [],
     "scripts": {
