@@ -40,6 +40,7 @@ export interface ZkSendLinkBuilderOptions {
 export interface ZkSendLinkOptions {
 	keypair?: Keypair;
 	client?: SuiClient;
+	creatorAddress?: string;
 }
 
 const DEFAULT_ZK_SEND_LINK_OPTIONS = {
@@ -313,10 +314,6 @@ export class ZkSendLinkBuilder {
 	/* End of Polymedia code */
 }
 
-export interface ZkSendLinkOptions {
-	keypair?: Keypair;
-	client?: SuiClient;
-}
 export class ZkSendLink {
 	#client: SuiClient;
 	#keypair: Keypair;
@@ -334,9 +331,12 @@ export class ZkSendLink {
 	constructor({
 		client = DEFAULT_ZK_SEND_LINK_OPTIONS.client,
 		keypair = new Ed25519Keypair(),
+		creatorAddress = undefined,
+
 	}: ZkSendLinkOptions & { linkAddress?: string }) {
 		this.#client = client;
 		this.#keypair = keypair;
+		this.#creatorAddress = creatorAddress;
 	}
 
 	static async fromUrl(url: string, options?: Omit<ZkSendLinkOptions, 'keypair'>) {
@@ -541,7 +541,9 @@ export class ZkSendLink {
 			}
 		});
 
-		this.#creatorAddress = result.data[0]?.transaction?.data.sender;
+		if (!this.#creatorAddress) {
+			this.#creatorAddress = result.data[0]?.transaction?.data.sender;
+		}
 	}
 }
 
