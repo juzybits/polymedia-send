@@ -99,7 +99,7 @@ export const PageSend: React.FC = () =>
         }
 
         if (!userBalances) {
-            return <div>Loading balances...</div>;
+            return <p>Loading balances...</p>;
         }
 
         return <>
@@ -148,11 +148,11 @@ export const PageSend: React.FC = () =>
                     />
                 </div>
 
-                <p>
+                <p className='tight'>
                     Amount to send: {formatNumber(amountNum, 'compact')} {coinInfo.symbol}
                 </p>
 
-                <p>
+                <p className='tight'>
                     Your balance: {formatBigInt(BigInt(chosenBalance.totalBalance), coinInfo.decimals, 'compact')}
                 </p>
 

@@ -2,7 +2,7 @@
 
 /* Constants */
 
-@bottom-space: 1rem;
+@space: 1rem;
 @color-blue-1: rgb(176, 231, 255);
 @color-blue-2: rgb(82, 203, 255);
 @color-blue-3: rgb(42, 167, 221);
@@ -14,7 +14,7 @@
 @input-color-muted: rgb(93, 93, 93);
 @input-color: black;
 @input-padding: 0.6em 1em;
-@input-width: 300px;
+@input-width: 400px;
 @mobile-width: 700px;
 @radius: 1em;
 @text-size: 1.1rem;
@@ -199,11 +199,11 @@ nav {
     flex-grow: 1;
     text-align: center;
     h1, h2, h3  {
-        padding-bottom: @bottom-space;
+        padding-bottom: @space;
         font-weight: 500;
     }
-    h1 {
-        padding-bottom: @bottom-space * 2;
+    h2, h3 {
+        padding-top: @space;
     }
     h3 {
         font-size: 1.25rem;
@@ -211,7 +211,16 @@ nav {
     p {
         font-size: @text-size;
         line-height: 1.5rem;
-        padding-bottom: @bottom-space;
+        padding: @space 0;
+        &.tight {
+            padding: 0.2rem 0;
+            &:first-of-type {
+                padding-top: @space;
+            }
+            &:last-of-type {
+                padding-bottom: @space;
+            }
+        }
     }
     .btn {
         background-color: @color-blue-4;
@@ -219,7 +228,8 @@ nav {
         color: white;
         font-size: 1rem;
         font-weight: 600;
-        margin-bottom: @bottom-space;
+        margin-top: @space;
+        margin-bottom: @space;
         padding: 0.6em 1em;
         text-decoration: none;
         user-select: none;
@@ -260,7 +270,8 @@ nav {
         background-color: @input-background;
         border-radius: @radius;
         color: @input-color;
-        margin-bottom: @bottom-space;
+        margin-top: @space;
+        margin-bottom: @space;
         outline: none;
         padding: @input-padding;
         width: @input-width;
@@ -273,20 +284,13 @@ nav {
     }
 
     textarea {
-        width: 100%;
         resize: vertical;
         min-height: 5rem;
     }
 
-    .error-box {
-        margin-bottom: @bottom-space;
-        color: rgb(255, 115, 115);
-        overflow-wrap: anywhere;
-        font-size: @text-size;
-    }
-
     .dropdown {
-        margin-bottom: @bottom-space;
+        margin-top: @space;
+        margin-bottom: @space;
         width: @input-width;
         max-width: 100%;
         display: inline-block;
@@ -325,5 +329,13 @@ nav {
                 border-bottom-right-radius: @radius;
             }
         }
+    }
+
+    .error-box {
+        margin-top: @space;
+        margin-bottom: @space;
+        color: rgb(255, 115, 115);
+        overflow-wrap: anywhere;
+        font-size: @text-size;
     }
 }

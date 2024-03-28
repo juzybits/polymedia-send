@@ -113,7 +113,7 @@ export const PageBulk: React.FC = () =>
         }
 
         if (!userBalances) {
-            return <div>Loading balances...</div>;
+            return <p>Loading balances...</p>;
         }
 
         if (!pendingLinks) {
@@ -152,8 +152,9 @@ export const PageBulk: React.FC = () =>
 
                     const disableSendBtn = totalValue === 0 || linkValuesErr !== '' || inProgress;
                     return <>
+                        <div>
                         <textarea
-                            placeholder='Enter "[LINKS] x [AMOUNT]". For example: 50x1000, 25x5000'
+                            placeholder='Enter LINKS x AMOUNT. Example: "50x10000 25x50000"'
                             value={chosenAmounts}
                             disabled={inProgress}
                             onChange={e => {
@@ -161,12 +162,13 @@ export const PageBulk: React.FC = () =>
                                 setChosenAmounts(newValue);
                             }}
                         />
+                        </div>
 
-                        <p>
+                        <p className='tight'>
                             Your balance: {formatBigInt(BigInt(chosenBalance.totalBalance), coinInfo.decimals, 'compact')}
                         </p>
 
-                        <p>
+                        <p className='tight'>
                             Total amount to send: {formatNumber(totalValue, 'compact')} {coinInfo.symbol}
                         </p>
 
@@ -185,7 +187,7 @@ export const PageBulk: React.FC = () =>
 
                         {linkValues.length > 0 && <>
                             <h3>Summary:</h3    >
-                            {linkValues.map((lv, idx) => <p key={idx} style={{paddingBottom: '0.2rem'}}>
+                            {linkValues.map((lv, idx) => <p key={idx} className='tight'>
                                 {lv.count} link{lv.count > 1 ? 's' : ''} with {formatNumber(lv.value, 'compact')} {coinInfo.symbol}
                             </p>)}
                         </>}
@@ -228,7 +230,7 @@ export const PageBulk: React.FC = () =>
                     readOnly
                     value={allLinksStr}
                     disabled={inProgress}
-                    style={{overflowWrap: 'normal'}}
+                    style={{overflowWrap: 'normal', width: '100%', textAlign: 'left'}}
                     onClick={(e: React.MouseEvent<HTMLTextAreaElement>) => { e.currentTarget.select() }}
                 />
 
