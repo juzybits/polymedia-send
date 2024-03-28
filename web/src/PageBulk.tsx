@@ -53,7 +53,7 @@ export const PageBulk: React.FC = () =>
             client: suiClient,
         };
 
-        const amounts = linkValues.flatMap(lv => Array(lv.count).fill(
+        const amounts = linkValues.flatMap(lv => Array<bigint>(lv.count).fill(
             convertNumberToBigInt(lv.value, coinInfo.decimals)
         ));
 
@@ -116,6 +116,8 @@ export const PageBulk: React.FC = () =>
         if (!userBalances) {
             return <p>Loading balances...</p>;
         }
+
+        // without pendingLinks
 
         if (!pendingLinks) {
             return <>
@@ -198,72 +200,71 @@ export const PageBulk: React.FC = () =>
             </>
         }
 
-        if (pendingLinks) {
-            const symbol = pendingLinks.coinInfo.symbol.toLowerCase();
-            const count = pendingLinks.links.length;
-            const allLinksStr = pendingLinks.links.reduce((txt, link) => txt + link.getLink() + '\n', '');
-            return <>
-                <p>Copy or download the links before funding them.</p>
+        // with pendingLinks
 
-                <textarea
-                    readOnly
-                    value={allLinksStr}
-                    disabled={inProgress}
-                    style={{overflowWrap: 'normal', width: '100%', textAlign: 'left'}}
-                    onClick={(e: React.MouseEvent<HTMLTextAreaElement>) => { e.currentTarget.select() }}
-                />
+        const symbol = pendingLinks.coinInfo.symbol.toLowerCase();
+        const count = pendingLinks.links.length;
+        const allLinksStr = pendingLinks.links.reduce((txt, link) => txt + link.getLink() + '\n', '');
+        return <>
+            <p>Copy or download the links before funding them.</p>
 
-                <div className='btn-group'>
-                    <button className='btn' disabled={inProgress} onClick={async () => {
-                        try {
-                            await navigator.clipboard.writeText(allLinksStr);
-                            // showCopyMessage('👍 Link copied');
-                            setAllowCreate(true);
-                        } catch (error) {
-                            // showCopyMessage("❌ Oops, didn't work. Please copy the page URL manually.");
-                        }
-                    }}>
-                        📑 COPY LINKS
-                    </button>
+            <textarea
+                readOnly
+                value={allLinksStr}
+                disabled={inProgress}
+                style={{overflowWrap: 'normal', width: '100%', textAlign: 'left'}}
+                onClick={(e: React.MouseEvent<HTMLTextAreaElement>) => { e.currentTarget.select() }}
+            />
 
-                    <button className='btn' disabled={inProgress} onClick={() => {
-                        const filename = `zksend_${symbol}_${count}_links_${getCurrentDate()}.csv`;
-                        // const csvRows = txbAndLinks.links.map(link => [link.getLink()]);
-                        downloadFile(filename, allLinksStr, MIME_CSV);
+            <div className='btn-group'>
+                <button className='btn' disabled={inProgress} onClick={async () => {
+                    try {
+                        await navigator.clipboard.writeText(allLinksStr);
+                        // showCopyMessage('👍 Link copied');
                         setAllowCreate(true);
-                    }}>
-                        📥 DOWNLOAD
-                    </button>
-                </div>
-
-                {(() => {
-                    if (!allowCreate) {
-                        return null;
+                    } catch (error) {
+                        // showCopyMessage("❌ Oops, didn't work. Please copy the page URL manually.");
                     }
+                }}>
+                    📑 COPY LINKS
+                </button>
 
-                    if (createResult && !createResult.errMsg) {
-                        return <>
-                            <p>Your links have been created. <u><b>Don't lose them!</b></u></p>
-                            <p>
-                                We don't store claim links. If you don't share or save your links before leaving this page, the assets will be lost.
-                            </p>
-                        </>;
-                    }
+                <button className='btn' disabled={inProgress} onClick={() => {
+                    const filename = `zksend_${symbol}_${count}_links_${getCurrentDate()}.csv`;
+                    // const csvRows = txbAndLinks.links.map(link => [link.getLink()]);
+                    downloadFile(filename, allLinksStr, MIME_CSV);
+                    setAllowCreate(true);
+                }}>
+                    📥 DOWNLOAD
+                </button>
+            </div>
 
+            {(() => {
+                if (!allowCreate) {
+                    return null;
+                }
+
+                if (createResult && !createResult.errMsg) {
                     return <>
-                        <button className='btn' disabled={inProgress} onClick={() => {
-                            createLinks(pendingLinks.txb)
-                        }}>
-                            🚀 CREATE LINKS
-                        </button>
-
-                        {createResult?.errMsg &&
-                        <div className='error-box'>{createResult.errMsg}</div>}
+                        <p>Your links have been created. <u><b>Don't lose them!</b></u></p>
+                        <p>
+                            We don't store claim links. If you don't share or save your links before leaving this page, the assets will be lost.
+                        </p>
                     </>;
-                })()}
-            </>;
-        }
-        return null;
+                }
+
+                return <>
+                    <button className='btn' disabled={inProgress} onClick={() => {
+                        createLinks(pendingLinks.txb)
+                    }}>
+                        🚀 CREATE LINKS
+                    </button>
+
+                    {createResult?.errMsg &&
+                    <div className='error-box'>{createResult.errMsg}</div>}
+                </>;
+            })()}
+        </>;
     })()}
 
     <ErrorBox err={error} />
