@@ -17,7 +17,6 @@ export const PageSend: React.FC = () =>
     const suiClient = useSuiClient();
     const { mutateAsync: signAndExecuteTxb } = useSignAndExecuteTransactionBlock();
 
-    // const [ walletNotSupported, setWalletNotSupported ] = useState(false); // TODO
     const { inProgress, setInProgress, openConnectModal } = useOutletContext<AppContext>();
     const [ errMsg, setErrMsg ] = useState<string>();
     const [ chosenBalance, setChosenBalance ] = useState<CoinBalance>(); // dropdown

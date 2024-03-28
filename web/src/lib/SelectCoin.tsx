@@ -15,7 +15,14 @@ export const SelectCoin: React.FC<{
 }) =>
 {
     const [ open, setOpen ] = useState(false);
-    const [ searchCoin, setSearchCoin ] = useState(''); // TODO
+    const [ searchCoin, setSearchCoin ] = useState('');
+
+    const foundBalances = searchCoin.length < 2 ? userBalances :
+    userBalances.filter(bal => {
+        const search = searchCoin.toLowerCase();
+        const coinType = bal.coinType.toLowerCase();
+        return coinType.includes(search);
+    });
 
     return <div className={'dropdown' + (open ? ' open' : '')}>
         <input className='dropdown-input'
@@ -40,7 +47,7 @@ export const SelectCoin: React.FC<{
                 </div>
             }
             return <div className='dropdown-options'>
-                {userBalances.map(bal =>
+                {foundBalances.map(bal =>
                 <div className='dropdown-option' key={bal.coinType}
                     onClick={() => { setChosenBalance(bal); setOpen(false); }}>
                     {shortenSuiAddress(bal.coinType)}
