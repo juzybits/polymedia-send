@@ -151,8 +151,6 @@ export const PageBulk: React.FC = () =>
 
                     const disableSendBtn = totalValue === 0 || linkValuesErr !== '' || inProgress;
                     return <>
-                        <p>You can create up to {MAX_LINKS} links with one transaction.</p>
-
                         <textarea
                             placeholder='Enter "[LINKS] x [AMOUNT]". For example: 50x1000, 25x5000'
                             value={chosenAmounts}
@@ -163,6 +161,7 @@ export const PageBulk: React.FC = () =>
                             }}
                         />
 
+                        <br/>
                         <p>
                             Your balance: {formatBigInt(BigInt(chosenBalance.totalBalance), coinInfo.decimals, 'compact')}
                         </p>
@@ -171,20 +170,27 @@ export const PageBulk: React.FC = () =>
                             Total amount to send: {formatNumber(totalValue, 'compact')} {coinInfo.symbol}
                         </p>
 
-                        {linkValues.map((lv, idx) => <p key={idx}>
-                            {lv.count} link{lv.count > 1 ? 's' : ''} with {formatNumber(lv.value, 'compact')} {coinInfo.symbol}
-                        </p>)}
-
                         {linkValuesErr &&
                         <div className='error-box'>
                             Error: {linkValuesErr}
                         </div>}
 
+                        <br/>
                         <button
                             className='btn'
                             onClick={ () => { prepareLinks(coinInfo, linkValues) }}
                             disabled={disableSendBtn}
-                        >PREPARE LINKS</button>
+                        >
+                            PREPARE LINKS
+                        </button>
+
+                        {linkValues.length > 0 && <>
+                            <br/><br/>
+                            <h3>Summary:</h3    >
+                            {linkValues.map((lv, idx) => <p key={idx} style={{paddingBottom: '0.2rem'}}>
+                                {lv.count} link{lv.count > 1 ? 's' : ''} with {formatNumber(lv.value, 'compact')} {coinInfo.symbol}
+                            </p>)}
+                        </>}
                     </>;
                 })()}
             </>
