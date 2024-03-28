@@ -18,6 +18,7 @@
 @mobile-width: 700px;
 @radius: 1em;
 @text-size: 1.1rem;
+@text-weight: 220;
 
 /* Resets */
 
@@ -82,7 +83,7 @@ header {
         display: flex;
         align-items: center;
         font-size: 1.5rem;
-        font-weight: 200;
+        font-weight: @text-weight;
         img {
             height: 2rem;
             width: 2rem;
@@ -91,7 +92,7 @@ header {
         }
         sub {
             color: gold;
-            font-weight: 300;
+            font-weight: @text-weight;
             font-size: 0.45em;
             padding-top: 0.6em;
         }
@@ -109,7 +110,7 @@ nav {
     flex-direction: column;
     gap: 1rem;
     font-size: 1.3rem;
-    font-weight: 200;
+    font-weight: @text-weight;
     white-space: nowrap;
     user-select: none;
 
@@ -162,7 +163,7 @@ nav {
     }
     .network-selector {
         text-transform: uppercase;
-        font-weight: 200;
+        font-weight: @text-weight;
         position: relative;
         .network-options {
             position: absolute;
@@ -187,7 +188,7 @@ nav {
 }
 
 .btn-connect, #btn-menu {
-    font-weight: 200;
+    font-weight: @text-weight;
     background-color: transparent;
     &:hover {
         cursor: pointer;
@@ -211,6 +212,7 @@ nav {
     p {
         font-size: @text-size;
         line-height: 1.5rem;
+        font-weight: @text-weight;
         padding: @space 0;
     }
     .tight p {
@@ -276,6 +278,8 @@ nav {
         width: @input-width;
         max-width: 100%;
         text-align: center;
+        font-size: @text-size;
+        font-weight: 300;
         &:disabled {
             background-color: @input-background-muted;
             color: @input-color-muted;
@@ -317,6 +321,8 @@ nav {
             color: @input-color;
             padding: @input-padding;
             overflow-wrap: break-word;
+            font-size: @text-size;
+            font-weight: 300;
             &:hover {
                 background-color: @color-blue-1;
                 &:hover {

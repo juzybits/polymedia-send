@@ -148,13 +148,15 @@ export const PageSend: React.FC = () =>
                     />
                 </div>
 
-                <p className='tight'>
-                    Amount to send: {formatNumber(amountNum, 'compact')} {coinInfo.symbol}
-                </p>
+                <div className='tight'>
+                    <p>
+                        Amount to send: {formatNumber(amountNum, 'compact')} {coinInfo.symbol}
+                    </p>
 
-                <p className='tight'>
-                    Your balance: {formatBigInt(BigInt(chosenBalance.totalBalance), coinInfo.decimals, 'compact')}
-                </p>
+                    <p>
+                        Your balance: {formatBigInt(BigInt(chosenBalance.totalBalance), coinInfo.decimals, 'compact')}
+                    </p>
+                </div>
 
                 {amountErr &&
                 <div className='error-box'>
