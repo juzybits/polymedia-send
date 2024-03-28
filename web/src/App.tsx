@@ -163,10 +163,10 @@ const Nav: React.FC<{
             Home
         </Link>
         <Link to='/send' className={selected('/send')} onClick={closeMobileNav}>
-            Send
+            Create link
         </Link>
         <Link to='/bulk' className={selected('/bulk')} onClick={closeMobileNav}>
-            Bulk
+            Bulk create
         </Link>
 
         {/*

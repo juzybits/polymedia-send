@@ -100,7 +100,7 @@ export const PageClaim: React.FC = () =>
         }
     };
 
-    return <div id='page-claim' className='page'>
+    return <div id='page-claim'>
 
     {errMsg &&
     <div className='error-box'>

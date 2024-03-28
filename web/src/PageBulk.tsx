@@ -95,11 +95,9 @@ export const PageBulk: React.FC = () =>
     const isMobile = /mobile/i.test(navigator.userAgent);
     const error = errBalances ?? errCoinInfo ?? null;
 
-    return <div id='bulk-page' className='page'>
+    return <div id='bulk-page' >
 
-    <h1>Bulk</h1>
-
-    <h2>Create multiple claim links</h2>
+    <h1>Create multiple links</h1>
 
     {(() => {
         if (isMobile) {

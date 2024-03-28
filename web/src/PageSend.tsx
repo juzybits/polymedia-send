@@ -81,11 +81,9 @@ export const PageSend: React.FC = () =>
     const isMobile = /mobile/i.test(navigator.userAgent);
     const error = errMsg ?? errBalances ?? errCoinInfo ?? null;
 
-    return <div id='page-send' className='page'>
+    return <div id='page-send'>
 
-    <h1>Send</h1>
-
-    <h2>Create a single claim link</h2>
+    <h1>Create one link</h1>
 
     {(() => {
         if (isMobile) {
