@@ -94,7 +94,7 @@ export const PageClaim: React.FC = () =>
 
     const copyLink = async () => {
         try {
-            await navigator.clipboard.writeText(window.location.href);
+            await navigator.clipboard.writeText(window.location.href); // TODO include network if not mainnet
             showCopyMessage('👍 Link copied');
         } catch (error) {
             showCopyMessage("❌ Oops, didn't work. Please copy the page URL manually.");

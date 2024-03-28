@@ -35,6 +35,7 @@ export const PageBulk: React.FC = () =>
             setInProgress(false);
             setChosenBalance(undefined);
             setChosenAmounts('');
+            // setChosenAmounts('1x11 2x22 3x33');
             setPendingLinks(undefined);
             setAllowCreate(false);
             setCreateResult(undefined);
@@ -183,7 +184,7 @@ export const PageBulk: React.FC = () =>
                             onClick={ () => { prepareLinks(coinInfo, linkValues) }}
                             disabled={disableSendBtn}
                         >
-                            PREPARE LINKS
+                            PREVIEW LINKS
                         </button>
 
                         {linkValues.length > 0 && <div className='tight'>
@@ -202,30 +203,7 @@ export const PageBulk: React.FC = () =>
             const count = pendingLinks.links.length;
             const allLinksStr = pendingLinks.links.reduce((txt, link) => txt + link.getLink() + '\n', '');
             return <>
-
-                {(() => {
-                    if (!allowCreate) {
-                        return <>
-                            <p>Your zkSend links are almost ready.</p>
-                            <p>Copy or download the claim URLs before sending the assets.</p>
-                        </>;
-                    }
-
-                    if (createResult && !createResult.errMsg) {
-                        return <p>Your links have been created. Don't lose them!</p>;
-                    }
-
-                    return <>
-                        <button className='btn' disabled={inProgress} onClick={() => {
-                            createLinks(pendingLinks.txb)
-                        }}>
-                            🚀 CREATE LINKS
-                        </button>
-
-                        {createResult?.errMsg &&
-                        <div className='error-box'>{createResult.errMsg}</div>}
-                    </>;
-                })()}
+                <p>Copy or download the links before funding them.</p>
 
                 <textarea
                     readOnly
@@ -245,7 +223,7 @@ export const PageBulk: React.FC = () =>
                             // showCopyMessage("❌ Oops, didn't work. Please copy the page URL manually.");
                         }
                     }}>
-                        📑 COPY
+                        📑 COPY LINKS
                     </button>
 
                     <button className='btn' disabled={inProgress} onClick={() => {
@@ -257,6 +235,32 @@ export const PageBulk: React.FC = () =>
                         📥 DOWNLOAD
                     </button>
                 </div>
+
+                {(() => {
+                    if (!allowCreate) {
+                        return null;
+                    }
+
+                    if (createResult && !createResult.errMsg) {
+                        return <>
+                            <p>Your links have been created. <u><b>Don't lose them!</b></u></p>
+                            <p>
+                                We don't store claim links. If you don't share or save your links before leaving this page, the assets will be lost.
+                            </p>
+                        </>;
+                    }
+
+                    return <>
+                        <button className='btn' disabled={inProgress} onClick={() => {
+                            createLinks(pendingLinks.txb)
+                        }}>
+                            🚀 CREATE LINKS
+                        </button>
+
+                        {createResult?.errMsg &&
+                        <div className='error-box'>{createResult.errMsg}</div>}
+                    </>;
+                })()}
             </>;
         }
         return null;

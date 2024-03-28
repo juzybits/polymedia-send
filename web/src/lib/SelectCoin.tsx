@@ -1,6 +1,6 @@
 import { CoinBalance } from '@mysten/sui.js/client';
 import { shortenSuiAddress } from '@polymedia/suits';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export const SelectCoin: React.FC<{
     userBalances: CoinBalance[],
@@ -23,6 +23,11 @@ export const SelectCoin: React.FC<{
         const coinType = bal.coinType.toLowerCase();
         return coinType.includes(search);
     });
+
+    useEffect(() => {
+    //     const fud = userBalances.filter(b => b.coinType.endsWith('::fud::FUD'));
+    //     fud.length && setChosenBalance(fud[0]);
+    }, []);
 
     return <div>
     <div className={'dropdown' + (open ? ' open' : '')}>
