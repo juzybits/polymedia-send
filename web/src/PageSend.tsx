@@ -8,6 +8,7 @@ import { SelectCoin } from './lib/SelectCoin';
 import { ZkSendLinkBuilder } from './lib/zksend';
 import { useCoinBalances } from './lib/useCoinBalances';
 import { useCoinInfo } from './lib/useCoinInfo';
+import { ErrorBox } from './lib/ErrorBox';
 
 export const PageSend: React.FC = () =>
 {
@@ -170,10 +171,7 @@ export const PageSend: React.FC = () =>
         </>
     })()}
 
-    {error &&
-    <div className='error-box'>
-        Something went wrong:<br/>{error}
-    </div>}
+    <ErrorBox err={error} />
 
     </div>;
 };

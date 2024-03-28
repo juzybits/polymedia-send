@@ -5,6 +5,7 @@ import { useLocation, useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';
 import { CoinInfo, getCoinInfo } from './lib/getCoinInfo';
 import { ZkSendLink } from './lib/zksend';
+import { ErrorBox } from './lib/ErrorBox';
 
 const FEES_ADDRESS = '0xfee3f5c55cb172ae9c1d30587f85c888f56851bfe7e45edc2a6d777374697deb';
 
@@ -102,10 +103,7 @@ export const PageClaim: React.FC = () =>
 
     return <div id='page-claim'>
 
-    {errMsg &&
-    <div className='error-box'>
-        Something went wrong:<br/>{errMsg}
-    </div>}
+    <ErrorBox err={errMsg} />
 
     {(() => {
 

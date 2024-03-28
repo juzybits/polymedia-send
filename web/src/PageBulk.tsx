@@ -10,6 +10,7 @@ import { CoinInfo } from './lib/getCoinInfo';
 import { useCoinBalances } from './lib/useCoinBalances';
 import { useCoinInfo } from './lib/useCoinInfo';
 import { ZkSendLinkBuilder, ZkSendLinkBuilderOptions } from './lib/zksend';
+import { ErrorBox } from './lib/ErrorBox';
 
 /* React */
 
@@ -261,10 +262,7 @@ export const PageBulk: React.FC = () =>
         return null;
     })()}
 
-    {error &&
-    <div className='error-box'>
-        Something went wrong:<br/>{error}
-    </div>}
+    <ErrorBox err={error} />
 
     </div>;
 };
