@@ -2,6 +2,8 @@
 
 Send any Sui coin simply by sharing a link.
 
+![Polymedia zkSend](./web/public/img/open-graph.webp)
+
 ## Local development
 
 ```
