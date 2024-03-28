@@ -2,7 +2,7 @@ export const PageHome: React.FC = () =>
 {
     return <div id='page-home' className='page'>
         <h1>Home</h1>
-        <h2>Send Sui assets simply by sharing a link</h2>
+        <h2>Send any Sui coin simply by sharing a link</h2>
 
         <br/>
         <h3>How it works, at a high level:</h3>

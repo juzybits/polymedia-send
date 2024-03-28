@@ -4,7 +4,7 @@
     "name": "@polymedia/send-web",
     "author": "@juzybits (https://polymedia.app)",
     "homepage": "https://send.polymedia.app",
-    "description": "zkSend any Sui coin or object",
+    "description": "Send any Sui coin simply by sharing a link",
     "license": "Apache-2.0",
     "repository": {
         "type": "git",

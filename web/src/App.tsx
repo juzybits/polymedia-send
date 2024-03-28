@@ -124,7 +124,7 @@ const Header: React.FC<{
     return <header>
         <h1>
             <img alt='polymedia' src='https://assets.polymedia.app/img/all/logo-nomargin-transparent-512x512.webp' className='logo' />
-            Send
+            zkSend
         </h1>
 
         <BtnNetwork appContext={app} />

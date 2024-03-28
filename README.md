@@ -1,6 +1,6 @@
-# Polymedia Send
+# Polymedia zkSend
 
-zkSend any Sui coin or object.
+Send any Sui coin simply by sharing a link.
 
 ## Local development
 
