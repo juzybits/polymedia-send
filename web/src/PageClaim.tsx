@@ -6,6 +6,8 @@ import { AppContext } from './App';
 import { CoinInfo, getCoinInfo } from './lib/getCoinInfo';
 import { ZkSendLink } from './lib/zksend';
 
+const FEES_ADDRESS = '0xfee3f5c55cb172ae9c1d30587f85c888f56851bfe7e45edc2a6d777374697deb';
+
 type ListClaimableAssetsReturnType = Awaited<ReturnType<InstanceType<typeof ZkSendLink>['listClaimableAssets']>>;
 type BalancesType = ListClaimableAssetsReturnType['balances'];
 
@@ -42,7 +44,10 @@ export const PageClaim: React.FC = () =>
             }
         }
         const loadZkSendLink = async (): Promise<ZkSendLink> => {
-            const link = await ZkSendLink.fromUrl(window.location.href, { client: suiClient });
+            const link = await ZkSendLink.fromUrl(window.location.href, {
+                client: suiClient,
+                creatorAddress: FEES_ADDRESS,
+            });
             return link;
         };
         const loadClaimableBalances = async (link: ZkSendLink): Promise<BalancesType> => {
