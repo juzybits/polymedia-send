@@ -29,6 +29,8 @@ export const SelectCoin: React.FC<{
             type='text'
             value={searchCoin}
             onChange={(e) => { setSearchCoin(e.target.value) }}
+            onClick={(e: React.MouseEvent<HTMLInputElement>) => { e.currentTarget.select() }}
+
             disabled={inProgress || userBalances.length === 0}
             onFocus={() => { setOpen(true) }}
             placeholder={ chosenBalance
@@ -49,7 +51,11 @@ export const SelectCoin: React.FC<{
             return <div className='dropdown-options'>
                 {foundBalances.map(bal =>
                 <div className='dropdown-option' key={bal.coinType}
-                    onClick={() => { setChosenBalance(bal); setOpen(false); }}>
+                    onClick={() => {
+                        setChosenBalance(bal);
+                        setSearchCoin(bal.coinType.split('::')[2]);
+                        setOpen(false);
+                    }}>
                     {shortenSuiAddress(bal.coinType)}
                 </div>)}
             </div>;

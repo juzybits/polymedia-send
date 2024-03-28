@@ -156,7 +156,7 @@ export const PageBulk: React.FC = () =>
                         <p>You can create up to {MAX_LINKS} links with one transaction.</p>
 
                         <textarea
-                            placeholder='Enter "[LINKS] x [AMOUNT]". For example: "50 x 1000, 25 x 5000".'
+                            placeholder='Enter "[LINKS] x [AMOUNT]". For example: "50x1000, 25x5000".'
                             value={chosenAmounts}
                             disabled={inProgress}
                             onChange={e => {
