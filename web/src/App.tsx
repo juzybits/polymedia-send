@@ -129,10 +129,6 @@ const Header: React.FC<{
             </h1>
         </Link>
 
-        <BtnNetwork appContext={app} />
-
-        <BtnConnect appContext={app} />
-
         <button id='btn-menu' onClick={() => { app.setShowMobileNav(!app.showMobileNav) }}>
             {!app.showMobileNav ? 'MENU' : 'CLOSE'}
         </button>
@@ -154,10 +150,10 @@ const Nav: React.FC<{
 
     return <nav className={app.showMobileNav ? 'open' : ''}>
 
-        {app.showMobileNav && <>
-            <BtnNetwork appContext={app} />
-            <BtnConnect appContext={app} />
-        </>}
+        <BtnConnect appContext={app} />
+        <BtnNetwork appContext={app} />
+
+        <hr />
 
         <Link to='/' className={selected('/')} onClick={closeMobileNav}>
             Home

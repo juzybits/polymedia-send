@@ -90,13 +90,8 @@ header {
     }
     #btn-menu {
         display: none;
-    }
-    @media (max-width: @mobile-width) {
-        #btn-menu {
+        @media (max-width: @mobile-width) {
             display: block;
-        }
-        .network-selector, .btn-connect {
-            display: none;
         }
     }
 }
@@ -108,6 +103,20 @@ nav {
     font-size: 1.1rem;
     min-width: 200px;
     user-select: none;
+
+    @media (max-width: @mobile-width) {
+        display: none;
+        &.open {
+            display: flex;
+            align-items: center;
+            a, button, span {
+                border-left-width: 0;
+                border-bottom-width: 2px;
+                padding-left: 0;
+            }
+        }
+    }
+
     a, button, span {
         display: block;
         padding: 0.2rem 0 0.2rem 0.6rem;
@@ -127,41 +136,34 @@ nav {
             border-color: @color-blue-2;
         }
     }
-    @media (max-width: @mobile-width) {
-        display: none;
-        &.open {
-            display: flex;
-            align-items: center;
-            a, button, span {
-                border-left-width: 0;
-                border-bottom-width: 2px;
-                padding-left: 0;
+    hr {
+        border-bottom: 1px solid rgb(36 49 79);
+    }
+    .network-selector, .btn-connect {
+        font-size: 0.8em;
+    }
+    .network-selector {
+        text-transform: uppercase;
+        font-weight: 500;
+        position: relative;
+        .network-options {
+            position: absolute;
+            min-width: 100%;
+            background-color: rgb(15 23 42);
+            padding: 0.1rem 0;
+            .network-option .text {
+                padding-top: 0.1rem;
+                padding-bottom: 0.1rem;
             }
         }
-    }
-}
-
-.network-selector {
-    text-transform: uppercase;
-    font-weight: 500;
-    position: relative;
-    .network-options {
-        position: absolute;
-        min-width: 100%;
-        background-color: rgb(15 23 42);
-        padding: 0.1rem 0;
         .network-option .text {
-            padding-top: 0.1rem;
-            padding-bottom: 0.1rem;
-        }
-    }
-    .network-option .text {
-        display: block;
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
-        &:hover {
-            cursor: pointer;
-            color: @color-blue-2;
+            display: block;
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+            &:hover {
+                cursor: pointer;
+                color: @color-blue-2;
+            }
         }
     }
 }
