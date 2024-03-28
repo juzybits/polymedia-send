@@ -42,7 +42,7 @@ export const PageSend: React.FC = () =>
 
         setInProgress(true);
         try {
-                const link = new ZkSendLinkBuilder({
+            const link = new ZkSendLinkBuilder({
                 sender: currAcct.address,
                 host: window.location.origin,
                 path: '/claim',

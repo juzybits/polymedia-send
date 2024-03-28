@@ -30,7 +30,7 @@ export const SelectCoin: React.FC<{
             type='text'
             value={searchCoin}
             onChange={(e) => { setSearchCoin(e.target.value) }}
-            onClick={(e: React.MouseEvent<HTMLInputElement>) => { e.currentTarget.select() }}
+            onClick={() => { setSearchCoin('') }}
 
             disabled={inProgress || userBalances.length === 0}
             onFocus={() => { setOpen(true) }}

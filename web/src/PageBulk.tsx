@@ -164,13 +164,14 @@ export const PageBulk: React.FC = () =>
                         />
                         </div>
 
-                        <p className='tight'>
-                            Your balance: {formatBigInt(BigInt(chosenBalance.totalBalance), coinInfo.decimals, 'compact')}
-                        </p>
-
-                        <p className='tight'>
-                            Total amount to send: {formatNumber(totalValue, 'compact')} {coinInfo.symbol}
-                        </p>
+                        <div className='tight'>
+                            <p>
+                                Your balance: {formatBigInt(BigInt(chosenBalance.totalBalance), coinInfo.decimals, 'compact')}
+                            </p>
+                            <p>
+                                Total amount to send: {formatNumber(totalValue, 'compact')} {coinInfo.symbol}
+                            </p>
+                        </div>
 
                         {linkValuesErr &&
                         <div className='error-box'>
@@ -185,12 +186,12 @@ export const PageBulk: React.FC = () =>
                             PREPARE LINKS
                         </button>
 
-                        {linkValues.length > 0 && <>
-                            <h3>Summary:</h3    >
-                            {linkValues.map((lv, idx) => <p key={idx} className='tight'>
+                        {linkValues.length > 0 && <div className='tight'>
+                            <p><b>Summary:</b></p>
+                            {linkValues.map((lv, idx) => <p key={idx}>
                                 {lv.count} link{lv.count > 1 ? 's' : ''} with {formatNumber(lv.value, 'compact')} {coinInfo.symbol}
                             </p>)}
-                        </>}
+                        </div>}
                     </>;
                 })()}
             </>

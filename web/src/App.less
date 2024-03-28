@@ -212,25 +212,24 @@ nav {
         font-size: @text-size;
         line-height: 1.5rem;
         padding: @space 0;
-        &.tight {
-            padding: 0.2rem 0;
-            &:first-of-type {
-                padding-top: @space;
-            }
-            &:last-of-type {
-                padding-bottom: @space;
-            }
+    }
+    .tight p {
+        padding: 0.2rem 0;
+        &:first-of-type {
+            padding-top: @space;
+        }
+        &:last-of-type {
+            padding-bottom: @space;
         }
     }
     .btn {
         background-color: @color-blue-4;
         border-radius: @radius;
         color: white;
-        font-size: 1rem;
-        font-weight: 600;
+        font-weight: 700;
         margin-top: @space;
         margin-bottom: @space;
-        padding: 0.6em 1em;
+        padding: 0.7em 1.2em;
         text-decoration: none;
         user-select: none;
         white-space: nowrap;
@@ -262,7 +261,7 @@ nav {
     }
     .btn-group {
         display: flex;
-        gap: 1rem;
+        gap: 1.2rem;
         justify-content: center;
     }
 
@@ -334,8 +333,10 @@ nav {
     .error-box {
         margin-top: @space;
         margin-bottom: @space;
-        color: rgb(255, 115, 115);
-        overflow-wrap: anywhere;
-        font-size: @text-size;
+        * {
+            color: rgb(255, 115, 115);
+            overflow-wrap: anywhere;
+            font-size: @text-size;
+        }
     }
 }
