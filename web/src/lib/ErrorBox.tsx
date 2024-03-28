@@ -8,6 +8,7 @@ export const ErrorBox: React.FC<{
         return null;
     }
     return <div className='error-box'>
-        Something went wrong:<br/>{err}
+        <div>Something went wrong:</div>
+        <div>{err}</div>
     </div>;
 }

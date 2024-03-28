@@ -162,7 +162,6 @@ export const PageBulk: React.FC = () =>
                             }}
                         />
 
-                        <br/>
                         <p>
                             Your balance: {formatBigInt(BigInt(chosenBalance.totalBalance), coinInfo.decimals, 'compact')}
                         </p>
@@ -176,7 +175,6 @@ export const PageBulk: React.FC = () =>
                             Error: {linkValuesErr}
                         </div>}
 
-                        <br/>
                         <button
                             className='btn'
                             onClick={ () => { prepareLinks(coinInfo, linkValues) }}
@@ -186,7 +184,6 @@ export const PageBulk: React.FC = () =>
                         </button>
 
                         {linkValues.length > 0 && <>
-                            <br/><br/>
                             <h3>Summary:</h3    >
                             {linkValues.map((lv, idx) => <p key={idx} style={{paddingBottom: '0.2rem'}}>
                                 {lv.count} link{lv.count > 1 ? 's' : ''} with {formatNumber(lv.value, 'compact')} {coinInfo.symbol}
