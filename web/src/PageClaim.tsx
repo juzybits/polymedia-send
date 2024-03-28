@@ -115,13 +115,15 @@ export const PageClaim: React.FC = () =>
                 <h1>Success</h1>
 
                 <p>Copy and share the link with the person you want to send the assets to.</p>
+                <br/>
 
                 <button className='btn' onClick={copyLink}>
                     COPY LINK
                 </button>
+                {copyMsg && <div>{copyMsg}</div>}
 
-                {copyMsg && <p>{copyMsg}</p>}
-
+                <br/>
+                <br/>
                 <p>
                     <u><b>Save your link before leaving this page</b></u>
                 </p>
@@ -181,11 +183,13 @@ export const PageClaim: React.FC = () =>
 
             {!currAcct &&
             <>
+                <br/>
                 <p>Enter the address where you want to send the assets, or&nbsp;
                     <button className='txt-btn' onClick={openConnectModal} disabled={inProgress}>LOG IN</button>
                     &nbsp;with your wallet to auto-fill.
                 </p>
 
+                <br/>
                 <input type='text' pattern='^0[xX][a-fA-F0-9]{1,64}$'
                     value={chosenAddress} autoFocus disabled={inProgress}
                     onChange={e => { setChosenAddress(e.target.validity.valid ? e.target.value : chosenAddress) }}
@@ -193,10 +197,13 @@ export const PageClaim: React.FC = () =>
                 />
             </>}
 
-            {normalizedAddress &&
-            <p>
-                Recipient: {shortAddress}
-            </p>}
+            {normalizedAddress && <>
+                <br/>
+                <p>
+                    Recipient: {shortAddress}
+                </p>
+                <br/>
+            </>}
 
             <div className='btn-group'>
                 {normalizedAddress &&

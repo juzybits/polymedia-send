@@ -138,12 +138,14 @@ export const PageSend: React.FC = () =>
                 const disableSendBtn = chosenAmount === '' || chosenAmount === '.' || amountErr !== '' || inProgress;
 
                 return <>
-                <input type='text' inputMode='numeric' pattern={`^[0-9]*\\.?[0-9]{0,${coinInfo.decimals}}$`}
-                    value={chosenAmount} disabled={inProgress}
-                    onChange={e => { setChosenAmount(e.target.validity.valid ? e.target.value : chosenAmount) }}
-                    onKeyDown={e => { if (e.key === 'Enter' && !disableSendBtn) { createLink(coinInfo.coinType, amountWithDec) } }}
-                    placeholder='enter amount'
-                />
+                <div>
+                    <input type='text' inputMode='numeric' pattern={`^[0-9]*\\.?[0-9]{0,${coinInfo.decimals}}$`}
+                        value={chosenAmount} disabled={inProgress}
+                        onChange={e => { setChosenAmount(e.target.validity.valid ? e.target.value : chosenAmount) }}
+                        onKeyDown={e => { if (e.key === 'Enter' && !disableSendBtn) { createLink(coinInfo.coinType, amountWithDec) } }}
+                        placeholder='enter amount'
+                    />
+                </div>
 
                 <p>
                     Amount to send: {formatNumber(amountNum, 'compact')} {coinInfo.symbol}

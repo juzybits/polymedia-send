@@ -24,7 +24,8 @@ export const SelectCoin: React.FC<{
         return coinType.includes(search);
     });
 
-    return <div className={'dropdown' + (open ? ' open' : '')}>
+    return <div>
+    <div className={'dropdown' + (open ? ' open' : '')}>
         <input className='dropdown-input'
             type='text'
             value={searchCoin}
@@ -60,5 +61,6 @@ export const SelectCoin: React.FC<{
                 </div>)}
             </div>;
         })()}
+    </div>
     </div>;
 }
