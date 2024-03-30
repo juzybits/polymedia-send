@@ -1,3 +1,6 @@
+// Forked from `sui/sdk/zksend/src/links/`
+/* eslint-disable */
+
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -45,6 +48,7 @@ export type ZkSendLinkOptions = {
 	address?: string;
 	isContractLink: boolean;
 	contract?: ZkBagContractOptions | null;
+	creatorAddress?: string; // Polymedia
 } & (
 	| {
 			address: string;
@@ -90,6 +94,7 @@ export class ZkSendLink {
 		host,
 		path,
 		isContractLink,
+		creatorAddress = undefined, // Polymedia
 	}: ZkSendLinkOptions) {
 		if (!keypair && !address) {
 			throw new Error('Either keypair or address must be provided');
@@ -102,6 +107,7 @@ export class ZkSendLink {
 		this.#network = network;
 		this.#host = host;
 		this.#path = path;
+		this.creatorAddress = creatorAddress; // Polymedia
 
 		if (isContractLink) {
 			if (!contract) {
@@ -671,7 +677,9 @@ export class ZkSendLink {
 			},
 		});
 
-		this.creatorAddress = result.data[0]?.transaction?.data.sender;
+		if (!this.creatorAddress) { // Polymedia
+			this.creatorAddress = result.data[0]?.transaction?.data.sender;
+		}
 
 		if (this.#hasSui || this.#ownedObjects.length > 0) {
 			this.claimed = false;

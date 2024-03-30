@@ -1,3 +1,6 @@
+// Forked from `sui/sdk/zksend/src/links/`
+/* eslint-disable */
+
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
