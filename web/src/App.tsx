@@ -73,6 +73,7 @@ export type AppContext = {
     setInProgress: React.Dispatch<React.SetStateAction<boolean>>,
     showMobileNav: boolean,
     setShowMobileNav: React.Dispatch<React.SetStateAction<boolean>>,
+    zkSendVersion: number,
 };
 
 const App: React.FC<{
@@ -95,6 +96,7 @@ const App: React.FC<{
         setInProgress,
         showMobileNav,
         setShowMobileNav,
+        zkSendVersion: 2,
     };
 
     return <>

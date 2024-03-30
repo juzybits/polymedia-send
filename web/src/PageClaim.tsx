@@ -1,16 +1,19 @@
 import { useCurrentAccount, useDisconnectWallet, useSuiClient } from '@mysten/dapp-kit';
+import { ZkSendLink as ZkSendLinkV4 } from '@mysten/zksend';
 import { formatBigInt, shortenSuiAddress, validateAndNormalizeSuiAddress } from '@polymedia/suits';
 import { useEffect, useState } from 'react';
 import { useLocation, useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';
+import { ErrorBox } from './lib/ErrorBox';
 import { CoinInfo, getCoinInfo } from './lib/getCoinInfo';
 import { ZkSendLink as ZkSendLinkV2 } from './lib/zksend';
-import { ErrorBox } from './lib/ErrorBox';
 
 const FEES_ADDRESS = '0xfee3f5c55cb172ae9c1d30587f85c888f56851bfe7e45edc2a6d777374697deb';
 
-type ListClaimableAssetsReturnType = Awaited<ReturnType<InstanceType<typeof ZkSendLinkV2>['listClaimableAssets']>>;
-type BalancesType = ListClaimableAssetsReturnType['balances'];
+type BalancesType = {
+    coinType: string;
+    amount: bigint;
+}[];
 
 export const PageClaim: React.FC = () =>
 {
@@ -21,9 +24,9 @@ export const PageClaim: React.FC = () =>
     const suiClient = useSuiClient();
     const { mutate: disconnect } = useDisconnectWallet();
 
-    const { inProgress, setInProgress, openConnectModal } = useOutletContext<AppContext>();
+    const { inProgress, setInProgress, openConnectModal, network, zkSendVersion } = useOutletContext<AppContext>();
     const [ errMsg, setErrMsg ] = useState('');
-    const [ link, setLink ] = useState<ZkSendLinkV2>(); // loaded on init
+    const [ link, setLink ] = useState<ZkSendLinkV2|ZkSendLinkV4>(); // loaded on init
     const [ claimableBalances, setClaimableBalances ] = useState<BalancesType>(); // loaded on init
     const [ claimableCoinsInfo, setClaimableCoinsInfo ] = useState<CoinInfo[]>(); // loaded on init
     const [ chosenAddress, setChosenAddress ] = useState(''); // chosen by user
@@ -31,11 +34,19 @@ export const PageClaim: React.FC = () =>
 
     useEffect(() => {
         const initialize = async () => {
+            if (zkSendVersion === 4 && network !== 'mainnet') {
+                setErrMsg(`Contract-based zkSend is only available on mainnet, but you are on ${network}`)
+                return;
+            }
             try {
-                const link = await loadZkSendLink();
+                const link = zkSendVersion === 2
+                    ? await loadZkSendLinkV2()
+                    : await loadZkSendLinkV4();
                 setLink(link);
 
-                const balances = await loadClaimableBalances(link);
+                const balances = link instanceof ZkSendLinkV2
+                    ? await loadClaimableBalancesV2(link)
+                    : loadClaimableBalancesV4(link);
                 setClaimableBalances(balances);
 
                 const coinInfos = await loadClaimableCoinsInfo(balances);
@@ -44,17 +55,35 @@ export const PageClaim: React.FC = () =>
                 setErrMsg(String(err));
             }
         }
-        const loadZkSendLink = async (): Promise<ZkSendLinkV2> => {
+        const loadZkSendLinkV2 = async (): Promise<ZkSendLinkV2> => {
             const link = await ZkSendLinkV2.fromUrl(window.location.href, {
                 client: suiClient,
                 creatorAddress: FEES_ADDRESS,
             });
             return link;
         };
-        const loadClaimableBalances = async (link: ZkSendLinkV2): Promise<BalancesType> => {
+        const loadZkSendLinkV4 = async (): Promise<ZkSendLinkV4> => {
+            const link = await ZkSendLinkV4.fromUrl(window.location.href, {
+                // claimApi?: string;
+                // keypair?: Keypair;
+                client: suiClient,
+                // network?: 'mainnet' | 'testnet';
+                // host: window.location.origin,
+                // path: '/claim',
+                // address?: string;
+                // isContractLink: boolean;
+                // contract?: ZkBagContractOptions | null;
+            });
+            return link;
+        };
+        const loadClaimableBalancesV2 = async (link: ZkSendLinkV2): Promise<BalancesType> => {
             const assets = await link.listClaimableAssets('0x123'); // address doesn't matter
             const balances = assets.balances.filter(bal => bal.amount > 0);
             return balances;
+        };
+        const loadClaimableBalancesV4 = (link: ZkSendLinkV4): BalancesType => {
+            const assets = link.assets;
+            return (!assets || link.claimed === true) ? [] : assets.balances;
         };
         const loadClaimableCoinsInfo = async (balances: BalancesType): Promise<CoinInfo[]> => {
             const promises = balances.map(bal => getCoinInfo(bal.coinType, suiClient));
@@ -64,7 +93,7 @@ export const PageClaim: React.FC = () =>
         initialize();
     }, [suiClient]);
 
-    const claimAssets = async (link: ZkSendLinkV2, recipientAddress: string) => {
+    const claimAssets = async (link: ZkSendLinkV2|ZkSendLinkV4, recipientAddress: string) => {
         setErrMsg('');
         setInProgress(true);
         try {
@@ -94,7 +123,7 @@ export const PageClaim: React.FC = () =>
 
     const copyLink = async () => {
         try {
-            await navigator.clipboard.writeText(window.location.href); // TODO include network if not mainnet
+            await navigator.clipboard.writeText(window.location.href); // TODO include network if not mainnet // TODO: use ZkSendLinkBuilder.getLink()
             showCopyMessage('👍 Link copied');
         } catch (error) {
             showCopyMessage("❌ Oops, didn't work. Please copy the page URL manually.");
