@@ -5,12 +5,12 @@ import { convertNumberToBigInt, formatBigInt, formatNumber } from '@polymedia/su
 import { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';
+import { ErrorBox } from './lib/ErrorBox';
 import { SelectCoin } from './lib/SelectCoin';
+import { ZkSendLinkBuilder, ZkSendLinkBuilderOptions } from './lib/builder';
 import { CoinInfo } from './lib/getCoinInfo';
 import { useCoinBalances } from './lib/useCoinBalances';
 import { useCoinInfo } from './lib/useCoinInfo';
-import { ErrorBox } from './lib/ErrorBox';
-import { ZkSendLinkBuilder, ZkSendLinkBuilderOptions } from '@mysten/zksend';
 
 /* React */
 
@@ -43,7 +43,7 @@ export const PageBulk: React.FC = () =>
         resetState();
     }, [currAcct, suiClient]);
 
-    const prepareLinks = (coinInfo: CoinInfo, linkValues: LinkValue[]) => {
+    const prepareLinks = async (coinInfo: CoinInfo, linkValues: LinkValue[]) => {
         if (!currAcct)
             return;
 
@@ -58,6 +58,23 @@ export const PageBulk: React.FC = () =>
             contract: null,
         };
 
+        const amounts = linkValues.flatMap(lv => Array<bigint>(lv.count).fill(
+            convertNumberToBigInt(lv.value, coinInfo.decimals)
+        ));
+
+        const [ txb, links ] = await ZkSendLinkBuilder.createMultiSendLinks(
+            coinInfo.coinType,
+            amounts,
+            options,
+        );
+
+        setPendingLinks({ txb, links, coinInfo });
+
+        for (const link of links) {
+            console.debug(link.getLink());
+        }
+
+        /*
         const txb = new TransactionBlock();
         const links: ZkSendLinkBuilder[] = [];
         for (const lv of linkValues) {
@@ -71,12 +88,7 @@ export const PageBulk: React.FC = () =>
                 links.push(link);
             }
         }
-
-        setPendingLinks({ txb, links, coinInfo });
-
-        for (const link of links) {
-            console.debug(link.getLink());
-        }
+        */
     };
 
     const createLinks = async (txb: TransactionBlock) => {
