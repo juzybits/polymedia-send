@@ -15,11 +15,11 @@ dependencies:
     specifier: ^0.4.1
     version: 0.4.1(typescript@5.4.3)
   '@polymedia/suits':
-    specifier: ^0.0.37
-    version: 0.0.37(typescript@5.4.3)
+    specifier: ^0.0.38
+    version: 0.0.38(typescript@5.4.3)
   '@polymedia/webutils':
-    specifier: ^0.0.44
-    version: 0.0.44(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.3)
+    specifier: ^0.0.45
+    version: 0.0.45(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.3)
   '@tanstack/react-query':
     specifier: ^5.28.9
     version: 5.28.9(react@18.2.0)
@@ -531,21 +531,21 @@ packages:
       fastq: 1.17.1
     dev: true
 
-  /@polymedia/suits@0.0.37(typescript@5.4.3):
-    resolution: {integrity: sha512-EtUZv0q+JeSdf2Srbwln9JEqor1bZUkUqOs24hwqeHVSFyD9rjgeKMD+l+CstZzRO+UCwVTUk1t/t430KGoAJg==}
+  /@polymedia/suits@0.0.38(typescript@5.4.3):
+    resolution: {integrity: sha512-0jKOcfP7iWYv+4/wfE/6FTBsyK3sJiSv2oj5iYelq2xOv6rorv4rIuR3g+LUjSmvOv93KuZUva7Zd+iQVrapug==}
     dependencies:
       '@mysten/sui.js': 0.51.1(typescript@5.4.3)
     transitivePeerDependencies:
       - typescript
     dev: false
 
-  /@polymedia/webutils@0.0.44(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.3):
-    resolution: {integrity: sha512-SQYaRxzRcB4C7EqlxLrcwqz9nv7e1S8Mmo25+0QBeVLvYWRoQ+pw3bLjUrMwJTpAa5B5JQqceO8//Z8lqen32g==}
+  /@polymedia/webutils@0.0.45(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.3):
+    resolution: {integrity: sha512-VhLV0u0belsmTch4sGP1KGZ7fcARPctaVT3JTw2SNSNQhS1RF7mN1sTbZyJiOWZ2F3dF5SFdjggg6qZUDkHdqQ==}
     peerDependencies:
       react: ^18.0.0
       react-dom: ^18.0.0
     dependencies:
-      '@polymedia/suits': 0.0.37(typescript@5.4.3)
+      '@polymedia/suits': 0.0.38(typescript@5.4.3)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     transitivePeerDependencies:
