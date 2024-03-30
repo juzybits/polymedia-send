@@ -1,11 +1,13 @@
 import { useCurrentAccount, useDisconnectWallet, useSuiClient } from '@mysten/dapp-kit';
-import { ZkSendLink } from '@mysten/zksend';
 import { formatBigInt, shortenSuiAddress, validateAndNormalizeSuiAddress } from '@polymedia/suits';
 import { useEffect, useState } from 'react';
 import { useLocation, useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';
 import { ErrorBox } from './lib/ErrorBox';
 import { CoinInfo, getCoinInfo } from './lib/getCoinInfo';
+import { ZkSendLink } from './lib/zksend/claim';
+
+const FEES_ADDRESS = '0xfee3f5c55cb172ae9c1d30587f85c888f56851bfe7e45edc2a6d777374697deb';
 
 type BalancesType = {
     coinType: string;
@@ -55,6 +57,7 @@ export const PageClaim: React.FC = () =>
                 // address?: string;
                 // isContractLink: boolean;
                 // contract?: ZkBagContractOptions | null;
+                creatorAddress: FEES_ADDRESS,
             });
             return link;
         };

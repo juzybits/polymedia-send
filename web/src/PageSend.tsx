@@ -1,6 +1,5 @@
 import { useCurrentAccount, useSignAndExecuteTransactionBlock, useSuiClient } from '@mysten/dapp-kit';
 import { CoinBalance } from '@mysten/sui.js/client';
-import { ZkSendLinkBuilder } from '@mysten/zksend';
 import { convertNumberToBigInt, formatBigInt, formatNumber } from '@polymedia/suits';
 import { useEffect, useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
@@ -9,6 +8,7 @@ import { ErrorBox } from './lib/ErrorBox';
 import { SelectCoin } from './lib/SelectCoin';
 import { useCoinBalances } from './lib/useCoinBalances';
 import { useCoinInfo } from './lib/useCoinInfo';
+import { ZkSendLinkBuilder } from './lib/zksend/builder';
 
 export const PageSend: React.FC = () =>
 {

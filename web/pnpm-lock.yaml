@@ -11,9 +11,6 @@ dependencies:
   '@mysten/sui.js':
     specifier: ^0.51.1
     version: 0.51.1(typescript@5.4.3)
-  '@mysten/zksend':
-    specifier: ^0.4.1
-    version: 0.4.1(typescript@5.4.3)
   '@polymedia/suits':
     specifier: ^0.0.38
     version: 0.0.38(typescript@5.4.3)

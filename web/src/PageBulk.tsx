@@ -7,10 +7,10 @@ import { useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';
 import { ErrorBox } from './lib/ErrorBox';
 import { SelectCoin } from './lib/SelectCoin';
-import { ZkSendLinkBuilder, ZkSendLinkBuilderOptions } from './lib/builder';
 import { CoinInfo } from './lib/getCoinInfo';
 import { useCoinBalances } from './lib/useCoinBalances';
 import { useCoinInfo } from './lib/useCoinInfo';
+import { ZkSendLinkBuilder, ZkSendLinkBuilderOptions } from './lib/zksend/builder';
 
 /* React */
 
