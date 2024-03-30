@@ -1,6 +1,6 @@
 import { useCurrentAccount, useSignAndExecuteTransactionBlock, useSuiClient } from '@mysten/dapp-kit';
 import { CoinBalance } from '@mysten/sui.js/client';
-import { ZkSendLinkBuilder as ZkSendLinkBuilderV4 } from '@mysten/zksend';
+import { ZkSendLinkBuilder } from '@mysten/zksend';
 import { convertNumberToBigInt, formatBigInt, formatNumber } from '@polymedia/suits';
 import { useEffect, useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
@@ -9,7 +9,6 @@ import { ErrorBox } from './lib/ErrorBox';
 import { SelectCoin } from './lib/SelectCoin';
 import { useCoinBalances } from './lib/useCoinBalances';
 import { useCoinInfo } from './lib/useCoinInfo';
-import { ZkSendLinkBuilder as ZkSendLinkBuilderV2 } from './lib/zksend';
 
 export const PageSend: React.FC = () =>
 {
@@ -19,7 +18,7 @@ export const PageSend: React.FC = () =>
     const suiClient = useSuiClient();
     const { mutateAsync: signAndExecuteTxb } = useSignAndExecuteTransactionBlock();
 
-    const { inProgress, setInProgress, openConnectModal, network, zkSendVersion } = useOutletContext<AppContext>();
+    const { inProgress, setInProgress, openConnectModal } = useOutletContext<AppContext>();
     const [ errMsg, setErrMsg ] = useState<string>();
     const [ chosenBalance, setChosenBalance ] = useState<CoinBalance>(); // dropdown
     const [ chosenAmount, setChosenAmount ] = useState(''); // numeric input
@@ -43,21 +42,9 @@ export const PageSend: React.FC = () =>
         if (!currAcct)
             return;
 
-        if (zkSendVersion === 4 && network !== 'mainnet') {
-            setErrMsg(`Contract-based zkSend is only available on mainnet, but you are on ${network}`)
-            return;
-        }
-
         setInProgress(true);
         try {
-            const link = zkSendVersion === 2
-            ? new ZkSendLinkBuilderV2({
-                sender: currAcct.address,
-                host: window.location.origin,
-                path: '/claim',
-                client: suiClient,
-            })
-            : new ZkSendLinkBuilderV4({
+            const link = new ZkSendLinkBuilder({
                 host: window.location.origin,
                 path: '/claim',
                 // keypair?: Keypair;
@@ -65,7 +52,7 @@ export const PageSend: React.FC = () =>
                 client: suiClient,
                 sender: currAcct.address,
                 // redirect?: ZkSendLinkRedirect;
-                // contract?: ZkBagContractOptions | null;
+                contract: null,
             });
 
             link.addClaimableBalance(coinType, amountWithDec);
