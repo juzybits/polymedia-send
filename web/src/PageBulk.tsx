@@ -9,8 +9,8 @@ import { SelectCoin } from './lib/SelectCoin';
 import { CoinInfo } from './lib/getCoinInfo';
 import { useCoinBalances } from './lib/useCoinBalances';
 import { useCoinInfo } from './lib/useCoinInfo';
-import { ZkSendLinkBuilder as ZkSendLinkBuilderV2, ZkSendLinkBuilderOptions as ZkSendLinkBuilderOptionsV2 } from './lib/zksend';
 import { ErrorBox } from './lib/ErrorBox';
+import { ZkSendLinkBuilder, ZkSendLinkBuilderOptions } from '@mysten/zksend';
 
 /* React */
 
@@ -43,25 +43,34 @@ export const PageBulk: React.FC = () =>
         resetState();
     }, [currAcct, suiClient]);
 
-    const prepareLinks = async (coinInfo: CoinInfo, linkValues: LinkValue[]) => {
-        if (!currAcct) return;
+    const prepareLinks = (coinInfo: CoinInfo, linkValues: LinkValue[]) => {
+        if (!currAcct)
+            return;
 
-        const options: ZkSendLinkBuilderOptionsV2 = {
-            sender: currAcct.address,
+        const options: ZkSendLinkBuilderOptions = {
             host: window.location.origin,
             path: '/claim',
+            // keypair?: Keypair;
+            // network?: 'mainnet' | 'testnet';
             client: suiClient,
+            sender: currAcct.address,
+            // redirect?: ZkSendLinkRedirect;
+            contract: null,
         };
 
-        const amounts = linkValues.flatMap(lv => Array<bigint>(lv.count).fill(
-            convertNumberToBigInt(lv.value, coinInfo.decimals)
-        ));
-
-        const [ txb, links ] = await ZkSendLinkBuilderV2.createMultiSendLinks(
-            coinInfo.coinType,
-            amounts,
-            options,
-        );
+        const txb = new TransactionBlock();
+        const links: ZkSendLinkBuilder[] = [];
+        for (const lv of linkValues) {
+            for (let i = 0; i < lv.count; i++) {
+                const link = new ZkSendLinkBuilder(options);
+                link.addClaimableBalance(
+                    coinInfo.coinType,
+                    convertNumberToBigInt(lv.value, coinInfo.decimals),
+                );
+                link.createSendTransaction({ transactionBlock: txb });
+                links.push(link);
+            }
+        }
 
         setPendingLinks({ txb, links, coinInfo });
 
@@ -281,7 +290,7 @@ const MIME_CSV = 'text/csv;charset=utf-8;';
 
 type PendingLinks = {
     txb: TransactionBlock,
-    links: ZkSendLinkBuilderV2[],
+    links: ZkSendLinkBuilder[],
     coinInfo: CoinInfo,
 };
 
