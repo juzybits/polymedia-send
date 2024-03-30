@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';
 import { SelectCoin } from './lib/SelectCoin';
-import { ZkSendLinkBuilder } from './lib/zksend';
+import { ZkSendLinkBuilder as ZkSendLinkBuilderV2 } from './lib/zksend';
 import { useCoinBalances } from './lib/useCoinBalances';
 import { useCoinInfo } from './lib/useCoinInfo';
 import { ErrorBox } from './lib/ErrorBox';
@@ -42,7 +42,7 @@ export const PageSend: React.FC = () =>
 
         setInProgress(true);
         try {
-            const link = new ZkSendLinkBuilder({
+            const link = new ZkSendLinkBuilderV2({
                 sender: currAcct.address,
                 host: window.location.origin,
                 path: '/claim',

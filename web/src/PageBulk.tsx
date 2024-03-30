@@ -9,7 +9,7 @@ import { SelectCoin } from './lib/SelectCoin';
 import { CoinInfo } from './lib/getCoinInfo';
 import { useCoinBalances } from './lib/useCoinBalances';
 import { useCoinInfo } from './lib/useCoinInfo';
-import { ZkSendLinkBuilder, ZkSendLinkBuilderOptions } from './lib/zksend';
+import { ZkSendLinkBuilder as ZkSendLinkBuilderV2, ZkSendLinkBuilderOptions as ZkSendLinkBuilderOptionsV2 } from './lib/zksend';
 import { ErrorBox } from './lib/ErrorBox';
 
 /* React */
@@ -46,7 +46,7 @@ export const PageBulk: React.FC = () =>
     const prepareLinks = async (coinInfo: CoinInfo, linkValues: LinkValue[]) => {
         if (!currAcct) return;
 
-        const options: ZkSendLinkBuilderOptions = {
+        const options: ZkSendLinkBuilderOptionsV2 = {
             sender: currAcct.address,
             host: window.location.origin,
             path: '/claim',
@@ -57,7 +57,7 @@ export const PageBulk: React.FC = () =>
             convertNumberToBigInt(lv.value, coinInfo.decimals)
         ));
 
-        const [ txb, links ] = await ZkSendLinkBuilder.createMultiSendLinks(
+        const [ txb, links ] = await ZkSendLinkBuilderV2.createMultiSendLinks(
             coinInfo.coinType,
             amounts,
             options,
@@ -281,7 +281,7 @@ const MIME_CSV = 'text/csv;charset=utf-8;';
 
 type PendingLinks = {
     txb: TransactionBlock,
-    links: ZkSendLinkBuilder[],
+    links: ZkSendLinkBuilderV2[],
     coinInfo: CoinInfo,
 };
 

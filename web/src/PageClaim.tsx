@@ -4,12 +4,12 @@ import { useEffect, useState } from 'react';
 import { useLocation, useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';
 import { CoinInfo, getCoinInfo } from './lib/getCoinInfo';
-import { ZkSendLink } from './lib/zksend';
+import { ZkSendLink as ZkSendLinkV2 } from './lib/zksend';
 import { ErrorBox } from './lib/ErrorBox';
 
 const FEES_ADDRESS = '0xfee3f5c55cb172ae9c1d30587f85c888f56851bfe7e45edc2a6d777374697deb';
 
-type ListClaimableAssetsReturnType = Awaited<ReturnType<InstanceType<typeof ZkSendLink>['listClaimableAssets']>>;
+type ListClaimableAssetsReturnType = Awaited<ReturnType<InstanceType<typeof ZkSendLinkV2>['listClaimableAssets']>>;
 type BalancesType = ListClaimableAssetsReturnType['balances'];
 
 export const PageClaim: React.FC = () =>
@@ -23,7 +23,7 @@ export const PageClaim: React.FC = () =>
 
     const { inProgress, setInProgress, openConnectModal } = useOutletContext<AppContext>();
     const [ errMsg, setErrMsg ] = useState('');
-    const [ link, setLink ] = useState<ZkSendLink>(); // loaded on init
+    const [ link, setLink ] = useState<ZkSendLinkV2>(); // loaded on init
     const [ claimableBalances, setClaimableBalances ] = useState<BalancesType>(); // loaded on init
     const [ claimableCoinsInfo, setClaimableCoinsInfo ] = useState<CoinInfo[]>(); // loaded on init
     const [ chosenAddress, setChosenAddress ] = useState(''); // chosen by user
@@ -44,14 +44,14 @@ export const PageClaim: React.FC = () =>
                 setErrMsg(String(err));
             }
         }
-        const loadZkSendLink = async (): Promise<ZkSendLink> => {
-            const link = await ZkSendLink.fromUrl(window.location.href, {
+        const loadZkSendLink = async (): Promise<ZkSendLinkV2> => {
+            const link = await ZkSendLinkV2.fromUrl(window.location.href, {
                 client: suiClient,
                 creatorAddress: FEES_ADDRESS,
             });
             return link;
         };
-        const loadClaimableBalances = async (link: ZkSendLink): Promise<BalancesType> => {
+        const loadClaimableBalances = async (link: ZkSendLinkV2): Promise<BalancesType> => {
             const assets = await link.listClaimableAssets('0x123'); // address doesn't matter
             const balances = assets.balances.filter(bal => bal.amount > 0);
             return balances;
@@ -64,7 +64,7 @@ export const PageClaim: React.FC = () =>
         initialize();
     }, [suiClient]);
 
-    const claimAssets = async (link: ZkSendLink, recipientAddress: string) => {
+    const claimAssets = async (link: ZkSendLinkV2, recipientAddress: string) => {
         setErrMsg('');
         setInProgress(true);
         try {
