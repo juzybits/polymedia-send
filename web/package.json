@@ -22,21 +22,22 @@
         "tunnel": "lt --port 1234 --subdomain poly"
     },
     "dependencies": {
-        "@mysten/dapp-kit": "^0.12.5",
-        "@mysten/sui.js": "^0.51.0",
+        "@mysten/dapp-kit": "^0.12.7",
+        "@mysten/sui.js": "^0.51.1",
+        "@mysten/zksend": "^0.4.1",
         "@polymedia/suits": "^0.0.37",
         "@polymedia/webutils": "^0.0.44",
-        "@tanstack/react-query": "^5.28.4",
+        "@tanstack/react-query": "^5.28.9",
         "normalize.css": "^8.0.1",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "react-router-dom": "^6.22.3"
     },
     "devDependencies": {
-        "@types/react": "^18.2.67",
-        "@types/react-dom": "^18.2.22",
-        "@typescript-eslint/eslint-plugin": "^7.3.1",
-        "@typescript-eslint/parser": "^7.3.1",
+        "@types/react": "^18.2.73",
+        "@types/react-dom": "^18.2.23",
+        "@typescript-eslint/eslint-plugin": "^7.4.0",
+        "@typescript-eslint/parser": "^7.4.0",
         "@vitejs/plugin-react-swc": "^3.6.0",
         "eslint": "^8.57.0",
         "eslint-plugin-react": "^7.34.1",
@@ -45,7 +46,7 @@
         "less": "^4.2.0",
         "localtunnel": "^2.0.2",
         "typescript": "^5.4.3",
-        "vite": "^5.2.2"
+        "vite": "^5.2.7"
     },
     "type": "module",
     "sideEffects": false
