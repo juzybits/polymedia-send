@@ -10,6 +10,7 @@ import { SelectCoin } from './lib/SelectCoin';
 import { CoinInfo } from './lib/getCoinInfo';
 import { useCoinBalances } from './lib/useCoinBalances';
 import { useCoinInfo } from './lib/useCoinInfo';
+import { useIsWalletNotSupported } from './lib/useIsWalletNotSupported';
 import { ZkSendLinkBuilder, ZkSendLinkBuilderOptions } from './lib/zksend/builder';
 
 /* React */
@@ -19,6 +20,8 @@ export const PageBulk: React.FC = () =>
     const currAcct = useCurrentAccount();
     const suiClient = useSuiClient();
     const { mutateAsync: signAndExecuteTxb } = useSignAndExecuteTransactionBlock();
+
+    const walletNotSupported = useIsWalletNotSupported();
 
     const { inProgress, setInProgress, openConnectModal } = useOutletContext<AppContext>();
     const [ chosenBalance, setChosenBalance ] = useState<CoinBalance>(); // dropdown
@@ -115,7 +118,6 @@ export const PageBulk: React.FC = () =>
         }
     };
 
-    const isMobile = /mobile/i.test(navigator.userAgent);
     const error = errBalances ?? errCoinInfo ?? null;
 
     return <div id='bulk-page' >
@@ -123,8 +125,8 @@ export const PageBulk: React.FC = () =>
     <h1>Create multiple links</h1>
 
     {(() => {
-        if (isMobile) {
-            return <p>Please use a desktop wallet to create links.</p>;
+        if (walletNotSupported) {
+            return <p>This wallet is not supported.</p>;
         }
 
         if (!currAcct) {
