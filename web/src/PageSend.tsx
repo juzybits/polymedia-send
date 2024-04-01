@@ -1,4 +1,4 @@
-import { useCurrentAccount, useCurrentWallet, useSignAndExecuteTransactionBlock, useSuiClient } from '@mysten/dapp-kit';
+import { useCurrentAccount, useSignAndExecuteTransactionBlock, useSuiClient } from '@mysten/dapp-kit';
 import { CoinBalance } from '@mysten/sui.js/client';
 import { convertNumberToBigInt, formatBigInt, formatNumber } from '@polymedia/suits';
 import { useEffect, useState } from 'react';
@@ -8,6 +8,7 @@ import { ErrorBox } from './lib/ErrorBox';
 import { SelectCoin } from './lib/SelectCoin';
 import { useCoinBalances } from './lib/useCoinBalances';
 import { useCoinInfo } from './lib/useCoinInfo';
+import { useIsWalletNotSupported } from './lib/useIsWalletNotSupported';
 import { ZkSendLinkBuilder } from './lib/zksend/builder';
 
 export const PageSend: React.FC = () =>
@@ -15,12 +16,12 @@ export const PageSend: React.FC = () =>
     const navigate = useNavigate();
 
     const currAcct = useCurrentAccount();
-    const currWallet = useCurrentWallet();
     const suiClient = useSuiClient();
     const { mutateAsync: signAndExecuteTxb } = useSignAndExecuteTransactionBlock();
 
+    const walletNotSupported = useIsWalletNotSupported();
+
     const { inProgress, setInProgress, openConnectModal } = useOutletContext<AppContext>();
-    const [ walletNotSupported, setWalletNotSupported ] = useState(false);
     const [ errMsg, setErrMsg ] = useState<string>();
     const [ chosenBalance, setChosenBalance ] = useState<CoinBalance>(); // dropdown
     const [ chosenAmount, setChosenAmount ] = useState(''); // numeric input
@@ -37,13 +38,6 @@ export const PageSend: React.FC = () =>
         }
         resetState();
     }, [currAcct, suiClient]);
-
-    useEffect(() => {
-        const isEthosMobile = currWallet
-            && currWallet.currentWallet?.name.startsWith('Ethos')
-            && /mobile/i.test(navigator.userAgent);
-        setWalletNotSupported(Boolean(isEthosMobile));
-    }, [currWallet]);
 
     const createLink = async (coinType: string, amountWithDec: bigint) => {
         setErrMsg(undefined);
