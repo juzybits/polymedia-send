@@ -17,7 +17,8 @@ type BalancesType = {
 export const PageClaim: React.FC = () =>
 {
     const location = useLocation();
-    const isCreator = location.state?.isCreator; // eslint-disable-line
+    const createdLinkUrl: string|undefined = location.state?.createdLinkUrl; // eslint-disable-line
+    const isCreator = !!createdLinkUrl;
 
     const currAcct = useCurrentAccount();
     const suiClient = useSuiClient();
@@ -47,7 +48,7 @@ export const PageClaim: React.FC = () =>
             }
         }
         const loadZkSendLink = async (): Promise<ZkSendLink> => {
-            const link = await ZkSendLink.fromUrl(window.location.href, {
+            const link = await ZkSendLink.fromUrl(createdLinkUrl || window.location.href, {
                 // claimApi?: string;
                 // keypair?: Keypair;
                 client: suiClient,
@@ -101,9 +102,9 @@ export const PageClaim: React.FC = () =>
         setTimeout(() => {setCopyMsg('')}, 3000);
     }
 
-    const copyLink = async () => {
+    const copyLink = async (linkUrl: string) => {
         try {
-            await navigator.clipboard.writeText(window.location.href); // TODO include network if not mainnet // TODO: use ZkSendLinkBuilder.getLink()
+            await navigator.clipboard.writeText(linkUrl);
             showCopyMessage('👍 Link copied');
         } catch (error) {
             showCopyMessage("❌ Oops, didn't work. Please copy the page URL manually.");
@@ -123,7 +124,9 @@ export const PageClaim: React.FC = () =>
 
                 <p>Copy and share the link with the person you want to send the assets to.</p>
 
-                <button className='btn' onClick={copyLink}>
+                <button className='btn' onClick={() => {
+                    copyLink(createdLinkUrl || window.location.href); // TODO include network if not mainnet
+                }}>
                     COPY LINK
                 </button>
                 {copyMsg && <div>{copyMsg}</div>}
