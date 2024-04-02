@@ -85,7 +85,6 @@ export async function listCreatedLinks({
 			network === 'testnet'
 				? 'https://sui-testnet.mystenlabs.com/graphql'
 				: 'https://sui-mainnet.mystenlabs.com/graphql',
-		fetch: fetch.bind(window),
 	});
 
 	const packageId = normalizeSuiAddress(contract.packageId);
