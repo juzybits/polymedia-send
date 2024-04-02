@@ -17,6 +17,7 @@ import './App.less';
 import { PageBulk } from './PageBulk';
 import { PageClaim } from './PageClaim';
 import { PageHome } from './PageHome';
+import { PageList } from './PageList';
 import { PageNotFound } from './PageNotFound';
 import { PageSend } from './PageSend';
 
@@ -31,6 +32,7 @@ export const AppWrapRouter: React.FC = () => {
                 <Route path='/send' element={<PageSend />} />
                 <Route path='/bulk' element={<PageBulk />} />
                 <Route path='/claim' element={<PageClaim />} />
+                <Route path='/list' element={<PageList />} />
                 <Route path='*' element={<PageNotFound />} />
             </Route>
         </Routes>
