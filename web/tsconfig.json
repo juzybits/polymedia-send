@@ -1,7 +1,8 @@
 {
     "include": [
         "./src",
-        "./vite.config.ts"
+        "./vite.config.ts",
+        "./functions",
     ],
     "exclude": [
         "./dist",

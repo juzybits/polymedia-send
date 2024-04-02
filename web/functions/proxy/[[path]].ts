@@ -1,17 +1,21 @@
-export const onRequest = async ({ request, params }) => {
+import { PagesFunction, RequestInit, /* Response, fetch */ } from '@cloudflare/workers-types';
+
+// @ts-expect-error importing Response solves this, but then Cloudflare complains: No matching export for import "Response"
+export const onRequest: PagesFunction = async ({ request, params }) => {
     const apiUrl = 'https://zksend.com/api';
-    const apiPath = params.path.join('/');
+    const apiPath = typeof params.path === 'string' ? params.path : params.path.join('/');
     const targetUrl = `${apiUrl}/${apiPath}`;
 
     const init: RequestInit = {
         method: request.method,
-        headers: new Headers(request.headers),
+        headers: request.headers,
     };
 
     if (request.method === 'POST') {
         init.body = await request.text();
     }
 
+    // @ts-expect-error importing fetch solves this, but then Cloudflare complains: No matching export for import "fetch"
     const resp = await fetch(targetUrl, init);
 
     const newResp = new Response(resp.body, resp);
