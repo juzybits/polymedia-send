@@ -35,7 +35,9 @@ export const PageList: React.FC = () =>
                     <p>digest: {link.digest}</p>
                     <p>address: {link.link.address}</p>
                     {link.assets.balances.map(bal =>
-                        <p>Balance: {String(bal.amount)} {bal.coinType.split('::')[2]}</p>
+                        <p key={bal.coinType}>
+                            Balance: {String(bal.amount)} {bal.coinType.split('::')[2]}
+                        </p>
                     )}
                 </div>)
             }

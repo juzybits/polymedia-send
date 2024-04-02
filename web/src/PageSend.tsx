@@ -88,7 +88,6 @@ export const PageSend: React.FC = () =>
         }
     };
 
-    const isMobile = /mobile/i.test(navigator.userAgent);
     const error = errMsg ?? errBalances ?? errCoinInfo ?? null;
 
     return <div id='page-send'>
