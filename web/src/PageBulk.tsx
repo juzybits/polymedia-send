@@ -10,7 +10,7 @@ import { SelectCoin } from './lib/SelectCoin';
 import { CoinInfo } from './lib/getCoinInfo';
 import { useCoinBalances } from './lib/useCoinBalances';
 import { useCoinInfo } from './lib/useCoinInfo';
-import { useIsWalletNotSupported } from './lib/useIsWalletNotSupported';
+import { useIsSupportedWallet } from './lib/useIsSupportedWallet';
 import { ZkSendLinkBuilder, ZkSendLinkBuilderOptions } from './lib/zksend/builder';
 
 /* React */
@@ -21,7 +21,7 @@ export const PageBulk: React.FC = () =>
     const suiClient = useSuiClient();
     const { mutateAsync: signAndExecuteTxb } = useSignAndExecuteTransactionBlock();
 
-    const walletNotSupported = useIsWalletNotSupported();
+    const isSupportedWallet = useIsSupportedWallet();
 
     const { inProgress, setInProgress, openConnectModal } = useOutletContext<AppContext>();
     const [ chosenBalance, setChosenBalance ] = useState<CoinBalance>(); // dropdown
@@ -125,7 +125,7 @@ export const PageBulk: React.FC = () =>
     <h1>Create multiple links</h1>
 
     {(() => {
-        if (walletNotSupported) {
+        if (!isSupportedWallet) {
             return <p>This wallet is not supported.</p>;
         }
 

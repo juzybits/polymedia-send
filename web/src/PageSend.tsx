@@ -8,7 +8,7 @@ import { ErrorBox } from './lib/ErrorBox';
 import { SelectCoin } from './lib/SelectCoin';
 import { useCoinBalances } from './lib/useCoinBalances';
 import { useCoinInfo } from './lib/useCoinInfo';
-import { useIsWalletNotSupported } from './lib/useIsWalletNotSupported';
+import { useIsSupportedWallet } from './lib/useIsSupportedWallet';
 import { ZkSendLinkBuilder } from './lib/zksend/builder';
 
 export const PageSend: React.FC = () =>
@@ -19,7 +19,7 @@ export const PageSend: React.FC = () =>
     const suiClient = useSuiClient();
     const { mutateAsync: signAndExecuteTxb } = useSignAndExecuteTransactionBlock();
 
-    const walletNotSupported = useIsWalletNotSupported();
+    const isSupportedWallet = useIsSupportedWallet();
 
     const { inProgress, setInProgress, openConnectModal } = useOutletContext<AppContext>();
     const [ errMsg, setErrMsg ] = useState<string>();
@@ -96,7 +96,7 @@ export const PageSend: React.FC = () =>
     <h1>Create one link</h1>
 
     {(() => {
-        if (walletNotSupported) {
+        if (!isSupportedWallet) {
             return <p>This wallet is not supported.</p>;
         }
 
