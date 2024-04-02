@@ -49,7 +49,7 @@ export const PageClaim: React.FC = () =>
         }
         const loadZkSendLink = async (): Promise<ZkSendLink> => {
             const link = await ZkSendLink.fromUrl(createdLinkUrl || window.location.href, {
-                // claimApi?: string;
+                claimApi: '/proxy',
                 // keypair?: Keypair;
                 client: suiClient,
                 // network?: 'mainnet' | 'testnet';
