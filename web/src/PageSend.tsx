@@ -7,12 +7,11 @@ import { AppContext } from './App';
 import { ErrorBox } from './lib/ErrorBox';
 import { LogInToContinue } from './lib/LogInToContinue';
 import { SelectCoin } from './lib/SelectCoin';
-import { TESTNET_IDS } from './lib/constants';
 import { useCoinBalances } from './lib/useCoinBalances';
 import { useCoinInfo } from './lib/useCoinInfo';
 import { useIsSupportedWallet } from './lib/useIsSupportedWallet';
+import { useZkBagContract } from './lib/useZkBagContract';
 import { ZkSendLinkBuilder } from './lib/zksend/builder';
-import { MAINNET_CONTRACT_IDS } from './lib/zksend/zk-bag';
 
 export const PageSend: React.FC = () =>
 {
@@ -22,9 +21,10 @@ export const PageSend: React.FC = () =>
     const suiClient = useSuiClient();
     const { mutateAsync: signAndExecuteTxb } = useSignAndExecuteTransactionBlock();
 
+    const { inProgress, setInProgress, network, sendMode } = useOutletContext<AppContext>();
     const isSupportedWallet = useIsSupportedWallet();
+    const zkBagContract = useZkBagContract();
 
-    const { inProgress, setInProgress, network } = useOutletContext<AppContext>();
     const [ errMsg, setErrMsg ] = useState<string>();
     const [ chosenBalance, setChosenBalance ] = useState<CoinBalance>(); // dropdown
     const [ chosenAmount, setChosenAmount ] = useState(''); // numeric input
@@ -58,7 +58,7 @@ export const PageSend: React.FC = () =>
                 client: suiClient,
                 sender: currAcct.address,
                 // redirect?: ZkSendLinkRedirect;
-                contract: network === 'mainnet' ? MAINNET_CONTRACT_IDS : TESTNET_IDS,
+                contract: sendMode === 'contract-based' ? zkBagContract : null,
             });
 
             link.addClaimableBalance(coinType, amountWithDec);

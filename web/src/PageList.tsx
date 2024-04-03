@@ -4,9 +4,8 @@ import { useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';
 import { ErrorBox } from './lib/ErrorBox';
 import { LogInToContinue } from './lib/LogInToContinue';
-import { TESTNET_IDS } from './lib/constants';
+import { useZkBagContract } from './lib/useZkBagContract';
 import { listCreatedLinks } from './lib/zksend/list-created-links';
-import { MAINNET_CONTRACT_IDS } from './lib/zksend/zk-bag';
 
 export const PageList: React.FC = () =>
 {
@@ -14,6 +13,7 @@ export const PageList: React.FC = () =>
     const suiClient = useSuiClient();
 
     const { network } = useOutletContext<AppContext>();
+    const zkBagContract = useZkBagContract();
 
     const [ links, setLinks ] = useState<Awaited<ReturnType<typeof listCreatedLinks>>>();
     const [ errMsg, setErrMsg ] = useState<string>();
@@ -26,7 +26,7 @@ export const PageList: React.FC = () =>
             try {
                 const res = await listCreatedLinks({
                     address: currAcct.address,
-                    contract: network === 'mainnet' ? MAINNET_CONTRACT_IDS : TESTNET_IDS,
+                    contract: zkBagContract,
                     // cursor?: string;
                     network,
                     host: window.location.origin,

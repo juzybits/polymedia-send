@@ -72,10 +72,13 @@ const AppWrapSui: React.FC = () => {
 
 export type ReactSetter<T> = React.Dispatch<React.SetStateAction<T>>;
 
+export type SendMode = 'contract-based' | 'contract-less';
+
 export type AppContext = {
     inProgress: boolean, setInProgress: ReactSetter<boolean>,
     network: NetworkName, setNetwork: ReactSetter<NetworkName>,
     openConnectModal: () => void,
+    sendMode: SendMode, setSendMode: ReactSetter<SendMode>,
     showMobileNav: boolean, setShowMobileNav: ReactSetter<boolean>,
 };
 
@@ -90,11 +93,13 @@ const App: React.FC<{
     const [ inProgress, setInProgress ] = useState(false);
     const [ showConnectModal, setShowConnectModal ] = useState(false);
     const [ showMobileNav, setShowMobileNav ] = useState(false);
+    const [ sendMode, setSendMode ] = useState<SendMode>('contract-based');
 
     const appContext: AppContext = {
         inProgress, setInProgress,
         network, setNetwork,
         openConnectModal: () => { setShowConnectModal(true) },
+        sendMode, setSendMode,
         showMobileNav, setShowMobileNav,
     };
 

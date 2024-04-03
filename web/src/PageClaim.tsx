@@ -5,9 +5,8 @@ import { useLocation, useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';
 import { ErrorBox } from './lib/ErrorBox';
 import { CoinInfo, getCoinInfo } from './lib/getCoinInfo';
+import { useZkBagContract } from './lib/useZkBagContract';
 import { ZkSendLink } from './lib/zksend/claim';
-import { MAINNET_CONTRACT_IDS } from './lib/zksend/zk-bag';
-import { TESTNET_IDS } from './lib/constants';
 
 const FEES_ADDRESS = '0xfee3f5c55cb172ae9c1d30587f85c888f56851bfe7e45edc2a6d777374697deb';
 
@@ -27,6 +26,8 @@ export const PageClaim: React.FC = () =>
     const { mutate: disconnect } = useDisconnectWallet();
 
     const { inProgress, setInProgress, openConnectModal, network } = useOutletContext<AppContext>();
+    const zkBagContract = useZkBagContract();
+
     const [ errMsg, setErrMsg ] = useState('');
     const [ link, setLink ] = useState<ZkSendLink>(); // loaded on init
     const [ claimableBalances, setClaimableBalances ] = useState<BalancesType>(); // loaded on init
@@ -56,7 +57,7 @@ export const PageClaim: React.FC = () =>
                 network,
                 host: window.location.origin,
                 path: '/claim',
-                contract: network === 'mainnet' ? MAINNET_CONTRACT_IDS : TESTNET_IDS,
+                contract: zkBagContract,
                 creatorAddress: FEES_ADDRESS,
             });
             return link;
