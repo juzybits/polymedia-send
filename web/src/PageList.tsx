@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';
 import { ErrorBox } from './lib/ErrorBox';
+import { LogInToContinue } from './lib/LogInToContinue';
 import { TESTNET_IDS } from './lib/constants';
 import { listCreatedLinks } from './lib/zksend/list-created-links';
 import { MAINNET_CONTRACT_IDS } from './lib/zksend/zk-bag';
@@ -46,6 +47,9 @@ export const PageList: React.FC = () =>
         {((() => {
             if (errMsg) {
                 return <ErrorBox err={errMsg} />
+            }
+            if (!currAcct) {
+                return <LogInToContinue />;
             }
             if (!links) {
                 return <p>Loading...</p>;

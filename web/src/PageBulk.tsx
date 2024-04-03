@@ -5,14 +5,15 @@ import { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';
 import { ErrorBox } from './lib/ErrorBox';
+import { LogInToContinue } from './lib/LogInToContinue';
 import { SelectCoin } from './lib/SelectCoin';
+import { TESTNET_IDS } from './lib/constants';
 import { CoinInfo } from './lib/getCoinInfo';
 import { useCoinBalances } from './lib/useCoinBalances';
 import { useCoinInfo } from './lib/useCoinInfo';
 import { useIsSupportedWallet } from './lib/useIsSupportedWallet';
 import { ZkSendLinkBuilder, ZkSendLinkBuilderOptions } from './lib/zksend/builder';
 import { MAINNET_CONTRACT_IDS } from './lib/zksend/zk-bag';
-import { TESTNET_IDS } from './lib/constants';
 
 /* React */
 
@@ -24,7 +25,7 @@ export const PageBulk: React.FC = () =>
 
     const isSupportedWallet = useIsSupportedWallet();
 
-    const { inProgress, setInProgress, openConnectModal, network } = useOutletContext<AppContext>();
+    const { inProgress, setInProgress, network } = useOutletContext<AppContext>();
     const [ chosenBalance, setChosenBalance ] = useState<CoinBalance>(); // dropdown
     const [ chosenAmounts, setChosenAmounts ] = useState<string>(''); // textarea
     const [ pendingLinks, setPendingLinks ] = useState<PendingLinks>();
@@ -138,10 +139,7 @@ export const PageBulk: React.FC = () =>
         }
 
         if (!currAcct) {
-            return <div>
-                <p>Connect your Sui wallet to get started.</p>
-                <button onClick={openConnectModal} className='btn'>LOG IN</button>
-            </div>;
+            return <LogInToContinue />;
         }
 
         if (!userBalances) {
