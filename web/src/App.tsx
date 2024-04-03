@@ -8,7 +8,7 @@ import {
 } from '@mysten/dapp-kit';
 import '@mysten/dapp-kit/dist/index.css';
 import { getFullnodeUrl } from '@mysten/sui.js/client';
-import { NetworkName, shortenSuiAddress } from '@polymedia/suits';
+import { shortenSuiAddress } from '@polymedia/suits';
 import { NetworkSelector, loadNetwork } from '@polymedia/webutils';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
@@ -40,11 +40,19 @@ export const AppWrapRouter: React.FC = () => {
     );
 }
 
-/* AppWrapSui */
+/* AppWrapSui + network config */
+
+const supportedNetworks = ['mainnet', 'testnet'] as const;
+
+export type NetworkName = typeof supportedNetworks[number];
+
+export function isSupportedNetwork(name: string): name is NetworkName {
+    return (supportedNetworks as readonly string[]).includes(name);
+}
 
 const { networkConfig } = createNetworkConfig({
-    localnet: { url: getFullnodeUrl('localnet') },
-    devnet: { url: getFullnodeUrl('devnet') },
+    // localnet: { url: getFullnodeUrl('localnet') },
+    // devnet: { url: getFullnodeUrl('devnet') },
     testnet: { url: getFullnodeUrl('testnet') },
     mainnet: { url: getFullnodeUrl('mainnet') },
     // mainnet: { url: 'https://mainnet.suiet.app' },
@@ -53,7 +61,10 @@ const { networkConfig } = createNetworkConfig({
 
 const queryClient = new QueryClient();
 const AppWrapSui: React.FC = () => {
-    const [network, setNetwork] = useState<NetworkName>(loadNetwork());
+    const [network, setNetwork] = useState<NetworkName>((() => {
+        const loadedNetwork = loadNetwork();
+        return isSupportedNetwork(loadedNetwork) ? loadedNetwork : 'mainnet';
+    })());
     return (
     <QueryClientProvider client={queryClient}>
         <SuiClientProvider networks={networkConfig} network={network}>
@@ -188,13 +199,16 @@ const BtnNetwork: React.FC<{
     appContext: app,
 }) =>
 {
-    const onSwitchNetwork = (newNet: NetworkName) => {
+    const onSwitchNetwork = (newNet: string) => {
+        if (!isSupportedNetwork(newNet)) {
+            throw new Error(`Network not supported: ${newNet}`);
+        }
         app.setNetwork(newNet);
         app.setShowMobileNav(false);
     };
     return <NetworkSelector
         currentNetwork={app.network}
-        supportedNetworks={['mainnet', 'testnet', 'devnet']}
+        supportedNetworks={[...supportedNetworks]}
         onSwitch={onSwitchNetwork}
     />;
 }
