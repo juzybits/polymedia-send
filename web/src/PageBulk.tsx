@@ -1,6 +1,5 @@
 import { useCurrentAccount, useSignAndExecuteTransactionBlock, useSuiClient } from '@mysten/dapp-kit';
 import { CoinBalance, SuiTransactionBlockResponse } from '@mysten/sui.js/client';
-import { TransactionBlock } from '@mysten/sui.js/transactions';
 import { convertNumberToBigInt, formatBigInt, formatNumber } from '@polymedia/suits';
 import { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
@@ -12,6 +11,8 @@ import { useCoinBalances } from './lib/useCoinBalances';
 import { useCoinInfo } from './lib/useCoinInfo';
 import { useIsSupportedWallet } from './lib/useIsSupportedWallet';
 import { ZkSendLinkBuilder, ZkSendLinkBuilderOptions } from './lib/zksend/builder';
+import { MAINNET_CONTRACT_IDS } from './lib/zksend/zk-bag';
+import { TESTNET_IDS } from './lib/constants';
 
 /* React */
 
@@ -23,7 +24,7 @@ export const PageBulk: React.FC = () =>
 
     const isSupportedWallet = useIsSupportedWallet();
 
-    const { inProgress, setInProgress, openConnectModal } = useOutletContext<AppContext>();
+    const { inProgress, setInProgress, openConnectModal, network } = useOutletContext<AppContext>();
     const [ chosenBalance, setChosenBalance ] = useState<CoinBalance>(); // dropdown
     const [ chosenAmounts, setChosenAmounts ] = useState<string>(''); // textarea
     const [ pendingLinks, setPendingLinks ] = useState<PendingLinks>();
@@ -46,7 +47,7 @@ export const PageBulk: React.FC = () =>
         resetState();
     }, [currAcct, suiClient]);
 
-    const prepareLinks = async (coinInfo: CoinInfo, linkValues: LinkValue[]) => {
+    const prepareLinks = (coinInfo: CoinInfo, linkValues: LinkValue[]) => {
         if (!currAcct)
             return;
 
@@ -54,13 +55,32 @@ export const PageBulk: React.FC = () =>
             host: window.location.origin,
             path: '/claim',
             // keypair?: Keypair;
-            // network?: 'mainnet' | 'testnet';
+            network: network,
             client: suiClient,
             sender: currAcct.address,
             // redirect?: ZkSendLinkRedirect;
-            contract: null,
+            contract: network === 'mainnet' ? MAINNET_CONTRACT_IDS : TESTNET_IDS,
         };
 
+        const links: ZkSendLinkBuilder[] = [];
+        for (const lv of linkValues) {
+            for (let i = 0; i < lv.count; i++) {
+                const link = new ZkSendLinkBuilder(options);
+                link.addClaimableBalance(
+                    coinInfo.coinType,
+                    convertNumberToBigInt(lv.value, coinInfo.decimals),
+                );
+                links.push(link);
+            }
+        }
+
+        setPendingLinks({ links, coinInfo });
+
+        for (const link of links) {
+            console.debug(link.getLink());
+        }
+
+        /*
         const amounts = linkValues.flatMap(lv => Array<bigint>(lv.count).fill(
             convertNumberToBigInt(lv.value, coinInfo.decimals)
         ));
@@ -70,34 +90,22 @@ export const PageBulk: React.FC = () =>
             amounts,
             options,
         );
-
-        setPendingLinks({ txb, links, coinInfo });
-
-        for (const link of links) {
-            console.debug(link.getLink());
-        }
-
-        /*
-        const txb = new TransactionBlock();
-        const links: ZkSendLinkBuilder[] = [];
-        for (const lv of linkValues) {
-            for (let i = 0; i < lv.count; i++) {
-                const link = new ZkSendLinkBuilder(options);
-                link.addClaimableBalance(
-                    coinInfo.coinType,
-                    convertNumberToBigInt(lv.value, coinInfo.decimals),
-                );
-                link.createSendTransaction({ transactionBlock: txb });
-                links.push(link);
-            }
-        }
         */
     };
 
-    const createLinks = async (txb: TransactionBlock) => {
+    const createLinks = async (links: ZkSendLinkBuilder[]) => {
         setCreateResult(undefined);
+
         setInProgress(true);
         try {
+            const txb = await ZkSendLinkBuilder.createLinks({
+                // transactionBlock?: TransactionBlock;
+                client: suiClient,
+                network,
+                links,
+                contract: network === 'mainnet' ? MAINNET_CONTRACT_IDS : TESTNET_IDS,
+            });
+
             const resp = await signAndExecuteTxb({
                 transactionBlock: txb,
                 options: { showEffects: true }
@@ -278,7 +286,7 @@ export const PageBulk: React.FC = () =>
 
                 return <>
                     <button className='btn' disabled={inProgress} onClick={() => {
-                        createLinks(pendingLinks.txb)
+                        createLinks(pendingLinks.links)
                     }}>
                         🚀 CREATE LINKS
                     </button>
@@ -303,7 +311,6 @@ const MIME_CSV = 'text/csv;charset=utf-8;';
 /* Types */
 
 type PendingLinks = {
-    txb: TransactionBlock,
     links: ZkSendLinkBuilder[],
     coinInfo: CoinInfo,
 };

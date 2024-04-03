@@ -1,11 +1,20 @@
-import { useCurrentAccount } from '@mysten/dapp-kit';
+import { useCurrentAccount, useSuiClient } from '@mysten/dapp-kit';
 import { useEffect, useState } from 'react';
+import { useOutletContext } from 'react-router-dom';
+import { AppContext } from './App';
+import { TESTNET_IDS } from './lib/constants';
 import { listCreatedLinks } from './lib/zksend/list-created-links';
+import { MAINNET_CONTRACT_IDS } from './lib/zksend/zk-bag';
 
 export const PageList: React.FC = () =>
 {
-    const [ links, setLinks ] = useState<Awaited<ReturnType<typeof listCreatedLinks>>>();
     const currAcct = useCurrentAccount();
+    const suiClient = useSuiClient();
+
+    const { network } = useOutletContext<AppContext>();
+
+    const [ links, setLinks ] = useState<Awaited<ReturnType<typeof listCreatedLinks>>>();
+    // const [ errMsg, setErrMsg ] = useState<string>(); // TODO
 
     useEffect(() => {
         const loadLinks = async () => {
@@ -14,8 +23,15 @@ export const PageList: React.FC = () =>
             } else {
                 const res = await listCreatedLinks({
                     address: currAcct.address,
+                    contract: network === 'mainnet' ? MAINNET_CONTRACT_IDS : TESTNET_IDS,
+                    // cursor?: string;
+                    network,
+                    host: window.location.origin,
+                    path: '/claim',
+                    client: suiClient,
                 });
                 setLinks(res);
+                console.debug(res);
             }
         };
         loadLinks();

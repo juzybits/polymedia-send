@@ -10,6 +10,8 @@ import { useCoinBalances } from './lib/useCoinBalances';
 import { useCoinInfo } from './lib/useCoinInfo';
 import { useIsSupportedWallet } from './lib/useIsSupportedWallet';
 import { ZkSendLinkBuilder } from './lib/zksend/builder';
+import { TESTNET_IDS } from './lib/constants';
+import { MAINNET_CONTRACT_IDS } from './lib/zksend/zk-bag';
 
 export const PageSend: React.FC = () =>
 {
@@ -21,7 +23,7 @@ export const PageSend: React.FC = () =>
 
     const isSupportedWallet = useIsSupportedWallet();
 
-    const { inProgress, setInProgress, openConnectModal } = useOutletContext<AppContext>();
+    const { inProgress, setInProgress, openConnectModal, network } = useOutletContext<AppContext>();
     const [ errMsg, setErrMsg ] = useState<string>();
     const [ chosenBalance, setChosenBalance ] = useState<CoinBalance>(); // dropdown
     const [ chosenAmount, setChosenAmount ] = useState(''); // numeric input
@@ -51,11 +53,11 @@ export const PageSend: React.FC = () =>
                 host: window.location.origin,
                 path: '/claim',
                 // keypair?: Keypair;
-                // network?: 'mainnet' | 'testnet';
+                network: network,
                 client: suiClient,
                 sender: currAcct.address,
                 // redirect?: ZkSendLinkRedirect;
-                contract: null,
+                contract: network === 'mainnet' ? MAINNET_CONTRACT_IDS : TESTNET_IDS,
             });
 
             link.addClaimableBalance(coinType, amountWithDec);
