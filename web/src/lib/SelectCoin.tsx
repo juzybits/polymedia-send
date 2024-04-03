@@ -1,11 +1,12 @@
 import { CoinBalance } from '@mysten/sui.js/client';
 import { shortenSuiAddress } from '@polymedia/suits';
 import { useEffect, useState } from 'react';
+import { ReactSetter } from '../App';
 
 export const SelectCoin: React.FC<{
     userBalances: CoinBalance[],
     chosenBalance: CoinBalance|undefined,
-    setChosenBalance: React.Dispatch<React.SetStateAction<CoinBalance|undefined>>,
+    setChosenBalance: ReactSetter<CoinBalance|undefined>,
     inProgress: boolean,
 }> = ({
     userBalances,

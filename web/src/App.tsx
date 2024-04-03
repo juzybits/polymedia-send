@@ -70,19 +70,18 @@ const AppWrapSui: React.FC = () => {
 
 /* App */
 
+export type ReactSetter<T> = React.Dispatch<React.SetStateAction<T>>;
+
 export type AppContext = {
-    network: NetworkName,
-    setNetwork: React.Dispatch<React.SetStateAction<NetworkName>>,
+    inProgress: boolean, setInProgress: ReactSetter<boolean>,
+    network: NetworkName, setNetwork: ReactSetter<NetworkName>,
     openConnectModal: () => void,
-    inProgress: boolean,
-    setInProgress: React.Dispatch<React.SetStateAction<boolean>>,
-    showMobileNav: boolean,
-    setShowMobileNav: React.Dispatch<React.SetStateAction<boolean>>,
+    showMobileNav: boolean, setShowMobileNav: ReactSetter<boolean>,
 };
 
 const App: React.FC<{
     network: NetworkName,
-    setNetwork: React.Dispatch<React.SetStateAction<NetworkName>>,
+    setNetwork: ReactSetter<NetworkName>,
 }> = ({
     network,
     setNetwork,
@@ -93,13 +92,10 @@ const App: React.FC<{
     const [ showMobileNav, setShowMobileNav ] = useState(false);
 
     const appContext: AppContext = {
-        network,
-        setNetwork,
+        inProgress, setInProgress,
+        network, setNetwork,
         openConnectModal: () => { setShowConnectModal(true) },
-        inProgress,
-        setInProgress,
-        showMobileNav,
-        setShowMobileNav,
+        showMobileNav, setShowMobileNav,
     };
 
     return <>
