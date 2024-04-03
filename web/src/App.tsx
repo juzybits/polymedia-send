@@ -43,12 +43,7 @@ export const AppWrapRouter: React.FC = () => {
 /* AppWrapSui + network config */
 
 const supportedNetworks = ['mainnet', 'testnet'] as const;
-
 export type NetworkName = typeof supportedNetworks[number];
-
-export function isSupportedNetwork(name: string): name is NetworkName {
-    return (supportedNetworks as readonly string[]).includes(name);
-}
 
 const { networkConfig } = createNetworkConfig({
     // localnet: { url: getFullnodeUrl('localnet') },
@@ -61,10 +56,7 @@ const { networkConfig } = createNetworkConfig({
 
 const queryClient = new QueryClient();
 const AppWrapSui: React.FC = () => {
-    const [network, setNetwork] = useState<NetworkName>((() => {
-        const loadedNetwork = loadNetwork();
-        return isSupportedNetwork(loadedNetwork) ? loadedNetwork : 'mainnet';
-    })());
+    const [network, setNetwork] = useState(loadNetwork(supportedNetworks, 'mainnet'));
     return (
     <QueryClientProvider client={queryClient}>
         <SuiClientProvider networks={networkConfig} network={network}>
@@ -199,16 +191,13 @@ const BtnNetwork: React.FC<{
     appContext: app,
 }) =>
 {
-    const onSwitchNetwork = (newNet: string) => {
-        if (!isSupportedNetwork(newNet)) {
-            throw new Error(`Network not supported: ${newNet}`);
-        }
+    const onSwitchNetwork = (newNet: NetworkName) => {
         app.setNetwork(newNet);
         app.setShowMobileNav(false);
     };
     return <NetworkSelector
         currentNetwork={app.network}
-        supportedNetworks={[...supportedNetworks]}
+        supportedNetworks={supportedNetworks}
         onSwitch={onSwitchNetwork}
     />;
 }
