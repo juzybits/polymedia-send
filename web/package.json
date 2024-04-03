@@ -22,10 +22,10 @@
         "tunnel": "lt --port 1234 --subdomain poly"
     },
     "dependencies": {
-        "@mysten/dapp-kit": "^0.12.8",
+        "@mysten/dapp-kit": "^0.12.9",
         "@mysten/sui.js": "^0.51.2",
         "@polymedia/suits": "^0.0.39",
-        "@polymedia/webutils": "^0.0.46",
+        "@polymedia/webutils": "^0.0.47",
         "@tanstack/react-query": "^5.28.14",
         "normalize.css": "^8.0.1",
         "react": "^18.2.0",
@@ -33,7 +33,7 @@
         "react-router-dom": "^6.22.3"
     },
     "devDependencies": {
-        "@cloudflare/workers-types": "^4.20240329.0",
+        "@cloudflare/workers-types": "^4.20240402.0",
         "@types/react": "^18.2.74",
         "@types/react-dom": "^18.2.23",
         "@typescript-eslint/eslint-plugin": "^7.5.0",
@@ -46,7 +46,7 @@
         "less": "^4.2.0",
         "localtunnel": "^2.0.2",
         "typescript": "^5.4.3",
-        "vite": "^5.2.7"
+        "vite": "^5.2.8"
     },
     "type": "module",
     "sideEffects": false
