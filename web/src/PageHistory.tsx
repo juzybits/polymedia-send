@@ -88,8 +88,7 @@ export const PageHistory: React.FC = () =>
     const error = errMsg ?? errCoinInfo ?? null;
 
     return <div id='page-history'>
-        <h1>Your links</h1>
-        <p><i>Only single links are shown. Links created in bulk will be supported later on.</i></p>
+        <h1>History</h1>
         { error && <ErrorBox err={error} /> }
         {((() => {
             if (!currAcct) {
@@ -100,6 +99,7 @@ export const PageHistory: React.FC = () =>
             }
 
             return <>
+            <p><i>Only single links are shown. Links created in bulk will be supported later on.</i></p>
             <div id='history-table'>
                 {links.links.map(link =>
                     <div key={link.digest} className='history-link'>
@@ -152,11 +152,9 @@ function formatDate(dateString: string): string {
     const date = new Date(dateString);
     const now = new Date();
 
-    // Format month and time parts
     const month = date.toLocaleString('default', { month: 'short' });
-    const time = date.toLocaleTimeString('default', { hour: '2-digit', minute: '2-digit' });
+    const time = date.toLocaleTimeString('default', { hour: '2-digit', minute: '2-digit', hour12: false });
 
-    // Check if the date is from the current year or a previous year
     if (date.getFullYear() === now.getFullYear()) {
         return `${month} ${date.getDate()} ${time}`;
     } else {
