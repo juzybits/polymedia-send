@@ -126,7 +126,7 @@ export const PageSend: React.FC = () =>
                 }
 
                 if (!coinInfo) {
-                    return <div>Loading coin info...</div>;
+                    return <p>Loading coin info...</p>;
                 }
 
                 // Validate amount

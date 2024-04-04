@@ -181,7 +181,7 @@ export const PageBulk: React.FC = () =>
                     }
 
                     if (!coinInfo) {
-                        return <div>Loading coin info...</div>;
+                        return <p>Loading coin info...</p>;
                     }
 
                     // Validate amounts

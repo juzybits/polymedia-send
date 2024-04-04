@@ -52,7 +52,7 @@ export const SelectCoin: React.FC<{
             }
             if (typeof userBalances === 'undefined') {
                 return <div className='dropdown-options'>
-                    <div>Loading...</div>
+                    <p>Loading...</p>
                 </div>
             }
             return <div className='dropdown-options'>
