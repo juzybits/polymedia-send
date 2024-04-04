@@ -7,7 +7,7 @@ import { LogInToContinue } from './lib/LogInToContinue';
 import { useZkBagContract } from './lib/useZkBagContract';
 import { listCreatedLinks } from './lib/zksend/list-created-links';
 
-export const PageList: React.FC = () =>
+export const PageHistory: React.FC = () =>
 {
     const currAcct = useCurrentAccount();
     const suiClient = useSuiClient();
