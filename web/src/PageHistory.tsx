@@ -26,7 +26,7 @@ export const PageHistory: React.FC = () =>
     const allCoinTypes = useMemo(() =>
         links?.links.flatMap(link => link.assets.balances.map(bal => bal.coinType))
     , [links]);
-    const { coinInfos, error: _errCoinInfo } = useCoinInfos(suiClient, allCoinTypes);
+    const { coinInfos, error: errCoinInfo } = useCoinInfos(suiClient, allCoinTypes);
 
     useEffect(() => {
         const loadLinks = async () => {
@@ -79,10 +79,12 @@ export const PageHistory: React.FC = () =>
         }
     }
 
-    return <div id='page-list'>
+    const error = errMsg ?? errCoinInfo ?? null;
+
+    return <div id='page-history'>
         <h1>Your links</h1>
         <p><i>Note: only single links are shown. Bulk-created links will be supported later on.</i></p>
-        { errMsg && <ErrorBox err={errMsg} /> }
+        { error && <ErrorBox err={error} /> }
         {((() => {
             if (!currAcct) {
                 return <LogInToContinue />;
@@ -113,7 +115,7 @@ export const PageHistory: React.FC = () =>
                             ?   <span className={link.assets.coins.length === 0 ? 'reclaimed' : 'claimed'}>
                                     {link.assets.coins.length === 0 ? 'RECLAIMED' : 'CLAIMED'}
                                 </span>
-                            :   <button className='btn' disabled={inProgress} onClick={() => {
+                            :   <button className='btn  ' disabled={inProgress} onClick={() => {
                                     reclaimLink(link.link)
                                 }}>
                                     RECLAIM
