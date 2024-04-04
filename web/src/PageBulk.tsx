@@ -2,7 +2,7 @@ import { useCurrentAccount, useSignAndExecuteTransactionBlock, useSuiClient } fr
 import { CoinBalance, SuiTransactionBlockResponse } from '@mysten/sui.js/client';
 import { TransactionBlock } from '@mysten/sui.js/transactions';
 import { convertNumberToBigInt, formatBigInt, formatNumber } from '@polymedia/suits';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';
 import { ErrorBox } from './lib/ErrorBox';
@@ -10,7 +10,7 @@ import { LogInToContinue } from './lib/LogInToContinue';
 import { SelectCoin } from './lib/SelectCoin';
 import { CoinInfo } from './lib/getCoinInfo';
 import { useCoinBalances } from './lib/useCoinBalances';
-import { useCoinInfo } from './lib/useCoinInfo';
+import { useCoinInfos } from './lib/useCoinInfos';
 import { useIsSupportedWallet } from './lib/useIsSupportedWallet';
 import { useZkBagContract } from './lib/useZkBagContract';
 import { ZkSendLinkBuilder, ZkSendLinkBuilderOptions } from './lib/zksend/builder';
@@ -40,7 +40,12 @@ export const PageBulk: React.FC = () =>
     const [ createResult, setCreateResult ] = useState<CreateResult>();
 
     const { userBalances, error: errBalances } = useCoinBalances(suiClient, currAcct);
-    const { coinInfo, error: errCoinInfo } = useCoinInfo(suiClient, chosenBalance);
+
+    const coinTypes = useMemo(() =>
+        chosenBalance ? [chosenBalance.coinType] : undefined
+    , [chosenBalance]);
+    const { coinInfos, error: errCoinInfo } = useCoinInfos(suiClient, coinTypes);
+    const coinInfo = chosenBalance && coinInfos[chosenBalance.coinType];
 
     useEffect(() => {
         const resetState = () => {

@@ -1,13 +1,13 @@
 import { useCurrentAccount, useSuiClient } from '@mysten/dapp-kit';
+import { convertBigIntToNumber } from '@polymedia/suits';
 import { useEffect, useMemo, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';
 import { ErrorBox } from './lib/ErrorBox';
 import { LogInToContinue } from './lib/LogInToContinue';
+import { useCoinInfos } from './lib/useCoinInfos';
 import { useZkBagContract } from './lib/useZkBagContract';
 import { listCreatedLinks } from './lib/zksend/list-created-links';
-import { useCoinInfos } from './lib/useCoinInfos';
-import { convertBigIntToNumber } from '@polymedia/suits';
 
 export const PageHistory: React.FC = () =>
 {
@@ -20,10 +20,10 @@ export const PageHistory: React.FC = () =>
     const [ links, setLinks ] = useState<Awaited<ReturnType<typeof listCreatedLinks>>>();
     const [ errMsg, setErrMsg ] = useState<string>();
 
-    const allBalances = useMemo(() => {
-        return links?.links.flatMap(link => link.assets.balances) ?? [];
-    }, [links]);
-    const coinInfos = useCoinInfos(suiClient, allBalances);
+    const allCoinTypes = useMemo(() =>
+        links?.links.flatMap(link => link.assets.balances.map(bal => bal.coinType))
+    , [links]);
+    const { coinInfos, error: _errCoinInfo } = useCoinInfos(suiClient, allCoinTypes);
 
     useEffect(() => {
         const loadLinks = async () => {
