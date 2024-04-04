@@ -1,4 +1,4 @@
-import { useCurrentAccount, useSuiClient } from '@mysten/dapp-kit';
+import { useCurrentAccount, useSignAndExecuteTransactionBlock, useSuiClient } from '@mysten/dapp-kit';
 import { formatBigInt } from '@polymedia/suits';
 import { useEffect, useMemo, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
@@ -7,6 +7,7 @@ import { ErrorBox } from './lib/ErrorBox';
 import { LogInToContinue } from './lib/LogInToContinue';
 import { useCoinInfos } from './lib/useCoinInfos';
 import { useZkBagContract } from './lib/useZkBagContract';
+import { ZkSendLink } from './lib/zksend/claim';
 import { listCreatedLinks } from './lib/zksend/list-created-links';
 import './styles/history.less';
 
@@ -14,8 +15,9 @@ export const PageHistory: React.FC = () =>
 {
     const currAcct = useCurrentAccount();
     const suiClient = useSuiClient();
+    const { mutateAsync: signAndExecuteTxb } = useSignAndExecuteTransactionBlock();
 
-    const { network } = useOutletContext<AppContext>();
+    const { network, inProgress, setInProgress } = useOutletContext<AppContext>();
     const zkBagContract = useZkBagContract();
 
     const [ links, setLinks ] = useState<Awaited<ReturnType<typeof listCreatedLinks>>>();
@@ -50,6 +52,33 @@ export const PageHistory: React.FC = () =>
         loadLinks();
     }, [currAcct, suiClient]);
 
+    const reclaimLink = async (link: ZkSendLink) => {
+        setErrMsg(undefined);
+
+        if (!currAcct)
+            return;
+
+        setInProgress(true);
+        try {
+            const txb = link.createClaimTransaction(currAcct.address, { reclaim: true });
+            const resp = await signAndExecuteTxb({
+                transactionBlock: txb,
+                options: { showEffects: true }
+            });
+            console.debug('resp:', resp);
+
+            if (resp.errors || resp.effects?.status.status !== 'success') {
+                setErrMsg(`Txn digest: ${resp.digest}\n`
+                    + `Txn status: ${resp.effects?.status.status}\n`
+                    + `Txn errors: ${JSON.stringify(resp.errors)}`);
+            }
+        } catch (err) {
+            setErrMsg(String(err));
+        } finally {
+            setInProgress(false);
+        }
+    }
+
     return <div id='page-list'>
         <h1>Your links</h1>
         <p><i>Note: only single links are shown. Bulk-created links will be supported later on.</i></p>
@@ -63,6 +92,7 @@ export const PageHistory: React.FC = () =>
             if (!links) {
                 return <p>Loading...</p>;
             }
+
             return <div id='history-table'>
                 {links.links.map(link =>
                     <div key={link.digest} className='history-link'>
@@ -80,7 +110,16 @@ export const PageHistory: React.FC = () =>
                                 }
                             </p>
                         })}
-                        <p>{link.claimed ? 'claimed' : 'reclaim'}</p>
+                        <p>
+                            {link.claimed
+                            ?   <span className='claimed'>
+                                    {link.assets.coins.length === 0 ? 'RECLAIMED' : 'CLAIMED'}
+                                </span>
+                            :   <button className='reclaim' onClick={() => { reclaimLink(link.link) }}>
+                                    RECLAIM
+                                </button>
+                            }
+                        </p>
                     </div>)
                 }
             </div>

@@ -9,9 +9,25 @@
         border-radius: @radius;
         padding: 0em 1.5em;
         &:hover {
-            background-color: @color-blue-5;
+            background-color: @color-blue-6;
         }
         > p {
+            span, button {
+                border-radius: @radius;
+                padding: 0.3em 0.6em;
+                font-weight: 500;
+                font-size: 0.85em;
+            }
+            span {
+                background-color: rgb(158, 87, 0);
+            }
+            button {
+                background-color: green;
+                cursor: pointer;
+                &:hover {
+                    background-color: rgb(0, 154, 0);
+                }
+            }
             &:nth-child(1) { flex-grow: 1; flex-shrink: 1; flex-basis: 0; text-align: left; }
             &:nth-child(2) { flex-grow: 0; flex-shrink: 1; flex-basis: auto; }
             &:nth-child(3) { flex-grow: 1; flex-shrink: 1; flex-basis: 0; text-align: right; }

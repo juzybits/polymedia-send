@@ -87,8 +87,7 @@ export const PageSend: React.FC = () =>
             }
         } catch (err) {
             setErrMsg(String(err));
-        }
-        finally {
+        } finally {
             setInProgress(false);
         }
     };
