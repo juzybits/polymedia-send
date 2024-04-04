@@ -19,14 +19,15 @@
                 font-size: 0.85em;
             }
             span {
-                background-color: rgb(158, 87, 0);
+                &.claimed {
+                    color: rgb(214, 139, 0);
+                }
+                &.reclaimed {
+                    color: rgb(197, 197, 197);
+                }
             }
             button {
-                background-color: green;
-                cursor: pointer;
-                &:hover {
-                    background-color: rgb(0, 154, 0);
-                }
+                margin: 0;
             }
             &:nth-child(1) { flex-grow: 1; flex-shrink: 1; flex-basis: 0; text-align: left; }
             &:nth-child(2) { flex-grow: 0; flex-shrink: 1; flex-basis: auto; }

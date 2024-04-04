@@ -82,10 +82,8 @@ export const PageHistory: React.FC = () =>
     return <div id='page-list'>
         <h1>Your links</h1>
         <p><i>Note: only single links are shown. Bulk-created links will be supported later on.</i></p>
+        { errMsg && <ErrorBox err={errMsg} /> }
         {((() => {
-            if (errMsg) {
-                return <ErrorBox err={errMsg} />
-            }
             if (!currAcct) {
                 return <LogInToContinue />;
             }
@@ -112,10 +110,12 @@ export const PageHistory: React.FC = () =>
                         })}
                         <p>
                             {link.claimed
-                            ?   <span className='claimed'>
+                            ?   <span className={link.assets.coins.length === 0 ? 'reclaimed' : 'claimed'}>
                                     {link.assets.coins.length === 0 ? 'RECLAIMED' : 'CLAIMED'}
                                 </span>
-                            :   <button className='reclaim' onClick={() => { reclaimLink(link.link) }}>
+                            :   <button className='btn' disabled={inProgress} onClick={() => {
+                                    reclaimLink(link.link)
+                                }}>
                                     RECLAIM
                                 </button>
                             }
