@@ -1,6 +1,7 @@
 import { CoinBalance } from '@mysten/sui.js/client';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ReactSetter } from '../App';
+import { useClickOutside } from '@polymedia/webutils';
 
 export const SelectCoin: React.FC<{
     userBalances: CoinBalance[],
@@ -16,6 +17,9 @@ export const SelectCoin: React.FC<{
 {
     const [ open, setOpen ] = useState(false);
     const [ searchCoin, setSearchCoin ] = useState('');
+
+    const selectorRef = useRef(null);
+    useClickOutside(selectorRef, () => { setOpen(false) });
 
     const sortedBalances = userBalances.sort((a, b) => {
         const symbolA = a.coinType.split('::')[2];
@@ -36,7 +40,7 @@ export const SelectCoin: React.FC<{
     }, []);
 
     return <div>
-    <div className={'dropdown' + (open ? ' open' : '')}>
+    <div className={'dropdown' + (open ? ' open' : '')} ref={selectorRef}>
         <input className='dropdown-input'
             type='text'
             value={searchCoin}
