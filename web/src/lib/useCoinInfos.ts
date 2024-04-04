@@ -10,8 +10,7 @@ export const useCoinInfos = (
     const [error, setError] = useState<string|undefined>();
 
     useEffect(() => {
-        const loadCoinInfo = async () =>
-        {
+        const loadCoinInfos = async () => {
             setCoinInfos({});
             setError(undefined);
 
@@ -19,13 +18,13 @@ export const useCoinInfos = (
                 return;
             }
 
-            const newInfos: Record<string, CoinInfo> = {};
+            const newCoinInfos: Record<string, CoinInfo> = {};
             const uniqueCoinTypes = Array.from(new Set(coinTypes));
             const errors: string[] = [];
             for (const coinType of uniqueCoinTypes) {
                 try {
                     const info = await getCoinInfo(coinType, suiClient); // has internal cache
-                    newInfos[coinType] = info;
+                    newCoinInfos[coinType] = info;
                 } catch (err) {
                     const errMsg = `Failed to load coin info for ${coinType}: ${String(err)}`;
                     errors.push(errMsg);
@@ -37,10 +36,10 @@ export const useCoinInfos = (
                 setError(errors.join('\n'));
             }
 
-            setCoinInfos(newInfos);
+            setCoinInfos(newCoinInfos);
         };
 
-        loadCoinInfo();
+        loadCoinInfos();
     }, [coinTypes, suiClient]);
 
     return { coinInfos, error };
