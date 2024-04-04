@@ -111,6 +111,8 @@ export const PageClaim: React.FC = () =>
         }
     };
 
+    const linkUrl = createdLinkUrl || window.location.href; // TODO include network if not mainnet
+    const isContractLess = !linkUrl.includes('#$');
     return <div id='page-claim'>
 
     <ErrorBox err={errMsg} />
@@ -125,19 +127,21 @@ export const PageClaim: React.FC = () =>
                 <p>Copy and share the link with the person you want to send the assets to.</p>
 
                 <button className='btn' onClick={() => {
-                    copyLink(createdLinkUrl || window.location.href); // TODO include network if not mainnet
+                    copyLink(linkUrl);
                 }}>
                     COPY LINK
                 </button>
                 {copyMsg && <div>{copyMsg}</div>}
 
-                <p>
-                    <u><b>Save your link before leaving this page</b></u>
-                </p>
+                {isContractLess && <>
+                    <p>
+                        <u><b>Save your link before leaving this page</b></u>
+                    </p>
 
-                <p>
-                    We don't store claim links. If you don't share or save your link before leaving this page, the assets will be lost.
-                </p>
+                    <p>
+                        We don't store claim links. If you don't share or save your link before leaving this page, the assets will be lost.
+                    </p>
+                </>}
             </div>;
         }
 
