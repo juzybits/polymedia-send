@@ -34,6 +34,10 @@ export const PageSend: React.FC = () =>
     const { userBalances, error: errBalances } = useCoinBalances(suiClient, currAcct);
     const { coinInfo, error: errCoinInfo } = useCoinInfo(suiClient, chosenBalance);
 
+    // const allCoinTypes = useMemo(() => userBalances?.map(bal => bal.coinType) , [userBalances]);
+    // const { coinInfos } = useCoinInfos(suiClient, allCoinTypes);
+    // console.log('=== coinInfos ===', JSON.stringify(coinInfos));
+
     useEffect(() => {
         const resetState = () => {
             setInProgress(false);
