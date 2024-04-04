@@ -29,28 +29,34 @@ export const PageHistory: React.FC = () =>
     const { coinInfos, error: errCoinInfo } = useCoinInfos(suiClient, allCoinTypes);
 
     useEffect(() => {
-        const loadLinks = async () => {
-            setLinks(undefined);
-            if (!currAcct)
-                return;
-            try {
-                const res = await listCreatedLinks({
-                    address: currAcct.address,
-                    contract: zkBagContract,
-                    // cursor?: string;
-                    network,
-                    host: window.location.origin,
-                    path: '/claim',
-                    client: suiClient,
-                });
-                setLinks(res);
-                console.debug(res);
-            } catch (err) {
-                setErrMsg(String(err))
-            }
-        };
+        setLinks(undefined);
         loadLinks();
     }, [currAcct, suiClient]);
+
+    const loadLinks = async (cursor?: string) => {
+        if (!currAcct)
+            return;
+        try {
+            const resp = await listCreatedLinks({
+                address: currAcct.address,
+                contract: zkBagContract,
+                cursor,
+                network,
+                host: window.location.origin,
+                path: '/claim',
+                client: suiClient,
+            });
+            console.debug(resp);
+            setLinks(currLinks => {
+                if (currLinks) {
+                    resp.links = [...currLinks.links, ...resp.links];
+                }
+                return resp;
+            });
+        } catch (err) {
+            setErrMsg(String(err))
+        }
+    };
 
     const reclaimLink = async (link: ZkSendLink) => {
         setErrMsg(undefined);
@@ -93,7 +99,8 @@ export const PageHistory: React.FC = () =>
                 return <p>Loading...</p>;
             }
 
-            return <div id='history-table'>
+            return <>
+            <div id='history-table'>
                 {links.links.map(link =>
                     <div key={link.digest} className='history-link'>
                         <p>{formatDate(link.createdAt)}</p>
@@ -125,6 +132,16 @@ export const PageHistory: React.FC = () =>
                     </div>)
                 }
             </div>
+
+            {links.hasNextPage &&
+                <button className='btn' onClick={() => {
+                    loadLinks(links.cursor ?? undefined)
+                }}>
+                        LOAD MORE
+                </button>
+            }
+
+            </>
         })())}
     </div>;
 }
