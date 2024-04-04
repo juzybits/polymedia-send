@@ -13,13 +13,13 @@ import { NetworkSelector, loadNetwork } from '@polymedia/webutils';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
 import { BrowserRouter, Link, Outlet, Route, Routes, useLocation } from 'react-router-dom';
-import './App.less';
 import { PageBulk } from './PageBulk';
 import { PageClaim } from './PageClaim';
-import { PageHome } from './PageHome';
 import { PageHistory } from './PageHistory';
+import { PageHome } from './PageHome';
 import { PageNotFound } from './PageNotFound';
 import { PageSend } from './PageSend';
+import './styles/app.less';
 
 /* AppWrapRouter */
 

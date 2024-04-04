@@ -1,0 +1,29 @@
+@import './constants.less';
+
+#history-table {
+    margin-top: @space;
+    .history-link {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-radius: @radius;
+        padding: 0em 1.5em;
+        &:hover {
+            background-color: @color-blue-5;
+        }
+        > p {
+            &:nth-child(1) { flex-grow: 1; flex-shrink: 1; flex-basis: 0; text-align: left; }
+            &:nth-child(2) { flex-grow: 0; flex-shrink: 1; flex-basis: auto; }
+            &:nth-child(3) { flex-grow: 1; flex-shrink: 1; flex-basis: 0; text-align: right; }
+        }
+        @media (max-width: @mobile-width) {
+            padding: 0;
+            &:hover {
+                background-color: transparent;
+            }
+            > p {
+                font-size: 1em;
+            }
+        }
+    }
+}

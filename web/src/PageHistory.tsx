@@ -1,5 +1,5 @@
 import { useCurrentAccount, useSuiClient } from '@mysten/dapp-kit';
-import { convertBigIntToNumber } from '@polymedia/suits';
+import { formatBigInt } from '@polymedia/suits';
 import { useEffect, useMemo, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';
@@ -8,6 +8,7 @@ import { LogInToContinue } from './lib/LogInToContinue';
 import { useCoinInfos } from './lib/useCoinInfos';
 import { useZkBagContract } from './lib/useZkBagContract';
 import { listCreatedLinks } from './lib/zksend/list-created-links';
+import './styles/history.less';
 
 export const PageHistory: React.FC = () =>
 {
@@ -62,10 +63,9 @@ export const PageHistory: React.FC = () =>
             if (!links) {
                 return <p>Loading...</p>;
             }
-            return <>
+            return <div id='history-table'>
                 {links.links.map(link =>
-                    <div key={link.digest} className='tight'>
-                        <p>{link.claimed ? 'claimed' : 'unclaimed'}</p>
+                    <div key={link.digest} className='history-link'>
                         <p>{formatDate(link.createdAt)}</p>
                         {/*
                         <p>digest: {link.digest}</p>
@@ -76,13 +76,14 @@ export const PageHistory: React.FC = () =>
                             return <p key={bal.coinType}>
                                 {!info
                                 ? <>Loading...</>
-                                : <>{ convertBigIntToNumber(bal.amount, info.decimals)} {info.symbol}</>
+                                : <>{ formatBigInt(bal.amount, info.decimals, 'compact')} {info.symbol}</>
                                 }
                             </p>
                         })}
+                        <p>{link.claimed ? 'claimed' : 'reclaim'}</p>
                     </div>)
                 }
-            </>
+            </div>
         })())}
     </div>;
 }
@@ -95,11 +96,11 @@ function formatDate(dateString: string): string {
 
     // Format month and time parts
     const month = date.toLocaleString('default', { month: 'short' });
-    // const time = date.toLocaleTimeString('default', { hour: '2-digit', minute: '2-digit' });
+    const time = date.toLocaleTimeString('default', { hour: '2-digit', minute: '2-digit' });
 
     // Check if the date is from the current year or a previous year
     if (date.getFullYear() === now.getFullYear()) {
-        return `${month} ${date.getDate()}`;
+        return `${month} ${date.getDate()} ${time}`;
     } else {
         return `${month} ${date.getDate()} ${date.getFullYear()}`;
     }
