@@ -30,9 +30,9 @@
             button {
                 margin: 0;
             }
-            &:nth-child(1) { flex-grow: 1; flex-shrink: 1; flex-basis: 0; text-align: left; }
-            &:nth-child(2) { flex-grow: 0; flex-shrink: 1; flex-basis: auto; }
-            &:nth-child(3) { flex-grow: 1; flex-shrink: 1; flex-basis: 0; text-align: right; }
+            &:nth-child(1) { flex: 1 1 0;    white-space: nowrap; text-align: left; }
+            &:nth-child(2) { flex: 0 1 auto; white-space: normal; text-align: center; }
+            &:nth-child(3) { flex: 1 1 0;    white-space: nowrap; text-align: right;  }
         }
         @media (max-width: @mobile-width) {
             padding: 0;
