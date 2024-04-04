@@ -1,5 +1,4 @@
 import { CoinBalance } from '@mysten/sui.js/client';
-import { shortenSuiAddress } from '@polymedia/suits';
 import { useEffect, useState } from 'react';
 import { ReactSetter } from '../App';
 
@@ -18,15 +17,21 @@ export const SelectCoin: React.FC<{
     const [ open, setOpen ] = useState(false);
     const [ searchCoin, setSearchCoin ] = useState('');
 
-    const foundBalances = searchCoin.length < 2 ? userBalances :
-    userBalances.filter(bal => {
+    const sortedBalances = userBalances.sort((a, b) => {
+        const symbolA = a.coinType.split('::')[2];
+        const symbolB = b.coinType.split('::')[2];
+        return symbolA.localeCompare(symbolB);
+    });
+
+    const foundBalances = searchCoin.length < 2 ? sortedBalances :
+    sortedBalances.filter(bal => {
         const search = searchCoin.toLowerCase();
         const coinType = bal.coinType.toLowerCase();
         return coinType.includes(search);
     });
 
     useEffect(() => {
-    //     const fud = userBalances.filter(b => b.coinType.endsWith('::fud::FUD'));
+    //     const fud = sortedBalances.filter(b => b.coinType.endsWith('::fud::FUD'));
     //     fud.length && setChosenBalance(fud[0]);
     }, []);
 
@@ -38,22 +43,17 @@ export const SelectCoin: React.FC<{
             onChange={(e) => { setSearchCoin(e.target.value) }}
             onClick={() => { setSearchCoin('') }}
 
-            disabled={inProgress || userBalances.length === 0}
+            disabled={inProgress || sortedBalances.length === 0}
             onFocus={() => { setOpen(true) }}
             placeholder={ chosenBalance
-                ? shortenSuiAddress(chosenBalance.coinType)
-                : (userBalances.length > 0 ? 'choose a coin' : 'no coins found')
+                ? shortenCoinType(chosenBalance.coinType)
+                : (sortedBalances.length > 0 ? 'choose a coin' : 'no coins found')
             }
             spellCheck='false' autoCorrect='off' autoComplete='off'
         />
         {(() => {
             if (!open) {
                 return null;
-            }
-            if (typeof userBalances === 'undefined') {
-                return <div className='dropdown-options'>
-                    <p>Loading...</p>
-                </div>
             }
             return <div className='dropdown-options'>
                 {foundBalances.map(bal =>
@@ -63,10 +63,15 @@ export const SelectCoin: React.FC<{
                         setSearchCoin(bal.coinType.split('::')[2]);
                         setOpen(false);
                     }}>
-                    {shortenSuiAddress(bal.coinType)}
+                    {shortenCoinType(bal.coinType)}
                 </div>)}
             </div>;
         })()}
     </div>
     </div>;
+}
+
+function shortenCoinType(coinType: string): string {
+    const chunks = coinType.split('::');
+    return chunks[0].slice(0, 6) + '... ' + chunks[2];
 }
