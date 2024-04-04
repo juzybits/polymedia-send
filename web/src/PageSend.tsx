@@ -13,6 +13,8 @@ import { useIsSupportedWallet } from './lib/useIsSupportedWallet';
 import { useZkBagContract } from './lib/useZkBagContract';
 import { ZkSendLinkBuilder } from './lib/zksend/builder';
 
+const SEND_MODE = () => 'contract-based';
+
 export const PageSend: React.FC = () =>
 {
     const navigate = useNavigate();
@@ -21,7 +23,7 @@ export const PageSend: React.FC = () =>
     const suiClient = useSuiClient();
     const { mutateAsync: signAndExecuteTxb } = useSignAndExecuteTransactionBlock();
 
-    const { inProgress, setInProgress, network, sendMode } = useOutletContext<AppContext>();
+    const { inProgress, setInProgress, network } = useOutletContext<AppContext>();
     const isSupportedWallet = useIsSupportedWallet();
     const zkBagContract = useZkBagContract();
 
@@ -58,7 +60,7 @@ export const PageSend: React.FC = () =>
                 client: suiClient,
                 sender: currAcct.address,
                 // redirect?: ZkSendLinkRedirect;
-                contract: sendMode === 'contract-based' ? zkBagContract : null,
+                contract: SEND_MODE() === 'contract-based' ? zkBagContract : null,
             });
 
             link.addClaimableBalance(coinType, amountWithDec);

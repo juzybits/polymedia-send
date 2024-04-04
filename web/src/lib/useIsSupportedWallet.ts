@@ -5,7 +5,7 @@ const unsupportedWallets = ['Ethos', 'Mofa'];
 
 export const useIsSupportedWallet = (): boolean => {
     const currWallet = useCurrentWallet();
-    const [ supported, setSupported ] = useState(false);
+    const [ supported, setSupported ] = useState(true);
 
     useEffect(() => {
         const walletName = currWallet.currentWallet?.name;

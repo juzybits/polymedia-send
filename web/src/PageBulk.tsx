@@ -15,6 +15,12 @@ import { useIsSupportedWallet } from './lib/useIsSupportedWallet';
 import { useZkBagContract } from './lib/useZkBagContract';
 import { ZkSendLinkBuilder, ZkSendLinkBuilderOptions } from './lib/zksend/builder';
 
+/* Constants */
+
+const SEND_MODE = () => 'contract-less';
+const MAX_LINKS = 300;
+const MIME_CSV = 'text/csv;charset=utf-8;';
+
 /* React */
 
 export const PageBulk: React.FC = () =>
@@ -23,7 +29,7 @@ export const PageBulk: React.FC = () =>
     const suiClient = useSuiClient();
     const { mutateAsync: signAndExecuteTxb } = useSignAndExecuteTransactionBlock();
 
-    const { inProgress, setInProgress, network, sendMode } = useOutletContext<AppContext>();
+    const { inProgress, setInProgress, network } = useOutletContext<AppContext>();
     const isSupportedWallet = useIsSupportedWallet();
     const zkBagContract = useZkBagContract();
 
@@ -64,7 +70,7 @@ export const PageBulk: React.FC = () =>
             // contract?: ZkBagContractOptions | null;
         };
 
-        if (sendMode === 'contract-based') {
+        if (SEND_MODE() === 'contract-based') {
             options.contract = zkBagContract;
 
             const links: ZkSendLinkBuilder[] = [];
@@ -312,11 +318,6 @@ export const PageBulk: React.FC = () =>
 
     </div>;
 };
-
-/* Constants */
-
-const MAX_LINKS = 300;
-const MIME_CSV = 'text/csv;charset=utf-8;';
 
 /* Types */
 
