@@ -1,11 +1,13 @@
 import { useCurrentAccount, useSuiClient } from '@mysten/dapp-kit';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';
 import { ErrorBox } from './lib/ErrorBox';
 import { LogInToContinue } from './lib/LogInToContinue';
 import { useZkBagContract } from './lib/useZkBagContract';
 import { listCreatedLinks } from './lib/zksend/list-created-links';
+import { useCoinInfos } from './lib/useCoinInfos';
+import { convertBigIntToNumber } from '@polymedia/suits';
 
 export const PageHistory: React.FC = () =>
 {
@@ -17,6 +19,11 @@ export const PageHistory: React.FC = () =>
 
     const [ links, setLinks ] = useState<Awaited<ReturnType<typeof listCreatedLinks>>>();
     const [ errMsg, setErrMsg ] = useState<string>();
+
+    const allBalances = useMemo(() => {
+        return links?.links.flatMap(link => link.assets.balances) ?? [];
+    }, [links]);
+    const coinInfos = useCoinInfos(suiClient, allBalances);
 
     useEffect(() => {
         const loadLinks = async () => {
@@ -44,6 +51,7 @@ export const PageHistory: React.FC = () =>
 
     return <div id='page-list'>
         <h1>Your links</h1>
+        <p><i>Note: only single links are shown. Bulk-created links will be supported later on.</i></p>
         {((() => {
             if (errMsg) {
                 return <ErrorBox err={errMsg} />
@@ -57,18 +65,42 @@ export const PageHistory: React.FC = () =>
             return <>
                 {links.links.map(link =>
                     <div key={link.digest} className='tight'>
-                        <p>claimed: {link.claimed ? 'yes' : 'no'}</p>
-                        <p>createdAt: {link.createdAt}</p>
+                        <p>{link.claimed ? 'claimed' : 'unclaimed'}</p>
+                        <p>{formatDate(link.createdAt)}</p>
+                        {/*
                         <p>digest: {link.digest}</p>
                         <p>address: {link.link.address}</p>
-                        {link.assets.balances.map(bal =>
-                            <p key={bal.coinType}>
-                                Balance: {String(bal.amount)} {bal.coinType.split('::')[2]}
+                        */}
+                        {link.assets.balances.map(bal => {
+                            const info = coinInfos[bal.coinType];
+                            return <p key={bal.coinType}>
+                                {!info
+                                ? <>Loading...</>
+                                : <>{ convertBigIntToNumber(bal.amount, info.decimals)} {info.symbol}</>
+                                }
                             </p>
-                        )}
+                        })}
                     </div>)
                 }
             </>
         })())}
     </div>;
+}
+
+/* Functions */
+
+function formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    const now = new Date();
+
+    // Format month and time parts
+    const month = date.toLocaleString('default', { month: 'short' });
+    // const time = date.toLocaleTimeString('default', { hour: '2-digit', minute: '2-digit' });
+
+    // Check if the date is from the current year or a previous year
+    if (date.getFullYear() === now.getFullYear()) {
+        return `${month} ${date.getDate()}`;
+    } else {
+        return `${month} ${date.getDate()} ${date.getFullYear()}`;
+    }
 }

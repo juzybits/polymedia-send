@@ -20,7 +20,7 @@ export const useCoinInfo = (
                 const info = await getCoinInfo(chosenBalance.coinType, suiClient);
                 setCoinInfo(info);
             } catch (err) {
-                setError(`Failed to load coin info: ${String(err)}`);
+                console.error(`Failed to load coin info for ${chosenBalance.coinType}: ${String(err)}`);
             }
         };
         loadCoinInfo();
