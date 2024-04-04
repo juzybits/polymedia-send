@@ -297,22 +297,28 @@ nav {
                 }
             }
         }
-        .dropdown-option {
-            background-color: @input-background;
-            color: @input-color;
-            padding: @input-padding;
-            overflow-wrap: break-word;
-            font-size: @text-size;
-            font-weight: 300;
-            &:hover {
-                background-color: @color-blue-1;
+        .dropdown-options {
+            max-height: 400px;
+            overflow-y: scroll;
+            border-bottom-left-radius: @radius;
+            border-bottom-right-radius: @radius;
+            .dropdown-option {
+                background-color: @input-background;
+                color: @input-color;
+                padding: @input-padding;
+                overflow-wrap: break-word;
+                font-size: @text-size;
+                font-weight: 300;
                 &:hover {
-                    cursor: pointer;
+                    background-color: @color-blue-1;
+                    &:hover {
+                        cursor: pointer;
+                    }
                 }
-            }
-            &:last-of-type {
-                border-bottom-left-radius: @radius;
-                border-bottom-right-radius: @radius;
+                &:last-of-type {
+                    border-bottom-left-radius: @radius;
+                    border-bottom-right-radius: @radius;
+                }
             }
         }
     }

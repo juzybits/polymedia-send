@@ -83,7 +83,7 @@ export const PageHistory: React.FC = () =>
 
     return <div id='page-history'>
         <h1>Your links</h1>
-        <p><i>Note: only single links are shown. Bulk-created links will be supported later on.</i></p>
+        <p><i>Only single links are shown. Links created in bulk will be supported later on.</i></p>
         { error && <ErrorBox err={error} /> }
         {((() => {
             if (!currAcct) {
