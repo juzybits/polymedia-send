@@ -98,46 +98,56 @@ export const PageHistory: React.FC = () =>
             return null;
         }
 
-        return <div id='history-table'>
-        {createdLinksPage.links.map(link =>
-            <div key={link.digest} className='history-link'>
-                <p>{formatDate(link.createdAt)}</p>
-                {link.assets.balances.map(bal => { // in practice balances.length is 1
-                    const info = coinInfos[bal.coinType];
-                    return <p key={bal.coinType}>
-                        {!info
-                        ? <>Loading...</>
-                        : <>{ formatBigInt(bal.amount, info.decimals, 'compact')} {info.symbol}</>
-                        }
-                    </p>
-                })}
-                <p>
-                {(() => {
-                    let linkStatus: 'unclaimed' | 'claimed' | 'reclaimed';
-                    if ( !link.assets.coins.length || ( link.digest && reclaimedDigests.includes(link.digest) ) ) {
-                        linkStatus = 'reclaimed';
-                    } else if (link.claimed) {
-                        linkStatus = 'claimed';
-                    } else {
-                        linkStatus = 'unclaimed';
-                    }
+        const formattedLinks = createdLinksPage.links.map(link => {
+            let linkStatus: 'unclaimed' | 'claimed' | 'reclaimed';
+            if ( !link.assets.coins.length || ( link.digest && reclaimedDigests.includes(link.digest) ) ) {
+                linkStatus = 'reclaimed';
+            } else if (link.claimed) {
+                linkStatus = 'claimed';
+            } else {
+                linkStatus = 'unclaimed';
+            }
 
-                    if (linkStatus === 'unclaimed') {
-                        return (
-                            <button className='btn' disabled={inProgress} onClick={() => { reclaimLink(link)}}>
-                                RECLAIM
-                            </button>
-                        );
-                    } else {
-                        return (
-                            <span className={linkStatus}>
-                                {linkStatus.toLocaleUpperCase()}
-                            </span>
-                        );
+            return {
+                link: link,
+                status: linkStatus,
+                date: formatDate(link.createdAt),
+                balances: link.assets.balances.map(bal => {
+                    if (linkStatus === 'reclaimed') {
+                        return '';
                     }
-                    return <></>
-                })()}
+                    const info = coinInfos[bal.coinType];
+                    if (!info) {
+                        return 'Loading...';
+                    }
+                    return formatBigInt(bal.amount, info.decimals, 'compact') + ' ' + info.symbol;
+                }),
+            };
+        });
+
+        return <div id='history-table'>
+        {formattedLinks.map(foLi =>
+            <div key={foLi.link.digest} className='history-link'>
+
+                <p>{foLi.date}</p>
+
+                {foLi.balances.map(bal => // in practice balances.length is 1
+                <p key={bal}>{bal}</p>
+                )}
+
+                <p>
+                {foLi.status === 'unclaimed'
+                    ?
+                    <button className='btn' disabled={inProgress} onClick={() => { reclaimLink(foLi.link)}}>
+                        RECLAIM
+                    </button>
+                    :
+                    <span className={foLi.status}>
+                        {foLi.status.toLocaleUpperCase()}
+                    </span>
+                }
                 </p>
+
                 {/*
                 <p>digest: {link.digest}</p>
                 <p>address: {link.link.address}</p>
