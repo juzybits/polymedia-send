@@ -49,7 +49,7 @@ export const PageHistory: React.FC = () =>
                 path: '/claim',
                 client: suiClient,
             });
-            console.debug(resp);
+            // console.debug(resp);
             setCreatedLinksPage(currLinks => {
                 if (currLinks) {
                     resp.links = [...currLinks.links, ...resp.links];
@@ -98,6 +98,9 @@ export const PageHistory: React.FC = () =>
             return null;
         }
 
+        const debug = coinInfos.size > 0;
+        debug && console.debug('========== LINKS ============');
+
         const formattedLinks = createdLinksPage.links.map(link => {
             let linkStatus: 'unclaimed' | 'claimed' | 'reclaimed';
             if ( !link.assets.coins.length || ( link.digest && reclaimedDigests.includes(link.digest) ) ) {
@@ -108,7 +111,7 @@ export const PageHistory: React.FC = () =>
                 linkStatus = 'unclaimed';
             }
 
-            return {
+            const foLi = {
                 link: link,
                 status: linkStatus,
                 date: formatDate(link.createdAt),
@@ -116,13 +119,22 @@ export const PageHistory: React.FC = () =>
                     if (linkStatus === 'reclaimed') {
                         return '';
                     }
-                    const info = coinInfos[bal.coinType];
+                    const info = coinInfos.get(bal.coinType);
                     if (!info) {
                         return 'Loading...';
                     }
                     return formatBigInt(bal.amount, info.decimals, 'compact') + ' ' + info.symbol;
                 }),
             };
+
+            debug && console.debug((() => {
+                return `### ${foLi.status} | `
+                    + `${[...foLi.balances.values()]} | `
+                    + `${foLi.link.digest}\n`
+                    + `${JSON.stringify(foLi.link, null, 2)}`;
+            })());
+
+            return foLi;
         });
 
         return <div id='history-table'>
