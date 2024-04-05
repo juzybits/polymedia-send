@@ -7,9 +7,11 @@ import { ErrorBox } from './lib/ErrorBox';
 import { LogInToContinue } from './lib/LogInToContinue';
 import { useCoinInfos } from './lib/useCoinInfos';
 import { useZkBagContract } from './lib/useZkBagContract';
-import { ZkSendLink } from './lib/zksend/claim';
 import { listCreatedLinks } from './lib/zksend/list-created-links';
 import './styles/history.less';
+
+type ListCreatedLinksReturn = Awaited<ReturnType<typeof listCreatedLinks>>;
+type ListCreatedLinksLink = ListCreatedLinksReturn['links'][number];
 
 export const PageHistory: React.FC = () =>
 {
@@ -20,7 +22,8 @@ export const PageHistory: React.FC = () =>
     const { network, inProgress, setInProgress } = useOutletContext<AppContext>();
     const zkBagContract = useZkBagContract();
 
-    const [ links, setLinks ] = useState<Awaited<ReturnType<typeof listCreatedLinks>>>();
+    const [ links, setLinks ] = useState<ListCreatedLinksReturn>();
+    const [ reclaimedDigests, setReclaimedDigests ] = useState<string[]>([]);
     const [ errMsg, setErrMsg ] = useState<string>();
 
     const allCoinTypes = useMemo(() =>
@@ -58,7 +61,7 @@ export const PageHistory: React.FC = () =>
         }
     };
 
-    const reclaimLink = async (link: ZkSendLink) => {
+    const reclaimLink = async (link: ListCreatedLinksLink) => {
         setErrMsg(undefined);
 
         if (!currAcct)
@@ -66,7 +69,7 @@ export const PageHistory: React.FC = () =>
 
         setInProgress(true);
         try {
-            const txb = link.createClaimTransaction(currAcct.address, { reclaim: true });
+            const txb = link.link.createClaimTransaction(currAcct.address, { reclaim: true });
             const resp = await signAndExecuteTxb({
                 transactionBlock: txb,
                 options: { showEffects: true }
@@ -77,6 +80,9 @@ export const PageHistory: React.FC = () =>
                 setErrMsg(`Txn digest: ${resp.digest}\n`
                     + `Txn status: ${resp.effects?.status.status}\n`
                     + `Txn errors: ${JSON.stringify(resp.errors)}`);
+            } else {
+                const digest = link.digest; // TypeScript complains below if we use link.digest
+                digest && setReclaimedDigests(prevDigests => [...prevDigests, digest]);
             }
         } catch (err) {
             setErrMsg(String(err));
@@ -99,16 +105,12 @@ export const PageHistory: React.FC = () =>
             }
 
             return <>
-            <p><i>Only single links are shown. Links created in bulk will be supported later on.</i></p>
+            <p style={{fontSize: '1em'}}><i>Only single links are shown. Links created in bulk will be supported later on.</i></p>
             <div id='history-table'>
                 {links.links.map(link =>
                     <div key={link.digest} className='history-link'>
                         <p>{formatDate(link.createdAt)}</p>
-                        {/*
-                        <p>digest: {link.digest}</p>
-                        <p>address: {link.link.address}</p>
-                        */}
-                        {link.assets.balances.map(bal => {
+                        {link.assets.balances.map(bal => { // in practice balances.length is 1
                             const info = coinInfos[bal.coinType];
                             return <p key={bal.coinType}>
                                 {!info
@@ -118,17 +120,36 @@ export const PageHistory: React.FC = () =>
                             </p>
                         })}
                         <p>
-                            {link.claimed
-                            ?   <span className={link.assets.coins.length === 0 ? 'reclaimed' : 'claimed'}>
-                                    {link.assets.coins.length === 0 ? 'RECLAIMED' : 'CLAIMED'}
-                                </span>
-                            :   <button className='btn  ' disabled={inProgress} onClick={() => {
-                                    reclaimLink(link.link)
-                                }}>
-                                    RECLAIM
-                                </button>
+                        {(() => {
+                            let linkStatus: 'unclaimed' | 'claimed' | 'reclaimed';
+                            if ( !link.assets.coins.length || ( link.digest && reclaimedDigests.includes(link.digest) ) ) {
+                                linkStatus = 'reclaimed';
+                            } else if (link.claimed) {
+                                linkStatus = 'claimed';
+                            } else {
+                                linkStatus = 'unclaimed';
                             }
+
+                            if (linkStatus === 'unclaimed') {
+                                return (
+                                    <button className='btn' disabled={inProgress} onClick={() => { reclaimLink(link)}}>
+                                        RECLAIM
+                                    </button>
+                                );
+                            } else {
+                                return (
+                                    <span className={linkStatus}>
+                                        {linkStatus.toLocaleUpperCase()}
+                                    </span>
+                                );
+                            }
+                            return <></>
+                        })()}
                         </p>
+                        {/*
+                        <p>digest: {link.digest}</p>
+                        <p>address: {link.link.address}</p>
+                        */}
                     </div>)
                 }
             </div>
