@@ -11,7 +11,7 @@ import { getFullnodeUrl } from '@mysten/sui.js/client';
 import { shortenSuiAddress } from '@polymedia/suits';
 import { NetworkSelector, loadNetwork } from '@polymedia/webutils';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter, Link, Outlet, Route, Routes, useLocation } from 'react-router-dom';
 import { PageBulk } from './PageBulk';
 import { PageClaim } from './PageClaim';
@@ -90,6 +90,14 @@ const App: React.FC<{
     const [ inProgress, setInProgress ] = useState(false);
     const [ showConnectModal, setShowConnectModal ] = useState(false);
     const [ showMobileNav, setShowMobileNav ] = useState(false);
+
+    useEffect(() => {
+        if (inProgress) {
+            document.body.classList.add('loading');
+        } else {
+            document.body.classList.remove('loading');
+        }
+    }, [inProgress]);
 
     const appContext: AppContext = {
         inProgress, setInProgress,
