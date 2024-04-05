@@ -10,8 +10,8 @@ import { useZkBagContract } from './lib/useZkBagContract';
 import { listCreatedLinks } from './lib/zksend/list-created-links';
 import './styles/history.less';
 
-type ListCreatedLinksReturn = Awaited<ReturnType<typeof listCreatedLinks>>;
-type ListCreatedLinksLink = ListCreatedLinksReturn['links'][number];
+type CreatedLinksPage = Awaited<ReturnType<typeof listCreatedLinks>>;
+type CreatedLink = CreatedLinksPage['links'][number];
 
 export const PageHistory: React.FC = () =>
 {
@@ -22,17 +22,17 @@ export const PageHistory: React.FC = () =>
     const { network, inProgress, setInProgress } = useOutletContext<AppContext>();
     const zkBagContract = useZkBagContract();
 
-    const [ links, setLinks ] = useState<ListCreatedLinksReturn>();
+    const [ createdLinksPage, setCreatedLinksPage ] = useState<CreatedLinksPage>();
     const [ reclaimedDigests, setReclaimedDigests ] = useState<string[]>([]);
     const [ errMsg, setErrMsg ] = useState<string>();
 
     const allCoinTypes = useMemo(() =>
-        links?.links.flatMap(link => link.assets.balances.map(bal => bal.coinType))
-    , [links]);
+        createdLinksPage?.links.flatMap(link => link.assets.balances.map(bal => bal.coinType))
+    , [createdLinksPage]);
     const { coinInfos, error: errCoinInfo } = useCoinInfos(suiClient, allCoinTypes);
 
     useEffect(() => {
-        setLinks(undefined);
+        setCreatedLinksPage(undefined);
         loadLinks();
     }, [currAcct, suiClient]);
 
@@ -50,7 +50,7 @@ export const PageHistory: React.FC = () =>
                 client: suiClient,
             });
             console.debug(resp);
-            setLinks(currLinks => {
+            setCreatedLinksPage(currLinks => {
                 if (currLinks) {
                     resp.links = [...currLinks.links, ...resp.links];
                 }
@@ -61,7 +61,7 @@ export const PageHistory: React.FC = () =>
         }
     };
 
-    const reclaimLink = async (link: ListCreatedLinksLink) => {
+    const reclaimLink = async (link: CreatedLink) => {
         setErrMsg(undefined);
 
         if (!currAcct)
@@ -100,63 +100,65 @@ export const PageHistory: React.FC = () =>
             if (!currAcct) {
                 return <LogInToContinue />;
             }
-            if (!links) {
+            if (!createdLinksPage) {
                 return <p>Loading...</p>;
             }
 
             return <>
+
             <p style={{fontSize: '1em'}}><i>Only single links are shown. Links created in bulk will be supported later on.</i></p>
+
             <div id='history-table'>
-                {links.links.map(link =>
-                    <div key={link.digest} className='history-link'>
-                        <p>{formatDate(link.createdAt)}</p>
-                        {link.assets.balances.map(bal => { // in practice balances.length is 1
-                            const info = coinInfos[bal.coinType];
-                            return <p key={bal.coinType}>
-                                {!info
-                                ? <>Loading...</>
-                                : <>{ formatBigInt(bal.amount, info.decimals, 'compact')} {info.symbol}</>
-                                }
-                            </p>
-                        })}
-                        <p>
-                        {(() => {
-                            let linkStatus: 'unclaimed' | 'claimed' | 'reclaimed';
-                            if ( !link.assets.coins.length || ( link.digest && reclaimedDigests.includes(link.digest) ) ) {
-                                linkStatus = 'reclaimed';
-                            } else if (link.claimed) {
-                                linkStatus = 'claimed';
-                            } else {
-                                linkStatus = 'unclaimed';
+            {createdLinksPage.links.map(link =>
+                <div key={link.digest} className='history-link'>
+                    <p>{formatDate(link.createdAt)}</p>
+                    {link.assets.balances.map(bal => { // in practice balances.length is 1
+                        const info = coinInfos[bal.coinType];
+                        return <p key={bal.coinType}>
+                            {!info
+                            ? <>Loading...</>
+                            : <>{ formatBigInt(bal.amount, info.decimals, 'compact')} {info.symbol}</>
                             }
-
-                            if (linkStatus === 'unclaimed') {
-                                return (
-                                    <button className='btn' disabled={inProgress} onClick={() => { reclaimLink(link)}}>
-                                        RECLAIM
-                                    </button>
-                                );
-                            } else {
-                                return (
-                                    <span className={linkStatus}>
-                                        {linkStatus.toLocaleUpperCase()}
-                                    </span>
-                                );
-                            }
-                            return <></>
-                        })()}
                         </p>
-                        {/*
-                        <p>digest: {link.digest}</p>
-                        <p>address: {link.link.address}</p>
-                        */}
-                    </div>)
-                }
-            </div>
+                    })}
+                    <p>
+                    {(() => {
+                        let linkStatus: 'unclaimed' | 'claimed' | 'reclaimed';
+                        if ( !link.assets.coins.length || ( link.digest && reclaimedDigests.includes(link.digest) ) ) {
+                            linkStatus = 'reclaimed';
+                        } else if (link.claimed) {
+                            linkStatus = 'claimed';
+                        } else {
+                            linkStatus = 'unclaimed';
+                        }
 
-            {links.hasNextPage &&
+                        if (linkStatus === 'unclaimed') {
+                            return (
+                                <button className='btn' disabled={inProgress} onClick={() => { reclaimLink(link)}}>
+                                    RECLAIM
+                                </button>
+                            );
+                        } else {
+                            return (
+                                <span className={linkStatus}>
+                                    {linkStatus.toLocaleUpperCase()}
+                                </span>
+                            );
+                        }
+                        return <></>
+                    })()}
+                    </p>
+                    {/*
+                    <p>digest: {link.digest}</p>
+                    <p>address: {link.link.address}</p>
+                    */}
+                </div>)
+            }
+            </div> {/* .history-table */}
+
+            {createdLinksPage.hasNextPage &&
                 <button className='btn' onClick={() => {
-                    loadLinks(links.cursor ?? undefined)
+                    loadLinks(createdLinksPage.cursor ?? undefined)
                 }}>
                         LOAD MORE
                 </button>
