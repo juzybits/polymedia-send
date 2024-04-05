@@ -131,7 +131,7 @@ export const PageHistory: React.FC = () =>
                 return `### ${foLi.status} | `
                     + `${[...foLi.balances.values()]} | `
                     + `${foLi.link.digest}\n`
-                    + `${JSON.stringify(foLi.link, null, 2)}`;
+                    + JSON.stringify(foLi.link, null, 2);
             })());
 
             return foLi;
