@@ -113,13 +113,13 @@ const App: React.FC<{
             onOpenChange={isOpen => { setShowConnectModal(isOpen) }}
         />
 
-        <div id='layout'>
+        <div id='layout' className={showMobileNav ? 'menu-open' : ''}>
             <Header appContext={appContext} />
             <main>
                 <Nav appContext={appContext} />
-                {!showMobileNav && <div id='page-wrap'>
+                <div id='page-wrap'>
                     <Outlet context={appContext} />
-                </div>}
+                </div>
             </main>
         </div>
 
@@ -157,8 +157,7 @@ const Nav: React.FC<{
     const location = useLocation();
     const selected = (name: string) => location.pathname === name ? 'selected' : '';
 
-    return <nav className={app.showMobileNav ? 'open' : ''}>
-
+    return <nav>
         <Link to='/' className={selected('/')} onClick={closeMobileNav}>
             Home
         </Link>
@@ -171,7 +170,7 @@ const Nav: React.FC<{
         <Link to='/history' className={selected('/history')} onClick={closeMobileNav}>
             History
         </Link>
-        <hr />
+        <div className='divider' />
         <BtnNetwork appContext={app} />
 
         {/*

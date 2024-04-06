@@ -28,7 +28,7 @@ body {
 #layout {
     margin-left: auto;
     margin-right: auto;
-    min-height: 100vh;
+    min-height: 100svh;
 }
 
 main {
@@ -41,10 +41,6 @@ main {
 
 header {
     padding-top: 2rem;
-}
-
-nav, #page-wrap {
-    padding-top: 0rem;
 }
 
 header, nav, #page-wrap {
@@ -97,20 +93,9 @@ nav {
     white-space: nowrap;
     user-select: none;
 
-    @media (max-width: @mobile-width) {
-        display: none;
-        &.open {
-            display: flex;
-            align-items: center;
-            a, button, span {
-                border-left-width: 0;
-                border-bottom-width: 2px;
-                padding-left: 0;
-            }
-        }
-    }
-
-    hr {
+    .divider {
+        width: 100%;
+        max-width: 200px;
         border-bottom: 1px solid @color-bg-end;
     }
 
@@ -165,6 +150,33 @@ nav {
                 cursor: pointer;
                 color: lightgreen;
                 border-color: lightgreen;
+            }
+        }
+    }
+}
+
+@media (max-width: @mobile-width) {
+    nav {
+        display: none;
+    }
+    #layout.menu-open {
+        header, #page-wrap {
+            display: none;
+        }
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: 0;
+            min-height: 100svh;
+            width: 100%;
+            background-color: @color-bg-begin;
+            font-size: 1.5rem;
+            a, button, span {
+                border-left-width: 0;
+                border-bottom-width: 2px;
+                padding-left: 0;
             }
         }
     }
