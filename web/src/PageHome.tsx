@@ -5,6 +5,7 @@ export const PageHome: React.FC = () =>
     return <div id='page-content' >
         <h1>Polymedia zkSend</h1>
 
+        <br />
         <h2>Send any Sui coin simply by sharing a link</h2>
 
         <br/>
@@ -15,6 +16,7 @@ export const PageHome: React.FC = () =>
             <Link to='/bulk' className='btn'>BULK CREATE</Link>
         </div>
 
+        <br/>
         <br/>
         <h3>How does it work?</h3>
         <p>The sender adds coins to a zkSend link, and then shares the link with the recipient via email, direct message, or any other channel.</p>
