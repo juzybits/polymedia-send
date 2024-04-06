@@ -114,7 +114,7 @@ const App: React.FC<{
         />
 
         <div id='layout'>
-            <Header />
+            <Header appContext={appContext} />
             <main>
                 <Nav appContext={appContext} />
                 {!showMobileNav && <div id='page-wrap'>
@@ -127,7 +127,12 @@ const App: React.FC<{
     </>;
 }
 
-const Header: React.FC = () => {
+const Header: React.FC<{
+    appContext: AppContext,
+}> = ({
+    appContext: app,
+}) =>
+{
     return <header>
         <Link to='/'>
             <h1>
@@ -135,6 +140,7 @@ const Header: React.FC = () => {
                 zkSend<sub>BETA</sub>
             </h1>
         </Link>
+        <BtnConnect appContext={app} />
     </header>;
 }
 
@@ -153,11 +159,6 @@ const Nav: React.FC<{
 
     return <nav className={app.showMobileNav ? 'open' : ''}>
 
-        <BtnConnect appContext={app} />
-        <BtnNetwork appContext={app} />
-
-        <hr />
-
         <Link to='/' className={selected('/')} onClick={closeMobileNav}>
             Home
         </Link>
@@ -170,6 +171,8 @@ const Nav: React.FC<{
         <Link to='/history' className={selected('/history')} onClick={closeMobileNav}>
             History
         </Link>
+        <hr />
+        <BtnNetwork appContext={app} />
 
         {/*
             <div>
