@@ -107,29 +107,27 @@ const App: React.FC<{
     };
 
     return <>
-    <ConnectModal
-        trigger={<></>}
-        open={showConnectModal}
-        onOpenChange={isOpen => { setShowConnectModal(isOpen) }}
-    />
-    <div id='layout'>
-        <Header appContext={appContext} />
-        <main>
-            <Nav appContext={appContext} />
-            {!showMobileNav && <div id='page-wrap'>
-                <Outlet context={appContext} />
-            </div>}
-        </main>
-    </div>
+        <ConnectModal
+            trigger={<></>}
+            open={showConnectModal}
+            onOpenChange={isOpen => { setShowConnectModal(isOpen) }}
+        />
+
+        <div id='layout'>
+            <Header />
+            <main>
+                <Nav appContext={appContext} />
+                {!showMobileNav && <div id='page-wrap'>
+                    <Outlet context={appContext} />
+                </div>}
+            </main>
+        </div>
+
+        <BtnMenu appContext={appContext} />
     </>;
 }
 
-const Header: React.FC<{
-    appContext: AppContext,
-}> = ({
-    appContext: app,
-}) =>
-{
+const Header: React.FC = () => {
     return <header>
         <Link to='/'>
             <h1>
@@ -137,10 +135,6 @@ const Header: React.FC<{
                 zkSend<sub>BETA</sub>
             </h1>
         </Link>
-
-        <button id='btn-menu' onClick={() => { app.setShowMobileNav(!app.showMobileNav) }}>
-            {!app.showMobileNav ? 'MENU' : 'CLOSE'}
-        </button>
     </header>;
 }
 
@@ -228,6 +222,17 @@ const BtnConnect: React.FC<{
     return <button className='btn-connect' onClick={onClick}>
         {text}
     </button>;
+}
+
+const BtnMenu: React.FC<{
+    appContext: AppContext,
+}> = ({
+    appContext: app,
+}) =>
+{
+    return <button id='btn-menu' onClick={() => { app.setShowMobileNav(!app.showMobileNav) }}>
+        {!app.showMobileNav ? 'MENU' : 'CLOSE'}
+    </button>
 }
 
 // const GITHUB_LOGO = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nOTgnIGhlaWdodD0nOTYnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zyc+PHBhdGggZmlsbC1ydWxlPSdldmVub2RkJyBjbGlwLXJ1bGU9J2V2ZW5vZGQnIGQ9J000OC44NTQgMEMyMS44MzkgMCAwIDIyIDAgNDkuMjE3YzAgMjEuNzU2IDEzLjk5MyA0MC4xNzIgMzMuNDA1IDQ2LjY5IDIuNDI3LjQ5IDMuMzE2LTEuMDU5IDMuMzE2LTIuMzYyIDAtMS4xNDEtLjA4LTUuMDUyLS4wOC05LjEyNy0xMy41OSAyLjkzNC0xNi40Mi01Ljg2Ny0xNi40Mi01Ljg2Ny0yLjE4NC01LjcwNC01LjQyLTcuMTctNS40Mi03LjE3LTQuNDQ4LTMuMDE1LjMyNC0zLjAxNS4zMjQtMy4wMTUgNC45MzQuMzI2IDcuNTIzIDUuMDUyIDcuNTIzIDUuMDUyIDQuMzY3IDcuNDk2IDExLjQwNCA1LjM3OCAxNC4yMzUgNC4wNzQuNDA0LTMuMTc4IDEuNjk5LTUuMzc4IDMuMDc0LTYuNi0xMC44MzktMS4xNDEtMjIuMjQzLTUuMzc4LTIyLjI0My0yNC4yODMgMC01LjM3OCAxLjk0LTkuNzc4IDUuMDE0LTEzLjItLjQ4NS0xLjIyMi0yLjE4NC02LjI3NS40ODYtMTMuMDM4IDAgMCA0LjEyNS0xLjMwNCAxMy40MjYgNS4wNTJhNDYuOTcgNDYuOTcgMCAwIDEgMTIuMjE0LTEuNjNjNC4xMjUgMCA4LjMzLjU3MSAxMi4yMTMgMS42MyA5LjMwMi02LjM1NiAxMy40MjctNS4wNTIgMTMuNDI3LTUuMDUyIDIuNjcgNi43NjMuOTcgMTEuODE2LjQ4NSAxMy4wMzggMy4xNTUgMy40MjIgNS4wMTUgNy44MjIgNS4wMTUgMTMuMiAwIDE4LjkwNS0xMS40MDQgMjMuMDYtMjIuMzI0IDI0LjI4MyAxLjc4IDEuNTQ4IDMuMzE2IDQuNDgxIDMuMzE2IDkuMTI2IDAgNi42LS4wOCAxMS44OTctLjA4IDEzLjUyNiAwIDEuMzA0Ljg5IDIuODUzIDMuMzE2IDIuMzY0IDE5LjQxMi02LjUyIDMzLjQwNS0yNC45MzUgMzMuNDA1LTQ2LjY5MUM5Ny43MDcgMjIgNzUuNzg4IDAgNDguODU0IDB6JyBmaWxsPScjMjQyOTJmJy8+PC9zdmc+';
