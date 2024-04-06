@@ -147,7 +147,7 @@ export const PageBulk: React.FC = () =>
 
     const error = errBalances ?? errCoinInfo ?? null;
 
-    return <div id='page' >
+    return <div id='page-content' >
 
     <h1>Create multiple links</h1>
 

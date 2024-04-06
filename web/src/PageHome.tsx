@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 export const PageHome: React.FC = () =>
 {
-    return <div id='page' >
+    return <div id='page-content' >
         <h1>Polymedia zkSend</h1>
 
         <h2>Send any Sui coin simply by sharing a link</h2>

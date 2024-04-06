@@ -113,7 +113,7 @@ export const PageClaim: React.FC = () =>
         ? linkUrlOriginal.replace('http://localhost:1234/', 'https://dev.polymedia-send.pages.dev/')
         : linkUrlOriginal;
     const isContractLess = !linkUrl.includes('#$');
-    return <div id='page'>
+    return <div id='page-content'>
 
     <ErrorBox err={errMsg} />
 

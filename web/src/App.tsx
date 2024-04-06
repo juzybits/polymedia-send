@@ -107,21 +107,21 @@ const App: React.FC<{
     };
 
     return <>
+        <div id='layout' className={showMobileNav ? 'menu-open' : ''}>
+            <Header appContext={appContext} />
+            <div id='nav-and-page'>
+                <Nav appContext={appContext} />
+                <div id='page'>
+                    <Outlet context={appContext} />
+                </div>
+            </div>
+        </div>
+
         <ConnectModal
             trigger={<></>}
             open={showConnectModal}
             onOpenChange={isOpen => { setShowConnectModal(isOpen) }}
         />
-
-        <div id='layout' className={showMobileNav ? 'menu-open' : ''}>
-            <Header appContext={appContext} />
-            <main>
-                <Nav appContext={appContext} />
-                <div id='page-wrap'>
-                    <Outlet context={appContext} />
-                </div>
-            </main>
-        </div>
 
         <BtnMenu appContext={appContext} />
     </>;
