@@ -8,8 +8,6 @@ import { CoinInfo, getCoinInfo } from './lib/getCoinInfo';
 import { useZkBagContract } from './lib/useZkBagContract';
 import { ZkSendLink } from './lib/zksend/claim';
 
-const FEES_ADDRESS = '0xfee3f5c55cb172ae9c1d30587f85c888f56851bfe7e45edc2a6d777374697deb';
-
 type BalancesType = {
     coinType: string;
     amount: bigint;
@@ -58,7 +56,6 @@ export const PageClaim: React.FC = () =>
                 host: window.location.origin,
                 path: '/claim',
                 contract: zkBagContract,
-                creatorAddress: FEES_ADDRESS,
             });
             return link;
         };
