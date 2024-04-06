@@ -116,7 +116,7 @@ const App: React.FC<{
         <Header appContext={appContext} />
         <main>
             <Nav appContext={appContext} />
-            {!showMobileNav && <div id='page'>
+            {!showMobileNav && <div id='page-wrap'>
                 <Outlet context={appContext} />
             </div>}
         </main>

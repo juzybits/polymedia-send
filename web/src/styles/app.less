@@ -26,7 +26,6 @@ body {
 }
 
 #layout {
-    max-width: 1000px;
     margin-left: auto;
     margin-right: auto;
     min-height: 100vh;
@@ -43,16 +42,20 @@ main {
 header {
     padding-top: 2rem;
 }
-nav, #page {
+nav, #page-wrap {
     padding-top: 0rem;
 }
-header, nav, #page {
+header, nav, #page-wrap {
     padding-bottom: 3rem;
     padding-left: 3rem;
     padding-right: 3rem;
     @media (max-width: @mobile-width) {
         padding: 1.7rem 1.5rem;
     }
+}
+
+#page-wrap {
+    flex-grow: 1;
 }
 
 header {
@@ -181,8 +184,9 @@ nav {
 }
 
 #page {
-    flex-grow: 1;
     text-align: center;
+    margin: 0 auto;
+    max-width: 800px;
     h1, h2, h3  {
         padding-bottom: @space;
         font-weight: 500;

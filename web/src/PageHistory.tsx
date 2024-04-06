@@ -169,7 +169,7 @@ export const PageHistory: React.FC = () =>
         </div>;
     }
 
-    return <div id='page-history'>
+    return <div id='page'>
 
         <h1>History</h1>
 

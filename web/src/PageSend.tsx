@@ -98,7 +98,7 @@ export const PageSend: React.FC = () =>
 
     const error = errMsg ?? errBalances ?? errCoinInfo ?? null;
 
-    return <div id='page-send'>
+    return <div id='page'>
 
     <h1>Create one link</h1>
 
