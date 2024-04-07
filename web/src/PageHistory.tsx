@@ -81,7 +81,7 @@ export const PageHistory: React.FC = () =>
                     + `Txn status: ${resp.effects?.status.status}\n`
                     + `Txn errors: ${JSON.stringify(resp.errors)}`);
             } else {
-                const digest = link.digest; // TypeScript complains below if we use link.digest
+                const digest = link.digest;
                 digest && setReclaimedDigests(prevDigests => [...prevDigests, digest]);
             }
         } catch (err) {

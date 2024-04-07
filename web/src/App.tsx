@@ -21,13 +21,13 @@ import { PageNotFound } from './PageNotFound';
 import { PageSend } from './PageSend';
 import './styles/app.less';
 
-/* AppWrapRouter */
+/* App router */
 
-export const AppWrapRouter: React.FC = () => {
+export const AppRouter: React.FC = () => {
     return (
     <BrowserRouter>
         <Routes>
-            <Route path='/' element={<AppWrapSui />} >
+            <Route path='/' element={<AppSuiProviders />} >
                 <Route index element={<PageHome />} />
                 <Route path='/send' element={<PageSend />} />
                 <Route path='/bulk' element={<PageBulk />} />
@@ -40,22 +40,18 @@ export const AppWrapRouter: React.FC = () => {
     );
 }
 
-/* AppWrapSui + network config */
+/* Sui providers + network config */
 
 const supportedNetworks = ['mainnet', 'testnet'] as const;
 export type NetworkName = typeof supportedNetworks[number];
 
 const { networkConfig } = createNetworkConfig({
-    // localnet: { url: getFullnodeUrl('localnet') },
-    // devnet: { url: getFullnodeUrl('devnet') },
     testnet: { url: getFullnodeUrl('testnet') },
-    // mainnet: { url: getFullnodeUrl('mainnet') },
     mainnet: { url: 'https://mainnet.suiet.app' },
-    // mainnet: { url: 'https://rpc-mainnet.suiscan.xyz' },
 });
 
 const queryClient = new QueryClient();
-const AppWrapSui: React.FC = () => {
+const AppSuiProviders: React.FC = () => {
     const [network, setNetwork] = useState(loadNetwork(supportedNetworks, 'mainnet'));
     return (
     <QueryClientProvider client={queryClient}>
@@ -75,8 +71,8 @@ export type ReactSetter<T> = React.Dispatch<React.SetStateAction<T>>;
 export type AppContext = {
     inProgress: boolean, setInProgress: ReactSetter<boolean>,
     network: NetworkName, setNetwork: ReactSetter<NetworkName>,
-    openConnectModal: () => void,
     showMobileNav: boolean, setShowMobileNav: ReactSetter<boolean>,
+    openConnectModal: () => void,
 };
 
 const App: React.FC<{
@@ -102,20 +98,26 @@ const App: React.FC<{
     const appContext: AppContext = {
         inProgress, setInProgress,
         network, setNetwork,
-        openConnectModal: () => { setShowConnectModal(true) },
         showMobileNav, setShowMobileNav,
+        openConnectModal: () => { setShowConnectModal(true) },
     };
 
     return <>
         <div id='layout' className={showMobileNav ? 'menu-open' : ''}>
+
             <Header appContext={appContext} />
+
             <div id='nav-and-page'>
                 <Nav appContext={appContext} />
+
                 <div id='page'>
-                    <Outlet context={appContext} />
+                    <Outlet context={appContext} /> {/* Loads a Page*.tsx */}
                 </div>
             </div>
+
         </div>
+
+        {/* Floating elements */}
 
         <ConnectModal
             trigger={<></>}
@@ -126,6 +128,8 @@ const App: React.FC<{
         <BtnMenu appContext={appContext} />
     </>;
 }
+
+/* One-off components (reusable components are in ./lib/) */
 
 const Header: React.FC<{
     appContext: AppContext,
@@ -140,6 +144,7 @@ const Header: React.FC<{
                 zkSend<sub>BETA</sub>
             </h1>
         </Link>
+
         <BtnConnect appContext={app} />
     </header>;
 }
@@ -161,16 +166,21 @@ const Nav: React.FC<{
         <Link to='/' className={selected('/')} onClick={closeMobileNav}>
             Home
         </Link>
+
         <Link to='/send' className={selected('/send')} onClick={closeMobileNav}>
             Create link
         </Link>
+
         <Link to='/bulk' className={selected('/bulk')} onClick={closeMobileNav}>
             Bulk create
         </Link>
+
         <Link to='/history' className={selected('/history')} onClick={closeMobileNav}>
             History
         </Link>
+
         <div className='divider' />
+
         <BtnNetwork appContext={app} />
 
         {/*
