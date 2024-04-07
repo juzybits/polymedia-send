@@ -15,6 +15,10 @@ import { useIsSupportedWallet } from './lib/useIsSupportedWallet';
 import { useZkBagContract } from './lib/useZkBagContract';
 import { ZkSendLinkBuilder, ZkSendLinkBuilderOptions } from './lib/zksend/builder';
 
+// Note: the code below supports both contract-based and contract-less bulk link creation.
+// The app currently uses contract-less zkSend for bulk links, because the `listCreatedLinks()`
+// function in @mysten/zksend doesn't fully support them: it only returns the 1st link in the batch.
+
 /* Constants */
 
 const SEND_MODE = () => 'contract-less';
@@ -55,7 +59,7 @@ export const PageBulk: React.FC = () =>
         resetState();
     }, [currAcct, suiClient]);
 
-    const prepareLinks = async (coinInfo: CoinInfo, linkValues: LinkValue[]) => {
+    const prepareLinks = async (coinInfo: CoinInfo, linkGroups: LinkGroup[]) => {
         if (!currAcct)
             return;
 
@@ -74,12 +78,12 @@ export const PageBulk: React.FC = () =>
             options.contract = zkBagContract;
 
             const links: ZkSendLinkBuilder[] = [];
-            for (const lv of linkValues) {
-                for (let i = 0; i < lv.count; i++) {
+            for (const group of linkGroups) {
+                for (let i = 0; i < group.count; i++) {
                     const link = new ZkSendLinkBuilder(options);
                     link.addClaimableBalance(
                         coinInfo.coinType,
-                        convertNumberToBigInt(lv.value, coinInfo.decimals),
+                        convertNumberToBigInt(group.value, coinInfo.decimals),
                     );
                     links.push(link);
                 }
@@ -93,8 +97,8 @@ export const PageBulk: React.FC = () =>
         } else {
             options.contract = null;
 
-            const amounts = linkValues.flatMap(lv => Array<bigint>(lv.count).fill(
-                convertNumberToBigInt(lv.value, coinInfo.decimals)
+            const amounts = linkGroups.flatMap(lg => Array<bigint>(lg.count).fill(
+                convertNumberToBigInt(lg.value, coinInfo.decimals)
             ));
 
             const [ txb, links ] = await ZkSendLinkBuilder.createMultiSendLinks(
@@ -185,10 +189,10 @@ export const PageBulk: React.FC = () =>
                     }
 
                     // Validate amounts
-                    const linkValues = parseLinksAmounts(chosenAmounts);
-                    const totalValue = linkValues.reduce((total, lv) => total + (lv.count * lv.value), 0);
-                    const linkValuesErr = (() => {
-                        const totalLinks = linkValues.reduce((total, lv) => total + lv.count, 0);
+                    const linkGroups = parseLinkGroups(chosenAmounts);
+                    const totalValue = linkGroups.reduce((total, lg) => total + (lg.count * lg.value), 0);
+                    const linkGroupsErr = (() => {
+                        const totalLinks = linkGroups.reduce((total, lg) => total + lg.count, 0);
                         if (totalLinks > MAX_LINKS) {
                             return `You can create up to ${MAX_LINKS} links at once`;
                         }
@@ -200,7 +204,7 @@ export const PageBulk: React.FC = () =>
                         return '';
                     })();
 
-                    const disableSendBtn = totalValue === 0 || linkValuesErr !== '' || inProgress;
+                    const disableSendBtn = totalValue === 0 || linkGroupsErr !== '' || inProgress;
                     return <>
                         <div>
                         <textarea
@@ -223,23 +227,23 @@ export const PageBulk: React.FC = () =>
                             </p>
                         </div>
 
-                        {linkValuesErr &&
+                        {linkGroupsErr &&
                         <div className='error-box'>
-                            Error: {linkValuesErr}
+                            Error: {linkGroupsErr}
                         </div>}
 
                         <button
                             className='btn'
-                            onClick={ () => { prepareLinks(coinInfo, linkValues) }}
+                            onClick={ () => { prepareLinks(coinInfo, linkGroups) }}
                             disabled={disableSendBtn}
                         >
                             PREVIEW LINKS
                         </button>
 
-                        {linkValues.length > 0 && <div className='tight'>
+                        {linkGroups.length > 0 && <div className='tight'>
                             <p><b>Summary:</b></p>
-                            {linkValues.map((lv, idx) => <p key={idx}>
-                                {lv.count} link{lv.count > 1 ? 's' : ''} with {formatNumber(lv.value, 'compact')} {coinInfo.symbol}
+                            {linkGroups.map((lg, idx) => <p key={idx}>
+                                {lg.count} link{lg.count > 1 ? 's' : ''} with {formatNumber(lg.value, 'compact')} {coinInfo.symbol}
                             </p>)}
                         </div>}
                     </>;
@@ -270,7 +274,7 @@ export const PageBulk: React.FC = () =>
                         // showCopyMessage('👍 Link copied');
                         setAllowCreate(true);
                     } catch (error) {
-                        // showCopyMessage("❌ Oops, didn't work. Please copy the page URL manually.");
+                        // showCopyMessage("❌ Oops, didn't work. Please copy the page URL manually."); // TODO
                     }
                 }}>
                     📑 COPY LINKS
@@ -332,7 +336,7 @@ type CreateResult = {
     errMsg: string|null,
 };
 
-type LinkValue = {
+type LinkGroup = {
     count: number;
     value: number;
 };
@@ -341,17 +345,17 @@ type LinkValue = {
 
 const linksAmountsPattern = /(\d+)\s*[xX*]\s*(\d+)/gi;
 
-function parseLinksAmounts(input: string): LinkValue[] {
-    const linkValues: LinkValue[] = [];
+function parseLinkGroups(input: string): LinkGroup[] {
+    const linkGroups: LinkGroup[] = [];
 
     let match;
     while ((match = linksAmountsPattern.exec(input)) !== null) {
         const count = parseInt(match[1]);
         const value = parseInt(match[2]);
-        linkValues.push({ count, value });
+        linkGroups.push({ count, value });
     }
 
-    return linkValues;
+    return linkGroups;
 }
 
 function downloadFile(filename: string, content: string, mime: string): void {
