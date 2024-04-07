@@ -375,16 +375,11 @@ function downloadFile(filename: string, content: string, mime: string): void {
     URL.revokeObjectURL(url); // Free up memory by releasing the blob URL
 }
 
-// function downloadCSV(filename: string, data: string[][]): void {
-//     const content = data.map(row => row.join(',')).join('\n');
-//     downloadFile(filename, content, 'text/csv;charset=utf-8;');
-// }
-
 function getCurrentDate(): string {
     const now = new Date();
 
     // const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0'); // JavaScript months are 0-based.
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // JS months are 0-based
     const day = String(now.getDate()).padStart(2, '0');
     // const hours = String(now.getHours()).padStart(2, '0');
     // const minutes = String(now.getMinutes()).padStart(2, '0');

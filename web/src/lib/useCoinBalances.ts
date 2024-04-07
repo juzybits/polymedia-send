@@ -21,7 +21,7 @@ export const useCoinBalances = (
                 const nonZeroBalances = balances.filter(bal => BigInt(bal.totalBalance) > 0n);
                 setUserBalances(nonZeroBalances);
             } catch (err) {
-                setError(`Failed to load user balances: ${String(err)}`);
+                setError(`[useCoinBalances] Failed to load user balances: ${String(err)}`);
             }
         };
         loadUserBalances();

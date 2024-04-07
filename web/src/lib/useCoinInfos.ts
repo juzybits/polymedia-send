@@ -29,7 +29,7 @@ export const useCoinInfos = (
                     newCoinInfos.set(coinType, undefined);
                     const errMsg = `Failed to load coin info for ${coinType}: ${String(err)}`;
                     errors.push(errMsg);
-                    console.error(`[useCoinInfo] ${errMsg}`);
+                    console.error(`[useCoinInfos] ${errMsg}`);
                 }
             }
 

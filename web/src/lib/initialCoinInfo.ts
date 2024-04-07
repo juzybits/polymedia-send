@@ -1,6 +1,6 @@
 import { CoinInfo } from './getCoinInfo';
 
-// TODO: store images in 1 repo
+// TODO: move to a separate repo
 
 export const initialCoinInfo: CoinInfo[] = [
     // mainnet
