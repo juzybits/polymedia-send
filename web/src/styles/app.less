@@ -29,10 +29,12 @@ body {
     margin-left: auto;
     margin-right: auto;
     min-height: 100svh;
-    padding-bottom: 5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
-header, nav, #page {
+header, nav, #page, footer {
     padding-left: 3rem;
     padding-right: 3rem;
     @media (max-width: @mobile-width) {
@@ -43,7 +45,7 @@ header, nav, #page {
 
 header {
     padding-top: 2rem;
-    padding-bottom: 3.3rem;
+    padding-bottom: 4rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -75,6 +77,24 @@ header {
         &:hover {
             cursor: pointer;
             color: @color-blue-2;
+        }
+    }
+}
+
+footer {
+    padding-top: 5rem;
+    padding-bottom: 2rem;
+    #icons {
+        display: flex;
+        gap: 1rem;
+        padding-left: 0.6rem; // same as nav items
+        a {
+            padding: 0;
+            border-width: 0;
+            .icon {
+                height: 25px;
+                width: 25px;
+            }
         }
     }
 }
@@ -313,6 +333,12 @@ nav {
     #nav-and-page {
         flex-direction: column;
     }
+    footer {
+        #icons {
+            justify-content: center;
+            padding-left: 0;
+        }
+    }
     #layout.menu-open {
         header, #page {
             display: none;
@@ -337,7 +363,7 @@ nav {
     #btn-menu {
         display: block;
         position: fixed;
-        bottom: 1.1rem;
+        bottom: 1.6rem;
         right: 1.1rem;
         padding: 0.8rem 1rem;
         border-radius: 1rem;
