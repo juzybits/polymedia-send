@@ -99,56 +99,40 @@ nav {
         border-bottom: 1px solid @color-bg-end;
     }
 
-    a, button, span {
+    a, span {
         display: block;
         padding: 0.2rem 0 0.2rem 0.6rem;
         border-style: solid;
         border-color: transparent;
         border-left-width: 2px;
         color: @color-muted;
-        text-align: left;
         text-decoration: none;
         &:hover {
             cursor: pointer;
         }
     }
     a {
-        &:hover {
+        &:hover, &.selected {
             color: @color-blue-2;
             border-color: @color-blue-2;
-        }
-        &.selected {
-            color: @color-blue-2;
-            border-color: @color-blue-2;
-        }
-    }
-    .network-selector, .btn-connect {
-        font-size: 0.8em;
-        &:hover {
-            color: lightgreen;
-            border-color: lightgreen;
         }
     }
     .network-selector {
         text-transform: uppercase;
-        font-weight: @text-weight;
+        font-size: 0.8em;
         position: relative;
+        .network-option .text {
+            &:hover {
+                color: lightgreen;
+                border-color: lightgreen;
+            }
+        }
         .network-options {
             position: absolute;
-            min-width: 100%;
-            // background-color: #141d33;
+            width: 100%;
             .network-option {
                 padding-top: 0.5rem;
                 padding-bottom: 0.5rem;
-            }
-        }
-        .network-option .text {
-            display: block;
-            padding-left: 0.5rem;
-            &:hover {
-                cursor: pointer;
-                color: lightgreen;
-                border-color: lightgreen;
             }
         }
     }
@@ -385,7 +369,7 @@ nav {
         rgba(255, 0, 0, 1) 100%
     );
     font-style: italic;
-    font-weight: 750;
+    font-weight: 800;
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
