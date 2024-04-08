@@ -11,7 +11,7 @@ import { getFullnodeUrl } from '@mysten/sui.js/client';
 import { shortenSuiAddress } from '@polymedia/suits';
 import { LinkExternal, NetworkSelector, loadNetwork } from '@polymedia/webutils';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { BrowserRouter, Link, Outlet, Route, Routes, useLocation } from 'react-router-dom';
 import { PageBulk } from './PageBulk';
 import { PageClaim } from './PageClaim';
@@ -142,7 +142,7 @@ const Header: React.FC<{
 }) =>
 {
     return <header>
-        <Link to='/'>
+        <Link to='/' onClick={e => app.inProgress ? e.preventDefault() : undefined}>
             <h1>
                 <img alt='polymedia' src='https://assets.polymedia.app/img/all/logo-nomargin-transparent-512x512.webp' className='logo' />
                 Send
@@ -165,21 +165,24 @@ const Nav: React.FC<{
 
     const location = useLocation();
     const selected = (name: string) => location.pathname === name ? 'selected' : '';
+    const onClick: React.MouseEventHandler = (e) => {
+        app.inProgress ? e.preventDefault() : closeMobileNav
+    };
 
     return <nav>
-        <Link to='/' className={selected('/')} onClick={closeMobileNav}>
+        <Link to='/' className={selected('/')} onClick={onClick}>
             Home
         </Link>
 
-        <Link to='/send' className={selected('/send')} onClick={closeMobileNav}>
+        <Link to='/send' className={selected('/send')} onClick={onClick}>
             Create link
         </Link>
 
-        <Link to='/bulk' className={selected('/bulk')} onClick={closeMobileNav}>
+        <Link to='/bulk' className={selected('/bulk')} onClick={onClick}>
             Bulk create
         </Link>
 
-        <Link to='/history' className={selected('/history')} onClick={closeMobileNav}>
+        <Link to='/history' className={selected('/history')} onClick={onClick}>
             History
         </Link>
 
@@ -203,6 +206,7 @@ const BtnNetwork: React.FC<{
         currentNetwork={app.network}
         supportedNetworks={supportedNetworks}
         onSwitch={onSwitchNetwork}
+        disabled={app.inProgress}
     />;
 }
 
@@ -216,8 +220,10 @@ const BtnConnect: React.FC<{
     const { mutate: disconnect } = useDisconnectWallet();
 
     const onClick = () => {
-        currAcct ? disconnect() : app.openConnectModal();
-        app.setShowMobileNav(false);
+        if (!app.inProgress) {
+            currAcct ? disconnect() : app.openConnectModal();
+            app.setShowMobileNav(false);
+        }
     };
 
     const text = currAcct ? shortenSuiAddress(currAcct.address, 3, 3) : 'LOG IN';
