@@ -18,7 +18,7 @@
         "deploy-prod": "pnpm build && wrangler pages deploy dist/ --project-name polymedia-send --branch main",
         "dev": "pnpm build && concurrently --kill-others 'pnpm dev-proxy' 'pnpm dev-app'",
         "dev-app": "vite",
-        "dev-proxy": "wrangler pages dev dist/ --port 8787",
+        "dev-proxy": "wrangler pages dev dist/ --port 8787 --compatibility-date=2024-04-08",
         "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
         "preview": "pnpm build && vite preview",
         "tunnel": "lt --port 1234"
