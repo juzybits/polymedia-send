@@ -20,9 +20,6 @@ h1, h2, h3, h4, h5 {
 
 body {
     background: linear-gradient(to bottom, @color-bg-begin, @color-bg-end);
-    &.loading * {
-        cursor: progress !important;
-    }
 }
 
 #layout {
@@ -32,6 +29,21 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+
+    &.disabled {
+        * {
+            color: #999;
+            cursor: progress !important;
+        }
+        img {
+            filter: grayscale(1);
+        }
+        nav {
+            a, span {
+                border-color: transparent;
+            }
+        }
+    }
 }
 
 header, nav, #page, footer {
@@ -201,9 +213,9 @@ nav {
             cursor: pointer;
         }
         &:disabled {
-            background-color: grey;
-            color: @color-muted;
             cursor: default;
+            color: @color-muted;
+            background-color: grey;
         }
     }
     .txt-btn {
@@ -218,8 +230,8 @@ nav {
         }
         &:disabled {
             cursor: default;
-            text-decoration: none;
             color: @color-muted;
+            text-decoration: none;
         }
     }
     .btn-group {
@@ -242,8 +254,8 @@ nav {
         font-size: @text-size;
         font-weight: 300;
         &:disabled {
-            background-color: @input-background-muted;
-            color: @input-color-muted;
+            background-color: @color-muted;
+            color: rgb(93, 93, 93);
         }
     }
 

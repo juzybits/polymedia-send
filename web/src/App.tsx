@@ -11,7 +11,7 @@ import { getFullnodeUrl } from '@mysten/sui.js/client';
 import { shortenSuiAddress } from '@polymedia/suits';
 import { LinkExternal, NetworkSelector, loadNetwork } from '@polymedia/webutils';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactNode, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter, Link, Outlet, Route, Routes, useLocation } from 'react-router-dom';
 import { PageBulk } from './PageBulk';
 import { PageClaim } from './PageClaim';
@@ -87,14 +87,6 @@ const App: React.FC<{
     const [ showConnectModal, setShowConnectModal ] = useState(false);
     const [ showMobileNav, setShowMobileNav ] = useState(false);
 
-    useEffect(() => {
-        if (inProgress) {
-            document.body.classList.add('loading');
-        } else {
-            document.body.classList.remove('loading');
-        }
-    }, [inProgress]);
-
     const appContext: AppContext = {
         inProgress, setInProgress,
         network, setNetwork,
@@ -102,8 +94,15 @@ const App: React.FC<{
         openConnectModal: () => { setShowConnectModal(true) },
     };
 
+    const layoutClasses: string[] = [];
+    if (showMobileNav) {
+        layoutClasses.push('menu-open');
+    }
+    if (inProgress) {
+        layoutClasses.push('disabled');
+    }
     return <>
-        <div id='layout' className={showMobileNav ? 'menu-open' : ''}>
+        <div id='layout' className={layoutClasses.join(' ')}>
 
             <div>
                 <Header appContext={appContext} />
@@ -239,7 +238,9 @@ const BtnMenu: React.FC<{
     appContext: app,
 }) =>
 {
-    return <button id='btn-menu' onClick={() => { app.setShowMobileNav(!app.showMobileNav) }}>
+    return <button id='btn-menu' onClick={() => {
+        !app.inProgress && app.setShowMobileNav(!app.showMobileNav)
+    }}>
         {!app.showMobileNav ? 'MENU' : 'CLOSE'}
     </button>
 }
