@@ -108,10 +108,7 @@ export const PageClaim: React.FC = () =>
         }
     };
 
-    const linkUrlOriginal = createdLinkUrl ?? window.location.href; // TODO include network if not mainnet
-    const linkUrl = linkUrlOriginal.includes('localhost:1234')
-        ? linkUrlOriginal.replace('http://localhost:1234/', 'https://dev.polymedia-send.pages.dev/')
-        : linkUrlOriginal;
+    const linkUrl = createdLinkUrl ?? window.location.href; // TODO include network if not mainnet
     const isContractLess = !linkUrl.includes('#$');
     return <div id='page-content'>
 

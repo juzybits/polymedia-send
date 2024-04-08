@@ -23,7 +23,7 @@ export async function getCoinInfo(coinType: string, client: SuiClient): Promise<
 
     const coinMeta = await client.getCoinMetadata({ coinType });
     if (!coinMeta) {
-        throw new Error(`[getCoinInfo] CoinMetadata not found for type: ${coinType}`);
+        throw new Error(`CoinMetadata not found for type: ${coinType}`);
     }
 
     const coinInfo: CoinInfo = {
