@@ -9,6 +9,7 @@ import { useCoinInfos } from './lib/useCoinInfos';
 import { useZkBagContract } from './lib/useZkBagContract';
 import { listCreatedLinks } from './lib/zksend/list-created-links';
 import './styles/history.less';
+import { Button } from './lib/Button';
 
 type CreatedLinksPage = Awaited<ReturnType<typeof listCreatedLinks>>;
 type CreatedLink = CreatedLinksPage['links'][number];
@@ -150,9 +151,9 @@ export const PageHistory: React.FC = () =>
                 <p>
                 {foLi.status === 'unclaimed'
                     ?
-                    <button className='btn' disabled={inProgress} onClick={() => { reclaimLink(foLi.link)}}>
+                    <Button onClick={() => { reclaimLink(foLi.link)}}>
                         RECLAIM
-                    </button>
+                    </Button>
                     :
                     <span className={foLi.status}>
                         {foLi.status.toLocaleUpperCase()}
@@ -190,9 +191,9 @@ export const PageHistory: React.FC = () =>
                 <HistoryTable />
 
                 {createdLinksPage.hasNextPage &&
-                <button className='btn' onClick={() => { loadLinks(createdLinksPage.cursor ?? undefined) }}>
+                <Button onClick={() => { loadLinks(createdLinksPage.cursor ?? undefined) }}>
                     LOAD MORE
-                </button>}
+                </Button>}
             </>
         })())}
     </div>;

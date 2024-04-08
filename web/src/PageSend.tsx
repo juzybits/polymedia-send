@@ -12,6 +12,7 @@ import { useCoinInfo } from './lib/useCoinInfo';
 import { useIsSupportedWallet } from './lib/useIsSupportedWallet';
 import { useZkBagContract } from './lib/useZkBagContract';
 import { ZkSendLinkBuilder } from './lib/zksend/builder';
+import { Button } from './lib/Button';
 
 const SEND_MODE = () => 'contract-based';
 
@@ -176,11 +177,10 @@ export const PageSend: React.FC = () =>
                     Error: {amountErr}
                 </div>}
 
-                <button
-                    className='btn'
-                    onClick={ () => { createLink(coinInfo.coinType, amountWithDec) }}
+                <Button
                     disabled={disableSendBtn}
-                >CREATE LINK</button>
+                    onClick={() => { createLink(coinInfo.coinType, amountWithDec)}}
+                >CREATE LINK</Button>
                 </>;
             })()}
         </>

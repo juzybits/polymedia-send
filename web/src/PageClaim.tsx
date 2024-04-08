@@ -7,6 +7,7 @@ import { ErrorBox } from './lib/ErrorBox';
 import { CoinInfo, getCoinInfo } from './lib/getCoinInfo';
 import { useZkBagContract } from './lib/useZkBagContract';
 import { ZkSendLink } from './lib/zksend/claim';
+import { Button } from './lib/Button';
 
 type BalancesType = {
     coinType: string;
@@ -123,11 +124,9 @@ export const PageClaim: React.FC = () =>
 
                 <p>Copy and share the link with the person you want to send the assets to.</p>
 
-                <button className='btn' onClick={() => {
-                    copyLink(linkUrl);
-                }}>
+                <Button onClick={() => { copyLink(linkUrl) }}>
                     COPY LINK
-                </button>
+                </Button>
                 {copyMsg && <div>{copyMsg}</div>}
 
                 {isContractLess && <>
@@ -192,7 +191,7 @@ export const PageClaim: React.FC = () =>
             {!currAcct &&
             <>
                 <p>Enter the address where you want to send the assets, or&nbsp;
-                    <button className='txt-btn' onClick={openConnectModal} disabled={inProgress}>LOG IN</button>
+                    <Button className='txt-btn' onClick={openConnectModal}>LOG IN</Button>
                     &nbsp;with your wallet to auto-fill.
                 </p>
 
@@ -211,14 +210,14 @@ export const PageClaim: React.FC = () =>
 
             <div className='btn-group'>
                 {normalizedAddress &&
-                <button className='btn' onClick={() => { claimAssets(link, normalizedAddress) }} disabled={inProgress}>
+                <Button onClick={() => { claimAssets(link, normalizedAddress) }}>
                     CLAIM ASSETS
-                </button>}
+                </Button>}
 
                 {currAcct &&
-                <button className='btn' disabled={inProgress} onClick={() => {disconnect()}}>
+                <Button onClick={() => {disconnect()}}>
                     LOG OUT
-                </button>}
+                </Button>}
             </div>
         </>;
 

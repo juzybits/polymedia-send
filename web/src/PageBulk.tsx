@@ -14,6 +14,7 @@ import { useCoinInfo } from './lib/useCoinInfo';
 import { useIsSupportedWallet } from './lib/useIsSupportedWallet';
 import { useZkBagContract } from './lib/useZkBagContract';
 import { ZkSendLinkBuilder, ZkSendLinkBuilderOptions } from './lib/zksend/builder';
+import { Button } from './lib/Button';
 
 // Note: the code below supports both contract-based and contract-less bulk link creation.
 // The app currently uses contract-less zkSend for bulk links, because the `listCreatedLinks()`
@@ -232,13 +233,12 @@ export const PageBulk: React.FC = () =>
                             Error: {linkGroupsErr}
                         </div>}
 
-                        <button
-                            className='btn'
-                            onClick={ () => { prepareLinks(coinInfo, linkGroups) }}
+                        <Button
+                            onClick={() => { prepareLinks(coinInfo, linkGroups) }}
                             disabled={disableSendBtn}
                         >
                             PREVIEW LINKS
-                        </button>
+                        </Button>
 
                         {linkGroups.length > 0 && <div className='tight'>
                             <p><b>Summary:</b></p>
@@ -268,7 +268,7 @@ export const PageBulk: React.FC = () =>
             />
 
             <div className='btn-group'>
-                <button className='btn' disabled={inProgress} onClick={async () => {
+                <Button onClick={async () => {
                     try {
                         await navigator.clipboard.writeText(allLinksStr);
                         // showCopyMessage('👍 Link copied');
@@ -278,16 +278,16 @@ export const PageBulk: React.FC = () =>
                     }
                 }}>
                     📑 COPY LINKS
-                </button>
+                </Button>
 
-                <button className='btn' disabled={inProgress} onClick={() => {
+                <Button onClick={() => {
                     const filename = `zksend_${symbol}_${count}_links_${getCurrentDate()}.csv`;
                     // const csvRows = txbAndLinks.links.map(link => [link.getLink()]);
                     downloadFile(filename, allLinksStr, MIME_CSV);
                     setAllowCreate(true);
                 }}>
                     📥 DOWNLOAD
-                </button>
+                </Button>
             </div>
 
             {(() => {
@@ -305,11 +305,9 @@ export const PageBulk: React.FC = () =>
                 }
 
                 return <>
-                    <button className='btn' disabled={inProgress} onClick={() => {
-                        createLinks(pendingLinks)
-                    }}>
+                    <Button onClick={() => { createLinks(pendingLinks) }}>
                         🚀 CREATE LINKS
-                    </button>
+                    </Button>
 
                     {createResult?.errMsg &&
                     <div className='error-box'>{createResult.errMsg}</div>}
