@@ -14,5 +14,11 @@ export default defineConfig({
     },
     server: {
         port: 1234,
-    }
+        proxy: {
+            '/proxy': {
+                target: 'http://localhost:8787',
+                changeOrigin: true
+            },
+        },
+    },
 });

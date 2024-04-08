@@ -17,9 +17,10 @@
         "deploy-dev": "pnpm build && wrangler pages deploy dist/ --project-name polymedia-send --branch dev",
         "deploy-prod": "pnpm build && wrangler pages deploy dist/ --project-name polymedia-send --branch main",
         "dev": "vite",
+        "dev-proxy": "pnpm build && wrangler pages dev dist/ --port 8787",
         "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
         "preview": "pnpm build && vite preview",
-        "tunnel": "lt --port 1234 --subdomain poly"
+        "tunnel": "lt --port 1234"
     },
     "dependencies": {
         "@mysten/dapp-kit": "^0.12.9",

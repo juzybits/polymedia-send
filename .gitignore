@@ -1,7 +1,8 @@
 .DS_Store
 
-# TypeScript
-.turbo
+# Web
+.turbo/
+.wrangler/
 dist/
 node_modules/
 
