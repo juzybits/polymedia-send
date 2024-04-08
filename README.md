@@ -1,6 +1,6 @@
 # Polymedia zkSend
 
-Send any Sui coin simply by sharing a link.
+Send any coin with Sui zkSend, and create zkSend links in bulk.
 
 ![Polymedia zkSend](./web/public/img/open-graph.webp)
 
@@ -20,7 +20,7 @@ Then visit http://localhost:1234
 
 This is a serverless app built with React, TypeScript, and Vite.
 
-But there is 1 server-side component: an API to sponsor claim transactions which is run by Mysten Labs on `https://zksend.com/api`.
+However there is 1 server-side component: an API to sponsor claim transactions which is run by Mysten Labs on `https://zksend.com/api`.
 
 To void CORS errors, we use a CloudFlare Pages Function (a serverless platform similar to AWS Lambda) to proxy requests to the API endpoint.
 
