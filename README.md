@@ -4,7 +4,7 @@ Send any Sui coin simply by sharing a link.
 
 ![Polymedia zkSend](./web/public/img/open-graph.webp)
 
-## Local development
+## Development
 
 ```
 cd web/
@@ -12,9 +12,19 @@ pnpm install
 pnpm dev
 ```
 
-## App structure
+Then visit http://localhost:1234
 
-The app uses React + TypeScript + Vite. Key files:
+`pnpm dev` starts both the Vite dev server on port 1234 (with hot reloading), and the CloudFlare Pages Function on port 8787 (without hot reloading).
+
+## Overview
+
+This is a serverless app built with React, TypeScript, and Vite.
+
+But there is 1 server-side component: an API to sponsor claim transactions which is run by Mysten Labs on `https://zksend.com/api`.
+
+To void CORS errors, we use a CloudFlare Pages Function (a serverless platform similar to AWS Lambda) to proxy requests to the API endpoint.
+
+### Key files and directories:
 
 ```
 web/
