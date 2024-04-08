@@ -101,26 +101,27 @@ const App: React.FC<{
     if (inProgress) {
         layoutClasses.push('disabled');
     }
-    return <>
-        <div id='layout' className={layoutClasses.join(' ')}>
 
-            <div>
-                <Header appContext={appContext} />
+    return (
+    <div id='layout' className={layoutClasses.join(' ')}>
 
-                <div id='nav-and-page'>
-                    <Nav appContext={appContext} />
+        <div>
+            <Header appContext={appContext} />
 
-                    <div id='page'>
-                        <Outlet context={appContext} /> {/* Loads a Page*.tsx */}
-                    </div>
+            <div id='nav-and-page'>
+                <Nav appContext={appContext} />
+
+                <div id='page'>
+                    <Outlet context={appContext} /> {/* Loads a Page*.tsx */}
                 </div>
             </div>
-
-            <Footer />
-
         </div>
 
+        <Footer />
+
         {/* Floating elements */}
+
+        <BtnMenu appContext={appContext} />
 
         <ConnectModal
             trigger={<></>}
@@ -128,8 +129,8 @@ const App: React.FC<{
             onOpenChange={isOpen => { setShowConnectModal(isOpen) }}
         />
 
-        <BtnMenu appContext={appContext} />
-    </>;
+    </div>
+    );
 }
 
 /* One-off components (reusable components are in ./lib/) */
@@ -219,15 +220,17 @@ const BtnConnect: React.FC<{
     const { mutate: disconnect } = useDisconnectWallet();
 
     const onClick = () => {
-        if (!app.inProgress) {
             currAcct ? disconnect() : app.openConnectModal();
             app.setShowMobileNav(false);
-        }
     };
 
     const text = currAcct ? shortenSuiAddress(currAcct.address, 3, 3) : 'LOG IN';
 
-    return <button className='btn-connect' onClick={onClick}>
+    return <button
+        className='btn-connect'
+        disabled={app.inProgress}
+        onClick={onClick}
+    >
         {text}
     </button>;
 }
@@ -238,9 +241,11 @@ const BtnMenu: React.FC<{
     appContext: app,
 }) =>
 {
-    return <button id='btn-menu' onClick={() => {
-        !app.inProgress && app.setShowMobileNav(!app.showMobileNav)
-    }}>
+    return <button
+        id='btn-menu'
+        disabled={app.inProgress}
+        onClick={() => { app.setShowMobileNav(!app.showMobileNav) }}
+    >
         {!app.showMobileNav ? 'MENU' : 'CLOSE'}
     </button>
 }

@@ -1,8 +1,8 @@
-# Polymedia zkSend
+# Polymedia Send
 
 Send any coin with Sui zkSend, and create zkSend links in bulk.
 
-![Polymedia zkSend](./web/public/img/open-graph.webp)
+![Polymedia Send](./web/public/img/open-graph.webp)
 
 ## Development
 
