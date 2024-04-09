@@ -1,6 +1,17 @@
 module.exports = {
     root: true,
     env: { browser: true },
+    ignorePatterns: ['dist', '.eslintrc.cjs'],
+    parser: '@typescript-eslint/parser',
+    parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+        project: [
+            './tsconfig.json',
+        ],
+        tsconfigRootDir: __dirname,
+    },
+    plugins: ['react-refresh'],
     extends: [
         'eslint:recommended',
         'plugin:@typescript-eslint/strict-type-checked',
@@ -9,9 +20,6 @@ module.exports = {
         'plugin:react/jsx-runtime',
         'plugin:react/recommended',
     ],
-    ignorePatterns: ['dist', '.eslintrc.cjs'],
-    parser: '@typescript-eslint/parser',
-    plugins: ['react-refresh'],
     rules: {
         '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
         '@typescript-eslint/no-floating-promises': 'off',
@@ -23,15 +31,9 @@ module.exports = {
         'react/prop-types': 'off',
         'react/react-in-jsx-scope': 'off',
     },
-    parserOptions: {
-        ecmaVersion: 'latest',
-        sourceType: 'module',
-        project: ['./tsconfig.json'],
-        tsconfigRootDir: __dirname,
-    },
     settings: {
         react: {
             version: 'detect'
         }
     },
-}
+};
