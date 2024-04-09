@@ -171,7 +171,7 @@ const Nav: React.FC<{
     const location = useLocation();
     const selected = (name: string) => location.pathname === name ? 'selected' : '';
     const onClick: React.MouseEventHandler = (e) => {
-        app.inProgress ? e.preventDefault() : closeMobileNav
+        app.inProgress ? e.preventDefault() : closeMobileNav()
     };
 
     return <nav>

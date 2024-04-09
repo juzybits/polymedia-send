@@ -76,7 +76,7 @@ export const PageHistory: React.FC = () =>
                 transactionBlock: txb,
             });
 
-            setModalContent('Reclaiming assets...');
+            setModalContent('⏳ Reclaiming assets...');
 
             const resp = await suiClient.executeTransactionBlock({
                 transactionBlock: signedTxb.transactionBlockBytes,

@@ -134,7 +134,7 @@ export const PageBulk: React.FC = () =>
                 transactionBlock: txb,
             });
 
-            setModalContent('Creating links...');
+            setModalContent('⏳ Creating links...');
 
             const resp = await suiClient.executeTransactionBlock({
                 transactionBlock: signedTxb.transactionBlockBytes,

@@ -75,7 +75,7 @@ export const PageClaim: React.FC = () =>
     const claimAssets = async (link: ZkSendLink, recipientAddress: string) => {
         setErrMsg('');
         setInProgress(true);
-        setModalContent('Claiming assets...');
+        setModalContent('⏳ Claiming assets...');
         try {
             const resp = await link.claimAssets(recipientAddress);
             console.debug('resp:', resp);

@@ -76,7 +76,7 @@ export const PageSend: React.FC = () =>
                 transactionBlock: txb,
             });
 
-            setModalContent('Creating link...');
+            setModalContent('⏳ Creating link...');
 
             const resp = await suiClient.executeTransactionBlock({
                 transactionBlock: signedTxb.transactionBlockBytes,
