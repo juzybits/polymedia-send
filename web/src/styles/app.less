@@ -31,9 +31,18 @@ body {
     justify-content: space-between;
 
     &.disabled {
-        * {
-            color: #999;
+        *:not(.modal-content) {
             cursor: progress !important;
+            text-decoration: none !important;
+            color: grey !important;
+        }
+        .btn {
+            color: @color-muted !important;
+            background-color: grey !important;
+        }
+        input[type=text], textarea, input::placeholder {
+            background-color: rgb(170, 170, 170) !important;
+            color: rgb(100, 100, 100) !important;
         }
         img {
             filter: grayscale(1);
@@ -212,11 +221,6 @@ nav {
             background-color: @color-blue-3;
             cursor: pointer;
         }
-        &:disabled {
-            cursor: default;
-            color: @color-muted;
-            background-color: grey;
-        }
     }
     .txt-btn {
         color: @color-blue-2;
@@ -227,11 +231,6 @@ nav {
         white-space: nowrap;
         &:hover {
             text-decoration: underline;
-        }
-        &:disabled {
-            cursor: default;
-            color: @color-muted;
-            text-decoration: none;
         }
     }
     .btn-group {
@@ -253,10 +252,6 @@ nav {
         text-align: center;
         font-size: @text-size;
         font-weight: 300;
-        &:disabled {
-            background-color: @color-muted;
-            color: rgb(93, 93, 93);
-        }
     }
 
     textarea {
@@ -275,9 +270,6 @@ nav {
             text-align: center;
             &:hover {
                 cursor: pointer;
-                &:disabled {
-                    cursor: default;
-                }
             }
         }
         &.open {
@@ -381,8 +373,7 @@ nav {
             color: white;
         }
         &:disabled {
-            color: grey;
-            background-color: rgb(32, 33, 36);
+            background-color: rgb(39, 39, 39);
         }
     }
 }
