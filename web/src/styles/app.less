@@ -34,7 +34,7 @@ body {
         *:not(.modal-content) {
             cursor: progress !important;
             text-decoration: none !important;
-            color: grey !important;
+            color: grey;
         }
         .btn {
             color: @color-muted !important;
@@ -221,6 +221,11 @@ nav {
             background-color: @color-blue-3;
             cursor: pointer;
         }
+        &:disabled {
+            cursor: default;
+            background-color: grey;
+            color: @color-muted;
+        }
     }
     .txt-btn {
         color: @color-blue-2;
@@ -231,6 +236,11 @@ nav {
         white-space: nowrap;
         &:hover {
             text-decoration: underline;
+        }
+        &:disabled {
+            cursor: default;
+            text-decoration: none;
+            color: @color-muted;
         }
     }
     .btn-group {
@@ -252,6 +262,12 @@ nav {
         text-align: center;
         font-size: @text-size;
         font-weight: 300;
+        &:disabled {
+            background-color: @color-muted;
+            color: rgb(93, 93, 93);
+        }
+    }
+    input[type=text] {
         &::placeholder {
             color: @input-color;
         }
@@ -273,6 +289,9 @@ nav {
             text-align: center;
             &:hover {
                 cursor: pointer;
+                &:disabled {
+                    cursor: default;
+                }
             }
         }
         &.open {
@@ -377,6 +396,7 @@ nav {
         }
         &:disabled {
             background-color: rgb(39, 39, 39);
+            color: grey;
         }
     }
 }
