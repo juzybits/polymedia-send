@@ -9,9 +9,9 @@ import {
 import '@mysten/dapp-kit/dist/index.css';
 import { getFullnodeUrl } from '@mysten/sui.js/client';
 import { shortenSuiAddress } from '@polymedia/suits';
-import { LinkExternal, NetworkSelector, loadNetwork } from '@polymedia/webutils';
+import { LinkExternal, Modal, NetworkSelector, loadNetwork } from '@polymedia/webutils';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { BrowserRouter, Link, Outlet, Route, Routes, useLocation } from 'react-router-dom';
 import { PageBulk } from './PageBulk';
 import { PageClaim } from './PageClaim';
@@ -72,6 +72,7 @@ export type AppContext = {
     inProgress: boolean, setInProgress: ReactSetter<boolean>,
     network: NetworkName, setNetwork: ReactSetter<NetworkName>,
     showMobileNav: boolean, setShowMobileNav: ReactSetter<boolean>,
+    setModalContent: ReactSetter<ReactNode>,
     openConnectModal: () => void,
 };
 
@@ -86,11 +87,13 @@ const App: React.FC<{
     const [ inProgress, setInProgress ] = useState(false);
     const [ showConnectModal, setShowConnectModal ] = useState(false);
     const [ showMobileNav, setShowMobileNav ] = useState(false);
+    const [ modalContent, setModalContent ] = useState<ReactNode>(null);
 
     const appContext: AppContext = {
         inProgress, setInProgress,
         network, setNetwork,
         showMobileNav, setShowMobileNav,
+        setModalContent,
         openConnectModal: () => { setShowConnectModal(true) },
     };
 
@@ -122,6 +125,8 @@ const App: React.FC<{
         {/* Floating elements */}
 
         <BtnMenu appContext={appContext} />
+
+        <Modal content={modalContent} />
 
         <ConnectModal
             trigger={<></>}

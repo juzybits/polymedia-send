@@ -1,15 +1,15 @@
-import { useCurrentAccount, useSignAndExecuteTransactionBlock, useSuiClient } from '@mysten/dapp-kit';
+import { useCurrentAccount, useSignTransactionBlock, useSuiClient } from '@mysten/dapp-kit';
 import { formatBigInt } from '@polymedia/suits';
 import { useEffect, useMemo, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';
+import { Button } from './lib/Button';
 import { ErrorBox } from './lib/ErrorBox';
 import { LogInToContinue } from './lib/LogInToContinue';
 import { useCoinInfos } from './lib/useCoinInfos';
 import { useZkBagContract } from './lib/useZkBagContract';
 import { listCreatedLinks } from './lib/zksend/list-created-links';
 import './styles/history.less';
-import { Button } from './lib/Button';
 
 type CreatedLinksPage = Awaited<ReturnType<typeof listCreatedLinks>>;
 type CreatedLink = CreatedLinksPage['links'][number];
@@ -18,9 +18,9 @@ export const PageHistory: React.FC = () =>
 {
     const currAcct = useCurrentAccount();
     const suiClient = useSuiClient();
-    const { mutateAsync: signAndExecuteTxb } = useSignAndExecuteTransactionBlock();
+    const { mutateAsync: signTransactionBlock } = useSignTransactionBlock();
 
-    const { network, inProgress, setInProgress } = useOutletContext<AppContext>();
+    const { network, setInProgress, setModalContent } = useOutletContext<AppContext>();
     const zkBagContract = useZkBagContract();
 
     const [ createdLinksPage, setCreatedLinksPage ] = useState<CreatedLinksPage>();
@@ -71,9 +71,17 @@ export const PageHistory: React.FC = () =>
         setInProgress(true);
         try {
             const txb = link.link.createClaimTransaction(currAcct.address, { reclaim: true });
-            const resp = await signAndExecuteTxb({
+
+            const signedTxb = await signTransactionBlock({
                 transactionBlock: txb,
-                options: { showEffects: true }
+            });
+
+            setModalContent('Reclaiming assets...');
+
+            const resp = await suiClient.executeTransactionBlock({
+                transactionBlock: signedTxb.transactionBlockBytes,
+                signature: signedTxb.signature,
+                options: { showEffects: true },
             });
             console.debug('resp:', resp);
 
@@ -89,6 +97,7 @@ export const PageHistory: React.FC = () =>
             setErrMsg(String(err));
         } finally {
             setInProgress(false);
+            setModalContent(null);
         }
     }
 

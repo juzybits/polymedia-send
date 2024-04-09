@@ -1,10 +1,11 @@
-import { useCurrentAccount, useSignAndExecuteTransactionBlock, useSuiClient } from '@mysten/dapp-kit';
+import { useCurrentAccount, useSignTransactionBlock, useSuiClient } from '@mysten/dapp-kit';
 import { CoinBalance, SuiTransactionBlockResponse } from '@mysten/sui.js/client';
 import { TransactionBlock } from '@mysten/sui.js/transactions';
 import { convertNumberToBigInt, formatBigInt, formatNumber } from '@polymedia/suits';
 import { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';
+import { Button } from './lib/Button';
 import { ErrorBox } from './lib/ErrorBox';
 import { LogInToContinue } from './lib/LogInToContinue';
 import { SelectCoin } from './lib/SelectCoin';
@@ -14,7 +15,6 @@ import { useCoinInfo } from './lib/useCoinInfo';
 import { useIsSupportedWallet } from './lib/useIsSupportedWallet';
 import { useZkBagContract } from './lib/useZkBagContract';
 import { ZkSendLinkBuilder, ZkSendLinkBuilderOptions } from './lib/zksend/builder';
-import { Button } from './lib/Button';
 
 // Note: the code below supports both contract-based and contract-less bulk link creation.
 // The app currently uses contract-less zkSend for bulk links, because the `listCreatedLinks()`
@@ -32,9 +32,9 @@ export const PageBulk: React.FC = () =>
 {
     const currAcct = useCurrentAccount();
     const suiClient = useSuiClient();
-    const { mutateAsync: signAndExecuteTxb } = useSignAndExecuteTransactionBlock();
+    const { mutateAsync: signTransactionBlock } = useSignTransactionBlock();
 
-    const { inProgress, setInProgress, network } = useOutletContext<AppContext>();
+    const { inProgress, setInProgress, network, setModalContent } = useOutletContext<AppContext>();
     const isSupportedWallet = useIsSupportedWallet();
     const zkBagContract = useZkBagContract();
 
@@ -130,9 +130,16 @@ export const PageBulk: React.FC = () =>
                     contract: zkBagContract,
                 });
 
-            const resp = await signAndExecuteTxb({
+            const signedTxb = await signTransactionBlock({
                 transactionBlock: txb,
-                options: { showEffects: true }
+            });
+
+            setModalContent('Creating links...');
+
+            const resp = await suiClient.executeTransactionBlock({
+                transactionBlock: signedTxb.transactionBlockBytes,
+                signature: signedTxb.signature,
+                options: { showEffects: true },
             });
             console.debug('resp:', resp);
 
@@ -147,6 +154,7 @@ export const PageBulk: React.FC = () =>
             setCreateResult({ resp: null, errMsg: String(err) });
         } finally {
             setInProgress(false);
+            setModalContent(null);
         }
     };
 

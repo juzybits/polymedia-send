@@ -1,9 +1,10 @@
-import { useCurrentAccount, useSignAndExecuteTransactionBlock, useSuiClient } from '@mysten/dapp-kit';
+import { useCurrentAccount, useSignTransactionBlock, useSuiClient } from '@mysten/dapp-kit';
 import { CoinBalance } from '@mysten/sui.js/client';
 import { convertNumberToBigInt, formatBigInt, formatNumber } from '@polymedia/suits';
 import { useEffect, useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';
+import { Button } from './lib/Button';
 import { ErrorBox } from './lib/ErrorBox';
 import { LogInToContinue } from './lib/LogInToContinue';
 import { SelectCoin } from './lib/SelectCoin';
@@ -12,7 +13,6 @@ import { useCoinInfo } from './lib/useCoinInfo';
 import { useIsSupportedWallet } from './lib/useIsSupportedWallet';
 import { useZkBagContract } from './lib/useZkBagContract';
 import { ZkSendLinkBuilder } from './lib/zksend/builder';
-import { Button } from './lib/Button';
 
 const SEND_MODE = () => 'contract-based';
 
@@ -22,9 +22,9 @@ export const PageSend: React.FC = () =>
 
     const currAcct = useCurrentAccount();
     const suiClient = useSuiClient();
-    const { mutateAsync: signAndExecuteTxb } = useSignAndExecuteTransactionBlock();
+    const { mutateAsync: signTransactionBlock } = useSignTransactionBlock();
 
-    const { inProgress, setInProgress, network } = useOutletContext<AppContext>();
+    const { inProgress, setInProgress, network, setModalContent } = useOutletContext<AppContext>();
     const isSupportedWallet = useIsSupportedWallet();
     const zkBagContract = useZkBagContract();
 
@@ -70,13 +70,18 @@ export const PageSend: React.FC = () =>
 
             link.addClaimableBalance(coinType, amountWithDec);
 
-            const url = link.getLink();
-            console.debug('url: ', url);
-
             const txb = await link.createSendTransaction();
-            const resp = await signAndExecuteTxb({
+
+            const signedTxb = await signTransactionBlock({
                 transactionBlock: txb,
-                options: { showEffects: true }
+            });
+
+            setModalContent('Creating link...');
+
+            const resp = await suiClient.executeTransactionBlock({
+                transactionBlock: signedTxb.transactionBlockBytes,
+                signature: signedTxb.signature,
+                options: { showEffects: true },
             });
             console.debug('resp:', resp);
 
@@ -85,6 +90,7 @@ export const PageSend: React.FC = () =>
                     + `Txn status: ${resp.effects?.status.status}\n`
                     + `Txn errors: ${JSON.stringify(resp.errors)}`);
             } else {
+                const url = link.getLink();
                 const secret = url.split('#')[1];
                 navigate('/claim#' + secret, {
                     state: { createdLinkUrl: url }
@@ -94,6 +100,7 @@ export const PageSend: React.FC = () =>
             setErrMsg(String(err));
         } finally {
             setInProgress(false);
+            setModalContent(null);
         }
     };
 

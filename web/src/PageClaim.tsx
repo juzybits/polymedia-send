@@ -3,11 +3,11 @@ import { formatBigInt, shortenSuiAddress, validateAndNormalizeSuiAddress } from 
 import { useEffect, useState } from 'react';
 import { useLocation, useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';
+import { Button } from './lib/Button';
 import { ErrorBox } from './lib/ErrorBox';
 import { CoinInfo, getCoinInfo } from './lib/getCoinInfo';
 import { useZkBagContract } from './lib/useZkBagContract';
 import { ZkSendLink } from './lib/zksend/claim';
-import { Button } from './lib/Button';
 
 type BalancesType = {
     coinType: string;
@@ -24,7 +24,7 @@ export const PageClaim: React.FC = () =>
     const suiClient = useSuiClient();
     const { mutate: disconnect } = useDisconnectWallet();
 
-    const { inProgress, setInProgress, openConnectModal, network } = useOutletContext<AppContext>();
+    const { inProgress, setInProgress, openConnectModal, network, setModalContent } = useOutletContext<AppContext>();
     const zkBagContract = useZkBagContract();
 
     const [ errMsg, setErrMsg ] = useState('');
@@ -75,6 +75,7 @@ export const PageClaim: React.FC = () =>
     const claimAssets = async (link: ZkSendLink, recipientAddress: string) => {
         setErrMsg('');
         setInProgress(true);
+        setModalContent('Claiming assets...');
         try {
             const resp = await link.claimAssets(recipientAddress);
             console.debug('resp:', resp);
@@ -88,6 +89,7 @@ export const PageClaim: React.FC = () =>
             setErrMsg(String(err));
         } finally {
             setInProgress(false);
+            setModalContent(null);
         }
     };
 
