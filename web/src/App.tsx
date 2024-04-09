@@ -11,7 +11,7 @@ import { getFullnodeUrl } from '@mysten/sui.js/client';
 import { shortenSuiAddress } from '@polymedia/suits';
 import { LinkExternal, Modal, NetworkSelector, loadNetwork } from '@polymedia/webutils';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { BrowserRouter, Link, Outlet, Route, Routes, useLocation } from 'react-router-dom';
 import { PageBulk } from './PageBulk';
 import { PageClaim } from './PageClaim';
@@ -147,7 +147,7 @@ const Header: React.FC<{
 }) =>
 {
     return <header>
-        <Link to='/' onClick={e => app.inProgress ? e.preventDefault() : undefined}>
+        <Link to='/' onClick={e => { app.inProgress ? e.preventDefault() : undefined }}>
             <h1>
                 <img alt='polymedia' src='https://assets.polymedia.app/img/all/logo-nomargin-transparent-512x512.webp' className='logo' />
                 Send
