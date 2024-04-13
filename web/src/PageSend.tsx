@@ -1,5 +1,6 @@
 import { useCurrentAccount, useSignTransactionBlock, useSuiClient } from '@mysten/dapp-kit';
 import { CoinBalance } from '@mysten/sui.js/client';
+import { useCoinMeta } from '@polymedia/coinmeta-react';
 import { convertNumberToBigInt, formatBigInt, formatNumber } from '@polymedia/suits';
 import { useEffect, useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
@@ -9,7 +10,6 @@ import { ErrorBox } from './lib/ErrorBox';
 import { LogInToContinue } from './lib/LogInToContinue';
 import { SelectCoin } from './lib/SelectCoin';
 import { useCoinBalances } from './lib/useCoinBalances';
-import { useCoinInfo } from './lib/useCoinInfo';
 import { useIsSupportedWallet } from './lib/useIsSupportedWallet';
 import { useZkBagContract } from './lib/useZkBagContract';
 import { ZkSendLinkBuilder } from './lib/zksend/builder';
@@ -28,21 +28,18 @@ export const PageSend: React.FC = () =>
     const isSupportedWallet = useIsSupportedWallet();
     const zkBagContract = useZkBagContract();
 
-    const [ errMsg, setErrMsg ] = useState<string>();
+    const [ errMsg, setErrMsg ] = useState<string|null>(null);
     const [ chosenBalance, setChosenBalance ] = useState<CoinBalance>(); // dropdown
     const [ chosenAmount, setChosenAmount ] = useState(''); // numeric input
 
     const { userBalances, error: errBalances } = useCoinBalances(suiClient, currAcct);
-    const { coinInfo, error: errCoinInfo } = useCoinInfo(suiClient, chosenBalance);
-
-    // const allCoinTypes = useMemo(() => userBalances?.map(bal => bal.coinType) , [userBalances]);
-    // const { coinInfos } = useCoinInfos(suiClient, allCoinTypes);
-    // console.log('=== coinInfos ===', JSON.stringify(coinInfos));
+    const { coinMeta, isLoadingCoinMeta, errorCoinMeta }
+        = useCoinMeta(suiClient, chosenBalance?.coinType);
 
     useEffect(() => {
         const resetState = () => {
             setInProgress(false);
-            setErrMsg(undefined);
+            setErrMsg(null);
             setChosenBalance(undefined);
             setChosenAmount('');
         }
@@ -50,7 +47,7 @@ export const PageSend: React.FC = () =>
     }, [currAcct, suiClient]);
 
     const createLink = async (coinType: string, amountWithDec: bigint) => {
-        setErrMsg(undefined);
+        setErrMsg(null);
 
         if (!currAcct)
             return;
@@ -104,7 +101,7 @@ export const PageSend: React.FC = () =>
         }
     };
 
-    const error = errMsg ?? errBalances ?? errCoinInfo ?? null;
+    const error = errMsg ?? errBalances ?? errorCoinMeta ?? null;
 
     return <div id='page-content'>
 
@@ -136,13 +133,13 @@ export const PageSend: React.FC = () =>
                     return <></>;
                 }
 
-                if (!coinInfo) {
+                if (isLoadingCoinMeta || !coinMeta) {
                     return <p>Loading coin info...</p>;
                 }
 
                 // Validate amount
                 const amountNum = chosenAmount === '.' ? 0 : Number(chosenAmount);
-                const amountWithDec = convertNumberToBigInt(amountNum, coinInfo.decimals);
+                const amountWithDec = convertNumberToBigInt(amountNum, coinMeta.decimals);
                 const amountErr = (() => {
                     if (chosenAmount === '' || chosenAmount === '.') {
                         return '';
@@ -161,21 +158,21 @@ export const PageSend: React.FC = () =>
 
                 return <>
                 <div>
-                    <input type='text' inputMode='numeric' pattern={`^[0-9]*\\.?[0-9]{0,${coinInfo.decimals}}$`}
+                    <input type='text' inputMode='numeric' pattern={`^[0-9]*\\.?[0-9]{0,${coinMeta.decimals}}$`}
                         value={chosenAmount} disabled={inProgress}
                         onChange={e => { setChosenAmount(e.target.validity.valid ? e.target.value : chosenAmount) }}
-                        onKeyDown={e => { if (e.key === 'Enter' && !disableSendBtn) { createLink(coinInfo.coinType, amountWithDec) } }}
+                        onKeyDown={e => { if (e.key === 'Enter' && !disableSendBtn) { createLink(chosenBalance.coinType, amountWithDec) } }}
                         placeholder='enter amount'
                     />
                 </div>
 
                 <div className='tight'>
                     <p>
-                        Amount to send: {formatNumber(amountNum, 'compact')} {coinInfo.symbol}
+                        Amount to send: {formatNumber(amountNum, 'compact')} {coinMeta.symbol}
                     </p>
 
                     <p>
-                        Your balance: {formatBigInt(BigInt(chosenBalance.totalBalance), coinInfo.decimals, 'compact')}
+                        Your balance: {formatBigInt(BigInt(chosenBalance.totalBalance), coinMeta.decimals, 'compact')}
                     </p>
                 </div>
 
@@ -186,7 +183,7 @@ export const PageSend: React.FC = () =>
 
                 <Button
                     disabled={disableSendBtn}
-                    onClick={() => { createLink(coinInfo.coinType, amountWithDec)}}
+                    onClick={() => { createLink(chosenBalance.coinType, amountWithDec)}}
                 >CREATE LINK</Button>
                 </>;
             })()}

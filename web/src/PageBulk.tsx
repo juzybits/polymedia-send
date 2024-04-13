@@ -1,6 +1,7 @@
 import { useCurrentAccount, useSignTransactionBlock, useSuiClient } from '@mysten/dapp-kit';
-import { CoinBalance, SuiTransactionBlockResponse } from '@mysten/sui.js/client';
+import { CoinBalance, CoinMetadata, SuiTransactionBlockResponse } from '@mysten/sui.js/client';
 import { TransactionBlock } from '@mysten/sui.js/transactions';
+import { useCoinMeta } from '@polymedia/coinmeta-react';
 import { convertNumberToBigInt, formatBigInt, formatNumber } from '@polymedia/suits';
 import { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
@@ -9,9 +10,7 @@ import { Button } from './lib/Button';
 import { ErrorBox } from './lib/ErrorBox';
 import { LogInToContinue } from './lib/LogInToContinue';
 import { SelectCoin } from './lib/SelectCoin';
-import { CoinInfo } from './lib/getCoinInfo';
 import { useCoinBalances } from './lib/useCoinBalances';
-import { useCoinInfo } from './lib/useCoinInfo';
 import { useIsSupportedWallet } from './lib/useIsSupportedWallet';
 import { useZkBagContract } from './lib/useZkBagContract';
 import { ZkSendLinkBuilder, ZkSendLinkBuilderOptions } from './lib/zksend/builder';
@@ -45,7 +44,8 @@ export const PageBulk: React.FC = () =>
     const [ createResult, setCreateResult ] = useState<CreateResult>();
 
     const { userBalances, error: errBalances } = useCoinBalances(suiClient, currAcct);
-    const { coinInfo, error: errCoinInfo } = useCoinInfo(suiClient, chosenBalance);
+    const { coinMeta, isLoadingCoinMeta, errorCoinMeta }
+        = useCoinMeta(suiClient, chosenBalance?.coinType);
 
     useEffect(() => {
         const resetState = () => {
@@ -60,7 +60,11 @@ export const PageBulk: React.FC = () =>
         resetState();
     }, [currAcct, suiClient]);
 
-    const prepareLinks = async (coinInfo: CoinInfo, linkGroups: LinkGroup[]) => {
+    const prepareLinks = async (
+        coinType: string,
+        coinMeta: CoinMetadata,
+        linkGroups: LinkGroup[]
+    ) => {
         if (!currAcct)
             return;
 
@@ -83,14 +87,14 @@ export const PageBulk: React.FC = () =>
                 for (let i = 0; i < group.count; i++) {
                     const link = new ZkSendLinkBuilder(options);
                     link.addClaimableBalance(
-                        coinInfo.coinType,
-                        convertNumberToBigInt(group.value, coinInfo.decimals),
+                        coinType,
+                        convertNumberToBigInt(group.value, coinMeta.decimals),
                     );
                     links.push(link);
                 }
             }
 
-            setPendingLinks({ links, coinInfo });
+            setPendingLinks({ links, coinMeta });
 
             for (const link of links) {
                 console.debug(link.getLink());
@@ -99,16 +103,16 @@ export const PageBulk: React.FC = () =>
             options.contract = null;
 
             const amounts = linkGroups.flatMap(lg => Array<bigint>(lg.count).fill(
-                convertNumberToBigInt(lg.value, coinInfo.decimals)
+                convertNumberToBigInt(lg.value, coinMeta.decimals)
             ));
 
             const [ txb, links ] = await ZkSendLinkBuilder.createMultiSendLinks(
-                coinInfo.coinType,
+                coinType,
                 amounts,
                 options,
             );
 
-            setPendingLinks({ links, coinInfo, txb });
+            setPendingLinks({ links, coinMeta, txb });
 
             for (const link of links) {
                 console.debug(link.getLink());
@@ -158,7 +162,7 @@ export const PageBulk: React.FC = () =>
         }
     };
 
-    const error = errBalances ?? errCoinInfo ?? null;
+    const error = errBalances ?? errorCoinMeta ?? null;
 
     return <div id='page-content' >
 
@@ -193,7 +197,7 @@ export const PageBulk: React.FC = () =>
                         return null;
                     }
 
-                    if (!coinInfo) {
+                    if (isLoadingCoinMeta || !coinMeta) {
                         return <p>Loading coin info...</p>;
                     }
 
@@ -205,7 +209,7 @@ export const PageBulk: React.FC = () =>
                         if (totalLinks > MAX_LINKS) {
                             return `You can create up to ${MAX_LINKS} links at once`;
                         }
-                        const totalValueWithDec = convertNumberToBigInt(totalValue, coinInfo.decimals);
+                        const totalValueWithDec = convertNumberToBigInt(totalValue, coinMeta.decimals);
                         const userBalanceWithDec = BigInt(chosenBalance.totalBalance);
                         if (totalValueWithDec > userBalanceWithDec) {
                             return 'Not enough balance';
@@ -229,10 +233,10 @@ export const PageBulk: React.FC = () =>
 
                         <div className='tight'>
                             <p>
-                                Your balance: {formatBigInt(BigInt(chosenBalance.totalBalance), coinInfo.decimals, 'compact')}
+                                Your balance: {formatBigInt(BigInt(chosenBalance.totalBalance), coinMeta.decimals, 'compact')}
                             </p>
                             <p>
-                                Total amount to send: {formatNumber(totalValue, 'compact')} {coinInfo.symbol}
+                                Total amount to send: {formatNumber(totalValue, 'compact')} {coinMeta.symbol}
                             </p>
                         </div>
 
@@ -242,7 +246,7 @@ export const PageBulk: React.FC = () =>
                         </div>}
 
                         <Button
-                            onClick={() => { prepareLinks(coinInfo, linkGroups) }}
+                            onClick={() => { prepareLinks(chosenBalance.coinType, coinMeta, linkGroups) }}
                             disabled={disableSendBtn}
                         >
                             PREVIEW LINKS
@@ -251,7 +255,7 @@ export const PageBulk: React.FC = () =>
                         {linkGroups.length > 0 && <div className='tight'>
                             <p><b>Summary:</b></p>
                             {linkGroups.map((lg, idx) => <p key={idx}>
-                                {lg.count} link{lg.count > 1 ? 's' : ''} with {formatNumber(lg.value, 'compact')} {coinInfo.symbol}
+                                {lg.count} link{lg.count > 1 ? 's' : ''} with {formatNumber(lg.value, 'compact')} {coinMeta.symbol}
                             </p>)}
                         </div>}
                     </>;
@@ -261,7 +265,7 @@ export const PageBulk: React.FC = () =>
 
         // with pendingLinks
 
-        const symbol = pendingLinks.coinInfo.symbol.toLowerCase();
+        const symbol = pendingLinks.coinMeta.symbol.toLowerCase();
         const count = pendingLinks.links.length;
         const allLinksStr = pendingLinks.links.reduce((txt, link) => txt + link.getLink() + '\n', '');
         return <>
@@ -333,7 +337,7 @@ export const PageBulk: React.FC = () =>
 
 type PendingLinks = {
     links: ZkSendLinkBuilder[],
-    coinInfo: CoinInfo,
+    coinMeta: CoinMetadata,
     txb?: TransactionBlock, // contract-less
 };
 

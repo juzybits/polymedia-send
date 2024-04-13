@@ -1,11 +1,11 @@
 import { useCurrentAccount, useDisconnectWallet, useSuiClient } from '@mysten/dapp-kit';
+import { useCoinMetas } from '@polymedia/coinmeta-react';
 import { formatBigInt, shortenSuiAddress, validateAndNormalizeSuiAddress } from '@polymedia/suits';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';
 import { Button } from './lib/Button';
 import { ErrorBox } from './lib/ErrorBox';
-import { CoinInfo, getCoinInfo } from './lib/getCoinInfo';
 import { useZkBagContract } from './lib/useZkBagContract';
 import { ZkSendLink } from './lib/zksend/claim';
 
@@ -27,12 +27,17 @@ export const PageClaim: React.FC = () =>
     const { inProgress, setInProgress, openConnectModal, network, setModalContent } = useOutletContext<AppContext>();
     const zkBagContract = useZkBagContract();
 
-    const [ errMsg, setErrMsg ] = useState('');
+    const [ errMsg, setErrMsg ] = useState<string|null>(null);
     const [ link, setLink ] = useState<ZkSendLink>(); // loaded on init
     const [ claimableBalances, setClaimableBalances ] = useState<BalancesType>(); // loaded on init
-    const [ claimableCoinsInfo, setClaimableCoinsInfo ] = useState<CoinInfo[]>(); // loaded on init
     const [ chosenAddress, setChosenAddress ] = useState(''); // chosen by user
     const [ claimSuccessful, setClaimSuccessful ] = useState<boolean>();
+
+    const allCoinTypes = useMemo(() =>
+        claimableBalances?.map(bal => bal.coinType)
+    , [claimableBalances]);
+    const { coinMetas, isLoadingCoinMetas, errorCoinMetas }
+        = useCoinMetas(suiClient, allCoinTypes);
 
     useEffect(() => {
         const initialize = async () => {
@@ -42,9 +47,6 @@ export const PageClaim: React.FC = () =>
 
                 const balances =  loadClaimableBalances(link);
                 setClaimableBalances(balances);
-
-                const coinInfos = await loadClaimableCoinsInfo(balances);
-                setClaimableCoinsInfo(coinInfos);
             } catch(err) {
                 setErrMsg(String(err));
             }
@@ -64,16 +66,11 @@ export const PageClaim: React.FC = () =>
             const assets = link.assets;
             return (!assets || link.claimed === true) ? [] : assets.balances;
         };
-        const loadClaimableCoinsInfo = async (balances: BalancesType): Promise<CoinInfo[]> => {
-            const promises = balances.map(bal => getCoinInfo(bal.coinType, suiClient));
-            const infos = await Promise.all(promises);
-            return infos;
-        }
         initialize();
     }, [suiClient]);
 
     const claimAssets = async (link: ZkSendLink, recipientAddress: string) => {
-        setErrMsg('');
+        setErrMsg(null);
         setInProgress(true);
         setModalContent('⏳ Claiming assets...');
         try {
@@ -115,7 +112,7 @@ export const PageClaim: React.FC = () =>
     const isContractLess = !linkUrl.includes('#$');
     return <div id='page-content'>
 
-    <ErrorBox err={errMsg} />
+    <ErrorBox err={errMsg ?? errorCoinMetas} />
 
     {(() => {
 
@@ -156,7 +153,7 @@ export const PageClaim: React.FC = () =>
         }
 
         // assets are loading
-        if (!link || !claimableBalances || !claimableCoinsInfo) {
+        if (!link || !claimableBalances || isLoadingCoinMetas) {
             if (errMsg) {
                 return null; // something went wrong on load
             }
@@ -181,12 +178,12 @@ export const PageClaim: React.FC = () =>
 
             <div>
             {claimableBalances.map(bal => {
-                const coinInfo = claimableCoinsInfo.find(info => info.coinType === bal.coinType);
-                if (!coinInfo) { // will never be undefined, otherwise an error would have been thrown already
+                const coinMeta = coinMetas.get(bal.coinType);
+                if (!coinMeta) {
                     return null;
                 }
-                const claimableBalancePretty = formatBigInt(bal.amount, coinInfo.decimals, 'compact');
-                return <h2 key={bal.coinType}>{claimableBalancePretty} {coinInfo.symbol}</h2>
+                const claimableBalancePretty = formatBigInt(bal.amount, coinMeta.decimals, 'compact');
+                return <h2 key={bal.coinType}>{claimableBalancePretty} {coinMeta.symbol}</h2>
             })}
             </div>
 

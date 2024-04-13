@@ -1,5 +1,5 @@
 export const ErrorBox: React.FC<{
-    err: string|null,
+    err: Error|string|null,
 }> = ({
     err,
 }) =>
@@ -9,6 +9,6 @@ export const ErrorBox: React.FC<{
     }
     return <div className='error-box'>
         <div>Something went wrong:</div>
-        <div>{err}</div>
+        <div>{String(err)}</div>
     </div>;
 }

@@ -1,4 +1,5 @@
 import { useCurrentAccount, useSignTransactionBlock, useSuiClient } from '@mysten/dapp-kit';
+import { useCoinMetas } from '@polymedia/coinmeta-react';
 import { formatBigInt } from '@polymedia/suits';
 import { useEffect, useMemo, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
@@ -6,7 +7,6 @@ import { AppContext } from './App';
 import { Button } from './lib/Button';
 import { ErrorBox } from './lib/ErrorBox';
 import { LogInToContinue } from './lib/LogInToContinue';
-import { useCoinInfos } from './lib/useCoinInfos';
 import { useZkBagContract } from './lib/useZkBagContract';
 import { listCreatedLinks } from './lib/zksend/list-created-links';
 import './styles/history.less';
@@ -25,12 +25,13 @@ export const PageHistory: React.FC = () =>
 
     const [ createdLinksPage, setCreatedLinksPage ] = useState<CreatedLinksPage>();
     const [ reclaimedDigests, setReclaimedDigests ] = useState<string[]>([]);
-    const [ errMsg, setErrMsg ] = useState<string>();
+    const [ errMsg, setErrMsg ] = useState<string|null>(null);
 
     const allCoinTypes = useMemo(() =>
         createdLinksPage?.links.flatMap(link => link.assets.balances.map(bal => bal.coinType))
     , [createdLinksPage]);
-    const { coinInfos, error: errCoinInfo } = useCoinInfos(suiClient, allCoinTypes);
+    const { coinMetas, isLoadingCoinMetas, errorCoinMetas }
+        = useCoinMetas(suiClient, allCoinTypes);
 
     useEffect(() => {
         setCreatedLinksPage(undefined);
@@ -63,7 +64,7 @@ export const PageHistory: React.FC = () =>
     };
 
     const reclaimLink = async (link: CreatedLink) => {
-        setErrMsg(undefined);
+        setErrMsg(null);
 
         if (!currAcct)
             return;
@@ -101,14 +102,14 @@ export const PageHistory: React.FC = () =>
         }
     }
 
-    const error = errMsg ?? errCoinInfo ?? null;
+    const error = errMsg ?? errorCoinMetas ?? null;
 
     const HistoryTable: React.FC = () => {
         if (!createdLinksPage) {
             return null;
         }
 
-        const debug = coinInfos.size > 0;
+        const debug = !isLoadingCoinMetas && coinMetas.size > 0;
         debug && console.debug('========== LINKS ============');
 
         const formattedLinks = createdLinksPage.links.map(link => {
@@ -129,11 +130,11 @@ export const PageHistory: React.FC = () =>
                     if (linkStatus === 'reclaimed') {
                         return '';
                     }
-                    const info = coinInfos.get(bal.coinType);
-                    if (!info) {
+                    const meta = !isLoadingCoinMetas && coinMetas.get(bal.coinType);
+                    if (!meta) {
                         return 'Loading...';
                     }
-                    return formatBigInt(bal.amount, info.decimals, 'compact') + ' ' + info.symbol;
+                    return formatBigInt(bal.amount, meta.decimals, 'compact') + ' ' + meta.symbol;
                 }),
             };
 
