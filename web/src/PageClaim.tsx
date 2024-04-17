@@ -173,7 +173,7 @@ export const PageClaim: React.FC = () =>
         // assets are ready to claim
         return <>
             <h1>
-                Found assets
+                Found assets!
             </h1>
 
             <div>
@@ -183,7 +183,14 @@ export const PageClaim: React.FC = () =>
                     return null;
                 }
                 const claimableBalancePretty = formatBigInt(bal.amount, coinMeta.decimals, "compact");
-                return <h2 key={bal.coinType}>{claimableBalancePretty} {coinMeta.symbol}</h2>
+                return <div key={bal.coinType}>
+                    <img src={coinMeta.iconUrl ?? ""} height="80"
+                        style={{borderRadius: "1rem", marginTop: "2rem"}}  />
+                    <h2 key={bal.coinType}
+                        style={{fontSize: "1.8rem", marginBottom: "1rem"}}>
+                        {claimableBalancePretty} {coinMeta.symbol}
+                    </h2>
+                </div>;
             })}
             </div>
 
