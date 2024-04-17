@@ -1,8 +1,8 @@
 import { useCurrentAccount, useSignTransactionBlock, useSuiClient } from '@mysten/dapp-kit';
 import { CoinBalance } from '@mysten/sui.js/client';
-import { useCoinMeta } from '@polymedia/coinmeta-react';
+import { useCoinMetas } from '@polymedia/coinmeta-react';
 import { convertNumberToBigInt, formatBigInt, formatNumber } from '@polymedia/suits';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import { AppContext } from './App';
 import { Button } from './lib/Button';
@@ -32,9 +32,14 @@ export const PageSend: React.FC = () =>
     const [ chosenBalance, setChosenBalance ] = useState<CoinBalance>(); // dropdown
     const [ chosenAmount, setChosenAmount ] = useState(''); // numeric input
 
+    // fetch all balances in the user's wallet
     const { userBalances, error: errBalances } = useCoinBalances(suiClient, currAcct);
-    const { coinMeta, isLoadingCoinMeta, errorCoinMeta }
-        = useCoinMeta(suiClient, chosenBalance?.coinType);
+    // extract the coin types from the user balances
+    const allCoinTypes = useMemo(() => userBalances?.map(bal => bal.coinType), [userBalances]);
+    // get the CoinMetadata for each coin type
+    const { coinMetas, isLoadingCoinMetas, errorCoinMetas } = useCoinMetas(suiClient, allCoinTypes);
+    // pick the CoinMetadata for selected balance
+    const coinMeta = !chosenBalance ? null : coinMetas.get(chosenBalance.coinType);
 
     useEffect(() => {
         const resetState = () => {
@@ -101,7 +106,7 @@ export const PageSend: React.FC = () =>
         }
     };
 
-    const error = errMsg ?? errBalances ?? errorCoinMeta ?? null;
+    const error = errMsg ?? errBalances ?? errorCoinMetas ?? null;
 
     return <div id='page-content'>
 
@@ -124,6 +129,7 @@ export const PageSend: React.FC = () =>
             <SelectCoin
                 userBalances={userBalances}
                 chosenBalance={chosenBalance}
+                coinMetas={coinMetas}
                 setChosenBalance={setChosenBalance}
                 inProgress={inProgress}
             />
@@ -133,7 +139,7 @@ export const PageSend: React.FC = () =>
                     return <></>;
                 }
 
-                if (isLoadingCoinMeta || !coinMeta) {
+                if (isLoadingCoinMetas || !coinMeta) {
                     return <p>Loading coin info...</p>;
                 }
 

@@ -1,4 +1,4 @@
-import { CoinBalance } from '@mysten/sui.js/client';
+import { CoinBalance, CoinMetadata } from '@mysten/sui.js/client';
 import { useEffect, useRef, useState } from 'react';
 import { ReactSetter } from '../App';
 import { useClickOutside } from '@polymedia/webutils';
@@ -6,11 +6,13 @@ import { useClickOutside } from '@polymedia/webutils';
 export const SelectCoin: React.FC<{
     userBalances: CoinBalance[],
     chosenBalance: CoinBalance|undefined,
+    coinMetas: Map<string, CoinMetadata | null>,
     setChosenBalance: ReactSetter<CoinBalance|undefined>,
     inProgress: boolean,
 }> = ({
     userBalances,
     chosenBalance,
+    coinMetas,
     setChosenBalance,
     inProgress,
 }) =>
@@ -39,6 +41,9 @@ export const SelectCoin: React.FC<{
     //     fud.length && setChosenBalance(fud[0]);
     }, []);
 
+    const chosenCoinMeta = chosenBalance && coinMetas.get(chosenBalance.coinType);
+    const chosenCoinSymbol = chosenBalance && (chosenCoinMeta?.symbol ?? chosenBalance.coinType.split('::')[2]);
+
     return <div>
     <div className={'dropdown' + (open ? ' open' : '')} ref={selectorRef}>
         <input className='dropdown-input'
@@ -50,7 +55,7 @@ export const SelectCoin: React.FC<{
             disabled={inProgress || sortedBalances.length === 0}
             onFocus={() => { setOpen(true) }}
             placeholder={ chosenBalance
-                ? shortenCoinType(chosenBalance.coinType)
+                ? chosenCoinSymbol
                 : (sortedBalances.length > 0 ? 'choose a coin' : 'no coins found')
             }
             spellCheck='false' autoCorrect='off' autoComplete='off'
@@ -60,22 +65,22 @@ export const SelectCoin: React.FC<{
                 return null;
             }
             return <div className='dropdown-options'>
-                {foundBalances.map(bal =>
+                {foundBalances.map(bal => {
+                const coinMeta = coinMetas.get(bal.coinType);
+                const coinSymbol = coinMeta?.symbol ?? bal.coinType.split('::')[2];
+                return (
                 <div className='dropdown-option' key={bal.coinType}
                     onClick={() => {
                         setChosenBalance(bal);
-                        setSearchCoin(bal.coinType.split('::')[2]);
+                        setSearchCoin(coinSymbol);
                         setOpen(false);
                     }}>
-                    {shortenCoinType(bal.coinType)}
-                </div>)}
+                    {<img src={coinMeta?.iconUrl ?? ''} height="30" width="30" />}
+                    <span>{coinSymbol}</span>
+                </div>
+                )})}
             </div>;
         })()}
     </div>
     </div>;
-}
-
-function shortenCoinType(coinType: string): string {
-    const chunks = coinType.split('::');
-    return chunks[0].slice(0, 6) + '... ' + chunks[2];
 }
