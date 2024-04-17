@@ -230,6 +230,7 @@ export const PageBulk: React.FC = () =>
                             placeholder='Enter LINKS x AMOUNT. Example: "50x10000 25x50000"'
                             value={chosenAmounts}
                             disabled={inProgress}
+                            style={{width: '400px'}}
                             onChange={e => {
                                 const newValue = e.target.value.replace(/\./g, '');
                                 setChosenAmounts(newValue);
@@ -281,7 +282,7 @@ export const PageBulk: React.FC = () =>
                 readOnly
                 value={allLinksStr}
                 disabled={inProgress}
-                style={{overflowWrap: 'normal', width: '100%', textAlign: 'left'}}
+                style={{overflowWrap: 'normal', width: '400px', textAlign: 'left'}}
                 onClick={(e: React.MouseEvent<HTMLTextAreaElement>) => { e.currentTarget.select() }}
             />
 

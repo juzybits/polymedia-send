@@ -257,7 +257,6 @@ nav {
         margin-bottom: @space;
         outline: none;
         padding: @input-padding;
-        width: @input-width;
         max-width: 100%;
         text-align: center;
         font-size: @text-size;
@@ -281,12 +280,11 @@ nav {
     .dropdown {
         margin-top: @space;
         margin-bottom: @space;
-        width: @input-width;
         max-width: 100%;
         display: inline-block;
         .dropdown-input {
             margin: 0;
-            text-align: center;
+            width: 100%;
             &:hover {
                 cursor: pointer;
                 &:disabled {
@@ -308,6 +306,8 @@ nav {
             overflow-y: scroll;
             border-bottom-left-radius: @radius;
             border-bottom-right-radius: @radius;
+            width: 100%;
+            word-break: break-all;
             .dropdown-option {
                 background-color: @input-background;
                 color: @input-color;
@@ -315,6 +315,7 @@ nav {
                 overflow-wrap: break-word;
                 font-size: @text-size;
                 font-weight: 300;
+                width: 100%;
                 &:hover {
                     background-color: @color-blue-1;
                     &:hover {
