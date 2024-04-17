@@ -19,7 +19,7 @@ import { PageHistory } from './PageHistory';
 import { PageHome } from './PageHome';
 import { PageNotFound } from './PageNotFound';
 import { PageSend } from './PageSend';
-import './styles/app.less';
+import './styles/App.less';
 
 /* App router */
 
