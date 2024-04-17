@@ -1,19 +1,19 @@
-import { useCurrentAccount, useSignTransactionBlock, useSuiClient } from '@mysten/dapp-kit';
-import { CoinBalance, CoinMetadata, SuiTransactionBlockResponse } from '@mysten/sui.js/client';
-import { TransactionBlock } from '@mysten/sui.js/transactions';
-import { useCoinMetas } from '@polymedia/coinmeta-react';
-import { convertNumberToBigInt, formatBigInt, formatNumber } from '@polymedia/suits';
-import { useEffect, useMemo, useState } from 'react';
-import { useOutletContext } from 'react-router-dom';
-import { AppContext } from './App';
-import { Button } from './lib/Button';
-import { ErrorBox } from './lib/ErrorBox';
-import { LogInToContinue } from './lib/LogInToContinue';
-import { SelectCoin } from './lib/SelectCoin';
-import { useCoinBalances } from './lib/useCoinBalances';
-import { useIsSupportedWallet } from './lib/useIsSupportedWallet';
-import { useZkBagContract } from './lib/useZkBagContract';
-import { ZkSendLinkBuilder, ZkSendLinkBuilderOptions } from './lib/zksend/builder';
+import { useCurrentAccount, useSignTransactionBlock, useSuiClient } from "@mysten/dapp-kit";
+import { CoinBalance, CoinMetadata, SuiTransactionBlockResponse } from "@mysten/sui.js/client";
+import { TransactionBlock } from "@mysten/sui.js/transactions";
+import { useCoinMetas } from "@polymedia/coinmeta-react";
+import { convertNumberToBigInt, formatBigInt, formatNumber } from "@polymedia/suits";
+import { useEffect, useMemo, useState } from "react";
+import { useOutletContext } from "react-router-dom";
+import { AppContext } from "./App";
+import { Button } from "./lib/Button";
+import { ErrorBox } from "./lib/ErrorBox";
+import { LogInToContinue } from "./lib/LogInToContinue";
+import { SelectCoin } from "./lib/SelectCoin";
+import { useCoinBalances } from "./lib/useCoinBalances";
+import { useIsSupportedWallet } from "./lib/useIsSupportedWallet";
+import { useZkBagContract } from "./lib/useZkBagContract";
+import { ZkSendLinkBuilder, ZkSendLinkBuilderOptions } from "./lib/zksend/builder";
 
 // Note: the code below supports both contract-based and contract-less bulk link creation.
 // The app currently uses contract-less zkSend for bulk links, because the `listCreatedLinks()`
@@ -21,9 +21,9 @@ import { ZkSendLinkBuilder, ZkSendLinkBuilderOptions } from './lib/zksend/builde
 
 /* Constants */
 
-const SEND_MODE = () => 'contract-less';
+const SEND_MODE = () => "contract-less";
 const MAX_LINKS = 300;
-const MIME_CSV = 'text/csv;charset=utf-8;';
+const MIME_CSV = "text/csv;charset=utf-8;";
 
 /* React */
 
@@ -38,7 +38,7 @@ export const PageBulk: React.FC = () =>
     const zkBagContract = useZkBagContract();
 
     const [ chosenBalance, setChosenBalance ] = useState<CoinBalance>(); // dropdown
-    const [ chosenAmounts, setChosenAmounts ] = useState<string>(''); // textarea
+    const [ chosenAmounts, setChosenAmounts ] = useState<string>(""); // textarea
     const [ pendingLinks, setPendingLinks ] = useState<PendingLinks>();
     const [ allowCreate, setAllowCreate ] = useState(false);
     const [ createResult, setCreateResult ] = useState<CreateResult>();
@@ -56,7 +56,7 @@ export const PageBulk: React.FC = () =>
         const resetState = () => {
             setInProgress(false);
             setChosenBalance(undefined);
-            setChosenAmounts('');
+            setChosenAmounts("");
             // setChosenAmounts('1x11 2x22 3x33');
             setPendingLinks(undefined);
             setAllowCreate(false);
@@ -75,7 +75,7 @@ export const PageBulk: React.FC = () =>
 
         const options: ZkSendLinkBuilderOptions = {
             host: window.location.origin,
-            path: '/claim',
+            path: "/claim",
             // keypair?: Keypair;
             network: network,
             client: suiClient,
@@ -84,7 +84,7 @@ export const PageBulk: React.FC = () =>
             // contract?: ZkBagContractOptions | null;
         };
 
-        if (SEND_MODE() === 'contract-based') {
+        if (SEND_MODE() === "contract-based") {
             options.contract = zkBagContract;
 
             const links: ZkSendLinkBuilder[] = [];
@@ -143,17 +143,17 @@ export const PageBulk: React.FC = () =>
                 transactionBlock: txb,
             });
 
-            setModalContent('⏳ Creating links...');
+            setModalContent("⏳ Creating links...");
 
             const resp = await suiClient.executeTransactionBlock({
                 transactionBlock: signedTxb.transactionBlockBytes,
                 signature: signedTxb.signature,
                 options: { showEffects: true },
             });
-            console.debug('resp:', resp);
+            console.debug("resp:", resp);
 
             let errMsg: string|null = null;
-            if (resp.errors || resp.effects?.status.status !== 'success') {
+            if (resp.errors || resp.effects?.status.status !== "success") {
                 errMsg = `Txn digest: ${resp.digest}\n`
                 + `Txn status: ${resp.effects?.status.status}\n`
                 + `Txn errors: ${JSON.stringify(resp.errors)}`;
@@ -218,21 +218,21 @@ export const PageBulk: React.FC = () =>
                         const totalValueWithDec = convertNumberToBigInt(totalValue, coinMeta.decimals);
                         const userBalanceWithDec = BigInt(chosenBalance.totalBalance);
                         if (totalValueWithDec > userBalanceWithDec) {
-                            return 'Not enough balance';
+                            return "Not enough balance";
                         }
-                        return '';
+                        return "";
                     })();
 
-                    const disableSendBtn = totalValue === 0 || linkGroupsErr !== '' || inProgress;
+                    const disableSendBtn = totalValue === 0 || linkGroupsErr !== "" || inProgress;
                     return <>
                         <div>
                         <textarea
                             placeholder='Enter LINKS x AMOUNT. Example: "50x10000 25x50000"'
                             value={chosenAmounts}
                             disabled={inProgress}
-                            style={{width: '400px'}}
+                            style={{width: "400px"}}
                             onChange={e => {
-                                const newValue = e.target.value.replace(/\./g, '');
+                                const newValue = e.target.value.replace(/\./g, "");
                                 setChosenAmounts(newValue);
                             }}
                         />
@@ -240,10 +240,10 @@ export const PageBulk: React.FC = () =>
 
                         <div className='tight'>
                             <p>
-                                Your balance: {formatBigInt(BigInt(chosenBalance.totalBalance), coinMeta.decimals, 'compact')}
+                                Your balance: {formatBigInt(BigInt(chosenBalance.totalBalance), coinMeta.decimals, "compact")}
                             </p>
                             <p>
-                                Total amount to send: {formatNumber(totalValue, 'compact')} {coinMeta.symbol}
+                                Total amount to send: {formatNumber(totalValue, "compact")} {coinMeta.symbol}
                             </p>
                         </div>
 
@@ -262,7 +262,7 @@ export const PageBulk: React.FC = () =>
                         {linkGroups.length > 0 && <div className='tight'>
                             <p><b>Summary:</b></p>
                             {linkGroups.map((lg, idx) => <p key={idx}>
-                                {lg.count} link{lg.count > 1 ? 's' : ''} with {formatNumber(lg.value, 'compact')} {coinMeta.symbol}
+                                {lg.count} link{lg.count > 1 ? "s" : ""} with {formatNumber(lg.value, "compact")} {coinMeta.symbol}
                             </p>)}
                         </div>}
                     </>;
@@ -274,7 +274,7 @@ export const PageBulk: React.FC = () =>
 
         const symbol = pendingLinks.coinMeta.symbol.toLowerCase();
         const count = pendingLinks.links.length;
-        const allLinksStr = pendingLinks.links.reduce((txt, link) => txt + link.getLink() + '\n', '');
+        const allLinksStr = pendingLinks.links.reduce((txt, link) => txt + link.getLink() + "\n", "");
         return <>
             <p>Copy or download the links before funding them.</p>
 
@@ -282,7 +282,7 @@ export const PageBulk: React.FC = () =>
                 readOnly
                 value={allLinksStr}
                 disabled={inProgress}
-                style={{overflowWrap: 'normal', width: '400px', textAlign: 'left'}}
+                style={{overflowWrap: "normal", width: "400px", textAlign: "left"}}
                 onClick={(e: React.MouseEvent<HTMLTextAreaElement>) => { e.currentTarget.select() }}
             />
 
@@ -383,9 +383,9 @@ function downloadFile(filename: string, content: string, mime: string): void {
     const url = URL.createObjectURL(blob);
 
     // Create an anchor (<a>) element and set its attributes for download
-    const downloadLink = document.createElement('a');
+    const downloadLink = document.createElement("a");
     downloadLink.href = url;
-    downloadLink.setAttribute('download', filename);
+    downloadLink.setAttribute("download", filename);
 
     // Trigger the download by clicking the anchor element
     document.body.appendChild(downloadLink);
@@ -400,8 +400,8 @@ function getCurrentDate(): string {
     const now = new Date();
 
     // const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0'); // JS months are 0-based
-    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, "0"); // JS months are 0-based
+    const day = String(now.getDate()).padStart(2, "0");
     // const hours = String(now.getHours()).padStart(2, '0');
     // const minutes = String(now.getMinutes()).padStart(2, '0');
     // const seconds = String(now.getSeconds()).padStart(2, '0');

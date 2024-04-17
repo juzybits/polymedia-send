@@ -1,6 +1,6 @@
-import { ReactNode } from 'react';
-import { useOutletContext } from 'react-router-dom';
-import { AppContext } from '../App';
+import { ReactNode } from "react";
+import { useOutletContext } from "react-router-dom";
+import { AppContext } from "../App";
 
 export const Button: React.FC<{
     children: ReactNode,
@@ -9,14 +9,14 @@ export const Button: React.FC<{
     onClick?: React.MouseEventHandler,
 }> = ({
     children,
-    className = 'btn',
+    className = "btn",
     disabled = undefined,
     onClick = undefined,
 }) =>
 {
     const { inProgress } = useOutletContext<AppContext>();
 
-    const isDisabled = typeof disabled === 'boolean' ? disabled : inProgress;
+    const isDisabled = typeof disabled === "boolean" ? disabled : inProgress;
 
     return <button
         className={className}

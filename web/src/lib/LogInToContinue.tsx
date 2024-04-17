@@ -1,6 +1,6 @@
-import { useOutletContext } from 'react-router-dom';
-import { AppContext } from '../App';
-import { Button } from './Button';
+import { useOutletContext } from "react-router-dom";
+import { AppContext } from "../App";
+import { Button } from "./Button";
 
 export const LogInToContinue: React.FC = () =>
 {

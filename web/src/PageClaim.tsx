@@ -1,13 +1,13 @@
-import { useCurrentAccount, useDisconnectWallet, useSuiClient } from '@mysten/dapp-kit';
-import { useCoinMetas } from '@polymedia/coinmeta-react';
-import { formatBigInt, shortenSuiAddress, validateAndNormalizeSuiAddress } from '@polymedia/suits';
-import { useEffect, useMemo, useState } from 'react';
-import { useLocation, useOutletContext } from 'react-router-dom';
-import { AppContext } from './App';
-import { Button } from './lib/Button';
-import { ErrorBox } from './lib/ErrorBox';
-import { useZkBagContract } from './lib/useZkBagContract';
-import { ZkSendLink } from './lib/zksend/claim';
+import { useCurrentAccount, useDisconnectWallet, useSuiClient } from "@mysten/dapp-kit";
+import { useCoinMetas } from "@polymedia/coinmeta-react";
+import { formatBigInt, shortenSuiAddress, validateAndNormalizeSuiAddress } from "@polymedia/suits";
+import { useEffect, useMemo, useState } from "react";
+import { useLocation, useOutletContext } from "react-router-dom";
+import { AppContext } from "./App";
+import { Button } from "./lib/Button";
+import { ErrorBox } from "./lib/ErrorBox";
+import { useZkBagContract } from "./lib/useZkBagContract";
+import { ZkSendLink } from "./lib/zksend/claim";
 
 type BalancesType = {
     coinType: string;
@@ -30,7 +30,7 @@ export const PageClaim: React.FC = () =>
     const [ errMsg, setErrMsg ] = useState<string|null>(null);
     const [ link, setLink ] = useState<ZkSendLink>(); // loaded on init
     const [ claimableBalances, setClaimableBalances ] = useState<BalancesType>(); // loaded on init
-    const [ chosenAddress, setChosenAddress ] = useState(''); // chosen by user
+    const [ chosenAddress, setChosenAddress ] = useState(""); // chosen by user
     const [ claimSuccessful, setClaimSuccessful ] = useState<boolean>();
 
     const allCoinTypes = useMemo(() =>
@@ -53,11 +53,11 @@ export const PageClaim: React.FC = () =>
         }
         const loadZkSendLink = async (): Promise<ZkSendLink> => {
             const link = await ZkSendLink.fromUrl(createdLinkUrl ?? window.location.href, {
-                claimApi: '/proxy',
+                claimApi: "/proxy",
                 client: suiClient,
                 network,
                 host: window.location.origin,
-                path: '/claim',
+                path: "/claim",
                 contract: zkBagContract,
             });
             return link;
@@ -72,10 +72,10 @@ export const PageClaim: React.FC = () =>
     const claimAssets = async (link: ZkSendLink, recipientAddress: string) => {
         setErrMsg(null);
         setInProgress(true);
-        setModalContent('⏳ Claiming assets...');
+        setModalContent("⏳ Claiming assets...");
         try {
             const resp = await link.claimAssets(recipientAddress);
-            console.debug('resp:', resp);
+            console.debug("resp:", resp);
             if (resp.errors) {
                 setErrMsg(`Txn digest: ${resp.digest}\nTxn errors: ${JSON.stringify(resp.errors)}`);
             } else {
@@ -92,24 +92,24 @@ export const PageClaim: React.FC = () =>
 
     /* Copy link to clipboard */
 
-    const [copyMsg, setCopyMsg] = useState('');
+    const [copyMsg, setCopyMsg] = useState("");
 
     const showCopyMessage = (message: string): void => {
         setCopyMsg(message);
-        setTimeout(() => {setCopyMsg('')}, 3000);
+        setTimeout(() => {setCopyMsg("")}, 3000);
     }
 
     const copyLink = async (linkUrl: string) => {
         try {
             await navigator.clipboard.writeText(linkUrl);
-            showCopyMessage('👍 Link copied');
+            showCopyMessage("👍 Link copied");
         } catch (error) {
             showCopyMessage("❌ Oops, didn't work. Please copy the page URL manually.");
         }
     };
 
     const linkUrl = createdLinkUrl ?? window.location.href; // TODO include network if not mainnet
-    const isContractLess = !linkUrl.includes('#$');
+    const isContractLess = !linkUrl.includes("#$");
     return <div id='page-content'>
 
     <ErrorBox err={errMsg ?? errorCoinMetas} />
@@ -148,7 +148,7 @@ export const PageClaim: React.FC = () =>
         if (claimSuccessful) {
             return <div className='success-box'>
                 <h1>Success</h1>
-                <p>Assets were sent to <span style={{whiteSpace: 'nowrap'}}>{shortAddress}</span></p>
+                <p>Assets were sent to <span style={{whiteSpace: "nowrap"}}>{shortAddress}</span></p>
             </div>;
         }
 
@@ -182,7 +182,7 @@ export const PageClaim: React.FC = () =>
                 if (!coinMeta) {
                     return null;
                 }
-                const claimableBalancePretty = formatBigInt(bal.amount, coinMeta.decimals, 'compact');
+                const claimableBalancePretty = formatBigInt(bal.amount, coinMeta.decimals, "compact");
                 return <h2 key={bal.coinType}>{claimableBalancePretty} {coinMeta.symbol}</h2>
             })}
             </div>

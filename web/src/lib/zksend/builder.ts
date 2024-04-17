@@ -450,7 +450,7 @@ export class ZkSendLinkBuilder {
 		for (const amount of coinAmounts) {
 			const link = new ZkSendLinkBuilder(options);
 			link.addClaimableBalance(coinType, amount);
-			if (typeof gasEstimateFromDryRun === 'undefined') {
+			if (typeof gasEstimateFromDryRun === "undefined") {
 				gasEstimateFromDryRun = await link.#estimateClaimGasFee();
 			}
 			link.#createMultiSendTransaction(txb, gasEstimateFromDryRun, fundingCoin);

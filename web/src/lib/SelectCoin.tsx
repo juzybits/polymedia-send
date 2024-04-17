@@ -1,7 +1,7 @@
-import { CoinBalance, CoinMetadata } from '@mysten/sui.js/client';
-import { useEffect, useRef, useState } from 'react';
-import { ReactSetter } from '../App';
-import { useClickOutside } from '@polymedia/webutils';
+import { CoinBalance, CoinMetadata } from "@mysten/sui.js/client";
+import { useEffect, useRef, useState } from "react";
+import { ReactSetter } from "../App";
+import { useClickOutside } from "@polymedia/webutils";
 
 export const SelectCoin: React.FC<{
     userBalances: CoinBalance[],
@@ -18,14 +18,14 @@ export const SelectCoin: React.FC<{
 }) =>
 {
     const [ open, setOpen ] = useState(false);
-    const [ searchCoin, setSearchCoin ] = useState('');
+    const [ searchCoin, setSearchCoin ] = useState("");
 
     const selectorRef = useRef(null);
     useClickOutside(selectorRef, () => { setOpen(false) });
 
     const sortedBalances = userBalances.sort((a, b) => {
-        const symbolA = a.coinType.split('::')[2];
-        const symbolB = b.coinType.split('::')[2];
+        const symbolA = a.coinType.split("::")[2];
+        const symbolB = b.coinType.split("::")[2];
         return symbolA.localeCompare(symbolB);
     });
 
@@ -42,21 +42,21 @@ export const SelectCoin: React.FC<{
     }, []);
 
     const chosenCoinMeta = chosenBalance && coinMetas.get(chosenBalance.coinType);
-    const chosenCoinSymbol = chosenBalance && (chosenCoinMeta?.symbol ?? chosenBalance.coinType.split('::')[2]);
+    const chosenCoinSymbol = chosenBalance && (chosenCoinMeta?.symbol ?? chosenBalance.coinType.split("::")[2]);
 
     return <div>
-    <div className={'dropdown' + (open ? ' open' : '')} ref={selectorRef}>
+    <div className={"dropdown" + (open ? " open" : "")} ref={selectorRef}>
         <input className='dropdown-input'
             type='text'
             value={searchCoin}
             onChange={(e) => { setSearchCoin(e.target.value) }}
-            onClick={() => { setSearchCoin('') }}
+            onClick={() => { setSearchCoin("") }}
 
             disabled={inProgress || sortedBalances.length === 0}
             onFocus={() => { setOpen(true) }}
             placeholder={ chosenBalance
                 ? chosenCoinSymbol
-                : (sortedBalances.length > 0 ? 'choose a coin' : 'no coins found')
+                : (sortedBalances.length > 0 ? "choose a coin" : "no coins found")
             }
             spellCheck='false' autoCorrect='off' autoComplete='off'
         />
@@ -67,7 +67,7 @@ export const SelectCoin: React.FC<{
             return <div className='dropdown-options'>
                 {foundBalances.map(bal => {
                 const coinMeta = coinMetas.get(bal.coinType);
-                const coinSymbol = coinMeta?.symbol ?? bal.coinType.split('::')[2];
+                const coinSymbol = coinMeta?.symbol ?? bal.coinType.split("::")[2];
                 return (
                 <div className='dropdown-option' key={bal.coinType}
                     onClick={() => {
@@ -75,7 +75,7 @@ export const SelectCoin: React.FC<{
                         setSearchCoin(coinSymbol);
                         setOpen(false);
                     }}>
-                    {<img src={coinMeta?.iconUrl ?? ''} height="30" width="30" />}
+                    {<img src={coinMeta?.iconUrl ?? ""} height="30" width="30" />}
                     <span>{coinSymbol}</span>
                 </div>
                 )})}

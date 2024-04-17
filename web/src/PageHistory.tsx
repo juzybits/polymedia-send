@@ -1,18 +1,18 @@
-import { useCurrentAccount, useSignTransactionBlock, useSuiClient } from '@mysten/dapp-kit';
-import { useCoinMetas } from '@polymedia/coinmeta-react';
-import { formatBigInt } from '@polymedia/suits';
-import { useEffect, useMemo, useState } from 'react';
-import { useOutletContext } from 'react-router-dom';
-import { AppContext } from './App';
-import { Button } from './lib/Button';
-import { ErrorBox } from './lib/ErrorBox';
-import { LogInToContinue } from './lib/LogInToContinue';
-import { useZkBagContract } from './lib/useZkBagContract';
-import { listCreatedLinks } from './lib/zksend/list-created-links';
-import './styles/history.less';
+import { useCurrentAccount, useSignTransactionBlock, useSuiClient } from "@mysten/dapp-kit";
+import { useCoinMetas } from "@polymedia/coinmeta-react";
+import { formatBigInt } from "@polymedia/suits";
+import { useEffect, useMemo, useState } from "react";
+import { useOutletContext } from "react-router-dom";
+import { AppContext } from "./App";
+import { Button } from "./lib/Button";
+import { ErrorBox } from "./lib/ErrorBox";
+import { LogInToContinue } from "./lib/LogInToContinue";
+import { useZkBagContract } from "./lib/useZkBagContract";
+import { listCreatedLinks } from "./lib/zksend/list-created-links";
+import "./styles/history.less";
 
 type CreatedLinksPage = Awaited<ReturnType<typeof listCreatedLinks>>;
-type CreatedLink = CreatedLinksPage['links'][number];
+type CreatedLink = CreatedLinksPage["links"][number];
 
 export const PageHistory: React.FC = () =>
 {
@@ -48,7 +48,7 @@ export const PageHistory: React.FC = () =>
                 cursor,
                 network,
                 host: window.location.origin,
-                path: '/claim',
+                path: "/claim",
                 client: suiClient,
             });
             // console.debug(resp);
@@ -77,16 +77,16 @@ export const PageHistory: React.FC = () =>
                 transactionBlock: txb,
             });
 
-            setModalContent('⏳ Reclaiming assets...');
+            setModalContent("⏳ Reclaiming assets...");
 
             const resp = await suiClient.executeTransactionBlock({
                 transactionBlock: signedTxb.transactionBlockBytes,
                 signature: signedTxb.signature,
                 options: { showEffects: true },
             });
-            console.debug('resp:', resp);
+            console.debug("resp:", resp);
 
-            if (resp.errors || resp.effects?.status.status !== 'success') {
+            if (resp.errors || resp.effects?.status.status !== "success") {
                 setErrMsg(`Txn digest: ${resp.digest}\n`
                     + `Txn status: ${resp.effects?.status.status}\n`
                     + `Txn errors: ${JSON.stringify(resp.errors)}`);
@@ -110,16 +110,16 @@ export const PageHistory: React.FC = () =>
         }
 
         const debug = !isLoadingCoinMetas && coinMetas.size > 0;
-        debug && console.debug('========== LINKS ============');
+        debug && console.debug("========== LINKS ============");
 
         const formattedLinks = createdLinksPage.links.map(link => {
-            let linkStatus: 'unclaimed' | 'claimed' | 'reclaimed';
+            let linkStatus: "unclaimed" | "claimed" | "reclaimed";
             if ( !link.assets.coins.length || ( link.digest && reclaimedDigests.includes(link.digest) ) ) {
-                linkStatus = 'reclaimed';
+                linkStatus = "reclaimed";
             } else if (link.claimed) {
-                linkStatus = 'claimed';
+                linkStatus = "claimed";
             } else {
-                linkStatus = 'unclaimed';
+                linkStatus = "unclaimed";
             }
 
             const foLi = {
@@ -127,14 +127,14 @@ export const PageHistory: React.FC = () =>
                 status: linkStatus,
                 date: formatDate(link.createdAt),
                 balances: link.assets.balances.map(bal => {
-                    if (linkStatus === 'reclaimed') {
-                        return '';
+                    if (linkStatus === "reclaimed") {
+                        return "";
                     }
                     const meta = !isLoadingCoinMetas && coinMetas.get(bal.coinType);
                     if (!meta) {
-                        return 'Loading...';
+                        return "Loading...";
                     }
-                    return formatBigInt(bal.amount, meta.decimals, 'compact') + ' ' + meta.symbol;
+                    return formatBigInt(bal.amount, meta.decimals, "compact") + " " + meta.symbol;
                 }),
             };
 
@@ -159,7 +159,7 @@ export const PageHistory: React.FC = () =>
                 )}
 
                 <p>
-                {foLi.status === 'unclaimed'
+                {foLi.status === "unclaimed"
                     ?
                     <Button onClick={() => { reclaimLink(foLi.link)}}>
                         RECLAIM
@@ -194,7 +194,7 @@ export const PageHistory: React.FC = () =>
                 return <p>Loading...</p>;
             }
             return <>
-                <p style={{fontSize: '1em', fontStyle: 'italic'}}>
+                <p style={{fontSize: "1em", fontStyle: "italic"}}>
                     Only single links are shown. Links created in bulk will be supported later on.
                 </p>
 
@@ -215,8 +215,8 @@ function formatDate(dateString: string): string {
     const date = new Date(dateString);
     const now = new Date();
 
-    const month = date.toLocaleString('default', { month: 'short' });
-    const time = date.toLocaleTimeString('default', { hour: '2-digit', minute: '2-digit', hour12: false });
+    const month = date.toLocaleString("default", { month: "short" });
+    const time = date.toLocaleTimeString("default", { hour: "2-digit", minute: "2-digit", hour12: false });
 
     if (date.getFullYear() === now.getFullYear()) {
         return `${month} ${date.getDate()} ${time}`;

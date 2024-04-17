@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import { useCurrentWallet } from '@mysten/dapp-kit';
+import { useState, useEffect } from "react";
+import { useCurrentWallet } from "@mysten/dapp-kit";
 
-const unsupportedWallets = ['Ethos', 'Mofa'];
+const unsupportedWallets = ["Ethos", "Mofa"];
 
 export const useIsSupportedWallet = (): boolean => {
     const currWallet = useCurrentWallet();
@@ -12,7 +12,7 @@ export const useIsSupportedWallet = (): boolean => {
         const notSupported =
             walletName
             && /mobile/i.test(navigator.userAgent) // is mobile browser
-            && navigator.userAgent.includes('; wv') // is WebView in-wallet browser
+            && navigator.userAgent.includes("; wv") // is WebView in-wallet browser
             && unsupportedWallets.some(prefix => walletName.startsWith(prefix));
         setSupported(!notSupported);
     }, [currWallet.currentWallet?.name]);

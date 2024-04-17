@@ -1,20 +1,20 @@
-import { useCurrentAccount, useSignTransactionBlock, useSuiClient } from '@mysten/dapp-kit';
-import { CoinBalance } from '@mysten/sui.js/client';
-import { useCoinMetas } from '@polymedia/coinmeta-react';
-import { convertNumberToBigInt, formatBigInt, formatNumber } from '@polymedia/suits';
-import { useEffect, useMemo, useState } from 'react';
-import { useNavigate, useOutletContext } from 'react-router-dom';
-import { AppContext } from './App';
-import { Button } from './lib/Button';
-import { ErrorBox } from './lib/ErrorBox';
-import { LogInToContinue } from './lib/LogInToContinue';
-import { SelectCoin } from './lib/SelectCoin';
-import { useCoinBalances } from './lib/useCoinBalances';
-import { useIsSupportedWallet } from './lib/useIsSupportedWallet';
-import { useZkBagContract } from './lib/useZkBagContract';
-import { ZkSendLinkBuilder } from './lib/zksend/builder';
+import { useCurrentAccount, useSignTransactionBlock, useSuiClient } from "@mysten/dapp-kit";
+import { CoinBalance } from "@mysten/sui.js/client";
+import { useCoinMetas } from "@polymedia/coinmeta-react";
+import { convertNumberToBigInt, formatBigInt, formatNumber } from "@polymedia/suits";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate, useOutletContext } from "react-router-dom";
+import { AppContext } from "./App";
+import { Button } from "./lib/Button";
+import { ErrorBox } from "./lib/ErrorBox";
+import { LogInToContinue } from "./lib/LogInToContinue";
+import { SelectCoin } from "./lib/SelectCoin";
+import { useCoinBalances } from "./lib/useCoinBalances";
+import { useIsSupportedWallet } from "./lib/useIsSupportedWallet";
+import { useZkBagContract } from "./lib/useZkBagContract";
+import { ZkSendLinkBuilder } from "./lib/zksend/builder";
 
-const SEND_MODE = () => 'contract-based';
+const SEND_MODE = () => "contract-based";
 
 export const PageSend: React.FC = () =>
 {
@@ -30,7 +30,7 @@ export const PageSend: React.FC = () =>
 
     const [ errMsg, setErrMsg ] = useState<string|null>(null);
     const [ chosenBalance, setChosenBalance ] = useState<CoinBalance>(); // dropdown
-    const [ chosenAmount, setChosenAmount ] = useState(''); // numeric input
+    const [ chosenAmount, setChosenAmount ] = useState(""); // numeric input
 
     // fetch all balances in the user's wallet
     const { userBalances, error: errBalances } = useCoinBalances(suiClient, currAcct);
@@ -46,7 +46,7 @@ export const PageSend: React.FC = () =>
             setInProgress(false);
             setErrMsg(null);
             setChosenBalance(undefined);
-            setChosenAmount('');
+            setChosenAmount("");
         }
         resetState();
     }, [currAcct, suiClient]);
@@ -61,13 +61,13 @@ export const PageSend: React.FC = () =>
         try {
             const link = new ZkSendLinkBuilder({
                 host: window.location.origin,
-                path: '/claim',
+                path: "/claim",
                 // keypair?: Keypair;
                 network: network,
                 client: suiClient,
                 sender: currAcct.address,
                 // redirect?: ZkSendLinkRedirect;
-                contract: SEND_MODE() === 'contract-based' ? zkBagContract : null,
+                contract: SEND_MODE() === "contract-based" ? zkBagContract : null,
             });
 
             link.addClaimableBalance(coinType, amountWithDec);
@@ -78,23 +78,23 @@ export const PageSend: React.FC = () =>
                 transactionBlock: txb,
             });
 
-            setModalContent('⏳ Creating link...');
+            setModalContent("⏳ Creating link...");
 
             const resp = await suiClient.executeTransactionBlock({
                 transactionBlock: signedTxb.transactionBlockBytes,
                 signature: signedTxb.signature,
                 options: { showEffects: true },
             });
-            console.debug('resp:', resp);
+            console.debug("resp:", resp);
 
-            if (resp.errors || resp.effects?.status.status !== 'success') {
+            if (resp.errors || resp.effects?.status.status !== "success") {
                 setErrMsg(`Txn digest: ${resp.digest}\n`
                     + `Txn status: ${resp.effects?.status.status}\n`
                     + `Txn errors: ${JSON.stringify(resp.errors)}`);
             } else {
                 const url = link.getLink();
-                const secret = url.split('#')[1];
-                navigate('/claim#' + secret, {
+                const secret = url.split("#")[1];
+                navigate("/claim#" + secret, {
                     state: { createdLinkUrl: url }
                 });
             }
@@ -144,41 +144,41 @@ export const PageSend: React.FC = () =>
                 }
 
                 // Validate amount
-                const amountNum = chosenAmount === '.' ? 0 : Number(chosenAmount);
+                const amountNum = chosenAmount === "." ? 0 : Number(chosenAmount);
                 const amountWithDec = convertNumberToBigInt(amountNum, coinMeta.decimals);
                 const amountErr = (() => {
-                    if (chosenAmount === '' || chosenAmount === '.') {
-                        return '';
+                    if (chosenAmount === "" || chosenAmount === ".") {
+                        return "";
                     }
                     if (amountNum === 0) {
-                        return 'Amount can\'t be 0';
+                        return "Amount can't be 0";
                     }
                     const userBalanceWithDec = BigInt(chosenBalance.totalBalance);
                     if (amountWithDec > userBalanceWithDec) {
-                        return 'Not enough balance';
+                        return "Not enough balance";
                     }
-                    return '';
+                    return "";
                 })();
 
-                const disableSendBtn = chosenAmount === '' || chosenAmount === '.' || amountErr !== '' || inProgress;
+                const disableSendBtn = chosenAmount === "" || chosenAmount === "." || amountErr !== "" || inProgress;
 
                 return <>
                 <div>
                     <input type='text' inputMode='numeric' pattern={`^[0-9]*\\.?[0-9]{0,${coinMeta.decimals}}$`}
                         value={chosenAmount} disabled={inProgress}
                         onChange={e => { setChosenAmount(e.target.validity.valid ? e.target.value : chosenAmount) }}
-                        onKeyDown={e => { if (e.key === 'Enter' && !disableSendBtn) { createLink(chosenBalance.coinType, amountWithDec) } }}
+                        onKeyDown={e => { if (e.key === "Enter" && !disableSendBtn) { createLink(chosenBalance.coinType, amountWithDec) } }}
                         placeholder='enter amount'
                     />
                 </div>
 
                 <div className='tight'>
                     <p>
-                        Amount to send: {formatNumber(amountNum, 'compact')} {coinMeta.symbol}
+                        Amount to send: {formatNumber(amountNum, "compact")} {coinMeta.symbol}
                     </p>
 
                     <p>
-                        Your balance: {formatBigInt(BigInt(chosenBalance.totalBalance), coinMeta.decimals, 'compact')}
+                        Your balance: {formatBigInt(BigInt(chosenBalance.totalBalance), coinMeta.decimals, "compact")}
                     </p>
                 </div>
 

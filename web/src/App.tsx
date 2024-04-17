@@ -5,21 +5,21 @@ import {
     createNetworkConfig,
     useCurrentAccount,
     useDisconnectWallet,
-} from '@mysten/dapp-kit';
-import '@mysten/dapp-kit/dist/index.css';
-import { getFullnodeUrl } from '@mysten/sui.js/client';
-import { shortenSuiAddress } from '@polymedia/suits';
-import { LinkExternal, Modal, NetworkSelector, loadNetwork } from '@polymedia/webutils';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactNode, useState } from 'react';
-import { BrowserRouter, Link, Outlet, Route, Routes, useLocation } from 'react-router-dom';
-import { PageBulk } from './PageBulk';
-import { PageClaim } from './PageClaim';
-import { PageHistory } from './PageHistory';
-import { PageHome } from './PageHome';
-import { PageNotFound } from './PageNotFound';
-import { PageSend } from './PageSend';
-import './styles/App.less';
+} from "@mysten/dapp-kit";
+import "@mysten/dapp-kit/dist/index.css";
+import { getFullnodeUrl } from "@mysten/sui.js/client";
+import { shortenSuiAddress } from "@polymedia/suits";
+import { LinkExternal, Modal, NetworkSelector, loadNetwork } from "@polymedia/webutils";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactNode, useState } from "react";
+import { BrowserRouter, Link, Outlet, Route, Routes, useLocation } from "react-router-dom";
+import { PageBulk } from "./PageBulk";
+import { PageClaim } from "./PageClaim";
+import { PageHistory } from "./PageHistory";
+import { PageHome } from "./PageHome";
+import { PageNotFound } from "./PageNotFound";
+import { PageSend } from "./PageSend";
+import "./styles/App.less";
 
 /* App router */
 
@@ -42,17 +42,17 @@ export const AppRouter: React.FC = () => {
 
 /* Sui providers + network config */
 
-const supportedNetworks = ['mainnet', 'testnet'] as const;
+const supportedNetworks = ["mainnet", "testnet"] as const;
 export type NetworkName = typeof supportedNetworks[number];
 
 const { networkConfig } = createNetworkConfig({
-    testnet: { url: getFullnodeUrl('testnet') },
-    mainnet: { url: 'https://mainnet.suiet.app' },
+    testnet: { url: getFullnodeUrl("testnet") },
+    mainnet: { url: "https://mainnet.suiet.app" },
 });
 
 const queryClient = new QueryClient();
 const AppSuiProviders: React.FC = () => {
-    const [network, setNetwork] = useState(loadNetwork(supportedNetworks, 'mainnet'));
+    const [network, setNetwork] = useState(loadNetwork(supportedNetworks, "mainnet"));
     return (
     <QueryClientProvider client={queryClient}>
         <SuiClientProvider networks={networkConfig} network={network}>
@@ -99,14 +99,14 @@ const App: React.FC<{
 
     const layoutClasses: string[] = [];
     if (showMobileNav) {
-        layoutClasses.push('menu-open');
+        layoutClasses.push("menu-open");
     }
     if (inProgress) {
-        layoutClasses.push('disabled');
+        layoutClasses.push("disabled");
     }
 
     return (
-    <div id='layout' className={layoutClasses.join(' ')}>
+    <div id='layout' className={layoutClasses.join(" ")}>
 
         <div>
             <Header appContext={appContext} />
@@ -169,25 +169,25 @@ const Nav: React.FC<{
     };
 
     const location = useLocation();
-    const selected = (name: string) => location.pathname === name ? 'selected' : '';
+    const selected = (name: string) => location.pathname === name ? "selected" : "";
     const onClick: React.MouseEventHandler = (e) => {
         app.inProgress ? e.preventDefault() : closeMobileNav()
     };
 
     return <nav>
-        <Link to='/' className={selected('/')} onClick={onClick}>
+        <Link to='/' className={selected("/")} onClick={onClick}>
             Home
         </Link>
 
-        <Link to='/send' className={selected('/send')} onClick={onClick}>
+        <Link to='/send' className={selected("/send")} onClick={onClick}>
             Create link
         </Link>
 
-        <Link to='/bulk' className={selected('/bulk')} onClick={onClick}>
+        <Link to='/bulk' className={selected("/bulk")} onClick={onClick}>
             Bulk create
         </Link>
 
-        <Link to='/history' className={selected('/history')} onClick={onClick}>
+        <Link to='/history' className={selected("/history")} onClick={onClick}>
             History
         </Link>
 
@@ -229,7 +229,7 @@ const BtnConnect: React.FC<{
             app.setShowMobileNav(false);
     };
 
-    const text = currAcct ? shortenSuiAddress(currAcct.address, 3, 3) : 'LOG IN';
+    const text = currAcct ? shortenSuiAddress(currAcct.address, 3, 3) : "LOG IN";
 
     return <button
         className='btn-connect'
@@ -251,7 +251,7 @@ const BtnMenu: React.FC<{
         disabled={app.inProgress}
         onClick={() => { app.setShowMobileNav(!app.showMobileNav) }}
     >
-        {!app.showMobileNav ? 'MENU' : 'CLOSE'}
+        {!app.showMobileNav ? "MENU" : "CLOSE"}
     </button>
 }
 

@@ -9,7 +9,10 @@ module.exports = {
         project: [ "./tsconfig.json" ],
         tsconfigRootDir: __dirname,
     },
-    plugins: ["react-refresh"],
+    plugins: [
+        "@stylistic",
+        "react-refresh",
+    ],
     extends: [
         "eslint:recommended",
         "plugin:@typescript-eslint/strict-type-checked",
@@ -19,6 +22,7 @@ module.exports = {
         "plugin:react/recommended",
     ],
     rules: {
+        "@stylistic/quotes": [ "error", "double", { "avoidEscape": true } ],
         "@typescript-eslint/no-confusing-void-expression": "off",
         "@typescript-eslint/use-unknown-in-catch-callback-variable": "off",
         "@typescript-eslint/consistent-type-definitions": ["error", "type"],
