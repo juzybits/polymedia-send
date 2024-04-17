@@ -5,7 +5,6 @@ export const PageHome: React.FC = () =>
     return <div id='page-content' >
         <h1>Polymedia <span className='rainbow'>Send</span></h1>
 
-        <br />
         <h2>Send any Sui coin simply by sharing a link</h2>
 
         <br/>

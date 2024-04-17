@@ -185,7 +185,7 @@ export const PageClaim: React.FC = () =>
                 const claimableBalancePretty = formatBigInt(bal.amount, coinMeta.decimals, "compact");
                 return <div key={bal.coinType}>
                     <img src={coinMeta.iconUrl ?? ""} height="80"
-                        style={{borderRadius: "1rem", marginTop: "2rem"}}  />
+                        style={{borderRadius: "1rem", marginTop: "1rem"}}  />
                     <h2 key={bal.coinType}
                         style={{fontSize: "1.8rem", marginBottom: "1rem"}}>
                         {claimableBalancePretty} {coinMeta.symbol}
