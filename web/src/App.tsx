@@ -138,7 +138,13 @@ const App: React.FC<{
     );
 }
 
-/* One-off components (reusable components are in ./lib/) */
+/* One-off components */
+
+/*
+Shared by the following Polymedia projects:
+- Send
+- Spam
+*/
 
 const Header: React.FC<{
     appContext: AppContext,

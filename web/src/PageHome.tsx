@@ -10,7 +10,7 @@ export const PageHome: React.FC = () =>
         <br/>
         <h3>Get started:</h3>
 
-        <div className='btn-group' style={{justifyContent: "center"}}>
+        <div className='btn-group'>
             <Link to='/send' className='btn'>CREATE LINK</Link>
             <Link to='/bulk' className='btn'>BULK CREATE</Link>
         </div>

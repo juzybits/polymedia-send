@@ -13,7 +13,7 @@
     "keywords": [],
     "scripts": {
         "build": "vite build",
-        "clean": "rm -rf dist/ node_modules/ .wrangler/",
+        "clean": "rm -rf dist/ node_modules/ .turbo/ .wrangler/",
         "deploy-dev": "pnpm build && wrangler pages deploy dist/ --project-name polymedia-send --branch dev",
         "deploy-prod": "pnpm build && wrangler pages deploy dist/ --project-name polymedia-send --branch main",
         "dev": "pnpm build && concurrently --kill-others 'pnpm dev-proxy' 'pnpm dev-app'",
