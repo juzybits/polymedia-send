@@ -240,7 +240,7 @@ export const PageBulk: React.FC = () =>
 
                         <div className='tight'>
                             <p>
-                                Your balance: {formatBigInt(BigInt(chosenBalance.totalBalance), coinMeta.decimals, "compact")}
+                                Your balance: {formatBigInt(BigInt(chosenBalance.totalBalance), coinMeta.decimals, "compact")} {coinMeta.symbol}
                             </p>
                             <p>
                                 Total amount to send: {formatNumber(totalValue, "compact")} {coinMeta.symbol}

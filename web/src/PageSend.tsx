@@ -174,11 +174,10 @@ export const PageSend: React.FC = () =>
 
                 <div className='tight'>
                     <p>
-                        Amount to send: {formatNumber(amountNum, "compact")} {coinMeta.symbol}
+                        Your balance: {formatBigInt(BigInt(chosenBalance.totalBalance), coinMeta.decimals, "compact")} {coinMeta.symbol}
                     </p>
-
                     <p>
-                        Your balance: {formatBigInt(BigInt(chosenBalance.totalBalance), coinMeta.decimals, "compact")}
+                        Amount to send: {formatNumber(amountNum, "compact")} {coinMeta.symbol}
                     </p>
                 </div>
 
