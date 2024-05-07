@@ -9,4 +9,4 @@ export const LogInToContinue: React.FC = () =>
         <p>Log in with your Sui wallet to continue.</p>
         <Button onClick={openConnectModal}>LOG IN</Button>
     </div>;
-}
+};

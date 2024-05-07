@@ -50,7 +50,7 @@ export const PageClaim: React.FC = () =>
             } catch(err) {
                 setErrMsg(String(err));
             }
-        }
+        };
         const loadZkSendLink = async (): Promise<ZkSendLink> => {
             const link = await ZkSendLink.fromUrl(createdLinkUrl ?? window.location.href, {
                 claimApi: "/proxy",
@@ -96,8 +96,8 @@ export const PageClaim: React.FC = () =>
 
     const showCopyMessage = (message: string): void => {
         setCopyMsg(message);
-        setTimeout(() => {setCopyMsg("")}, 3000);
-    }
+        setTimeout(() => {setCopyMsg("");}, 3000);
+    };
 
     const copyLink = async (linkUrl: string) => {
         try {
@@ -110,7 +110,7 @@ export const PageClaim: React.FC = () =>
 
     const linkUrl = createdLinkUrl ?? window.location.href; // TODO include network if not mainnet
     const isContractLess = !linkUrl.includes("#$");
-    return <div id='page-content'>
+    return <div id="page-content">
 
     <ErrorBox err={errMsg ?? errorCoinMetas} />
 
@@ -118,12 +118,12 @@ export const PageClaim: React.FC = () =>
 
         // creation was successful
         if (isCreator) {
-            return <div className='success-box'>
+            return <div className="success-box">
                 <h1>Success</h1>
 
                 <p>Copy and share the link with the person you want to send the assets to.</p>
 
-                <Button onClick={() => { copyLink(linkUrl) }}>
+                <Button onClick={() => { copyLink(linkUrl); }}>
                     COPY LINK
                 </Button>
                 {copyMsg && <div>{copyMsg}</div>}
@@ -146,7 +146,7 @@ export const PageClaim: React.FC = () =>
 
         // claim was successful
         if (claimSuccessful) {
-            return <div className='success-box'>
+            return <div className="success-box">
                 <h1>Success</h1>
                 <p>Assets were sent to <span style={{whiteSpace: "nowrap"}}>{shortAddress}</span></p>
             </div>;
@@ -197,14 +197,14 @@ export const PageClaim: React.FC = () =>
             {!currAcct &&
             <>
                 <p>Enter the address where you want to send the assets, or&nbsp;
-                    <Button className='txt-btn' onClick={openConnectModal}>LOG IN</Button>
+                    <Button className="txt-btn" onClick={openConnectModal}>LOG IN</Button>
                     &nbsp;with your wallet to auto-fill.
                 </p>
 
-                <input type='text' pattern='^0[xX][a-fA-F0-9]{1,64}$'
+                <input type="text" pattern="^0[xX][a-fA-F0-9]{1,64}$"
                     value={chosenAddress} autoFocus disabled={inProgress}
-                    onChange={e => { setChosenAddress(e.target.validity.valid ? e.target.value : chosenAddress) }}
-                    placeholder='paste address'
+                    onChange={e => { setChosenAddress(e.target.validity.valid ? e.target.value : chosenAddress); }}
+                    placeholder="paste address"
                 />
             </>}
 
@@ -214,14 +214,14 @@ export const PageClaim: React.FC = () =>
                 </p>
             </>}
 
-            <div className='btn-group'>
+            <div className="btn-group">
                 {normalizedAddress &&
-                <Button onClick={() => { claimAssets(link, normalizedAddress) }}>
+                <Button onClick={() => { claimAssets(link, normalizedAddress); }}>
                     CLAIM ASSETS
                 </Button>}
 
                 {currAcct &&
-                <Button onClick={() => {disconnect()}}>
+                <Button onClick={() => {disconnect();}}>
                     LOG OUT
                 </Button>}
             </div>
@@ -229,4 +229,4 @@ export const PageClaim: React.FC = () =>
 
     })()}
     </div>;
-}
+};

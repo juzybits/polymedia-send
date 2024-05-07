@@ -59,7 +59,7 @@ export const PageHistory: React.FC = () =>
                 return resp;
             });
         } catch (err) {
-            setErrMsg(String(err))
+            setErrMsg(String(err));
         }
     };
 
@@ -100,7 +100,7 @@ export const PageHistory: React.FC = () =>
             setInProgress(false);
             setModalContent(null);
         }
-    }
+    };
 
     const error = errMsg ?? errorCoinMetas ?? null;
 
@@ -148,9 +148,9 @@ export const PageHistory: React.FC = () =>
             return foLi;
         });
 
-        return <div id='history-table'>
+        return <div id="history-table">
         {formattedLinks.map(foLi =>
-            <div key={foLi.link.digest} className='history-link'>
+            <div key={foLi.link.digest} className="history-link">
 
                 <p>{foLi.date}</p>
 
@@ -161,7 +161,7 @@ export const PageHistory: React.FC = () =>
                 <p>
                 {foLi.status === "unclaimed"
                     ?
-                    <Button onClick={() => { reclaimLink(foLi.link)}}>
+                    <Button onClick={() => { reclaimLink(foLi.link);}}>
                         RECLAIM
                     </Button>
                     :
@@ -178,9 +178,9 @@ export const PageHistory: React.FC = () =>
             </div>)
         }
         </div>;
-    }
+    };
 
-    return <div id='page-content'>
+    return <div id="page-content">
 
         <h1>History</h1>
 
@@ -201,13 +201,13 @@ export const PageHistory: React.FC = () =>
                 <HistoryTable />
 
                 {createdLinksPage.hasNextPage &&
-                <Button onClick={() => { loadLinks(createdLinksPage.cursor ?? undefined) }}>
+                <Button onClick={() => { loadLinks(createdLinksPage.cursor ?? undefined); }}>
                     LOAD MORE
                 </Button>}
-            </>
+            </>;
         })())}
     </div>;
-}
+};
 
 /* Functions */
 

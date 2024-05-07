@@ -3,10 +3,10 @@ import { useOutletContext } from "react-router-dom";
 import { AppContext } from "../App";
 
 export const Button: React.FC<{
-    children: ReactNode,
-    className?: string,
-    disabled?: boolean,
-    onClick?: React.MouseEventHandler,
+    children: ReactNode;
+    className?: string;
+    disabled?: boolean;
+    onClick?: React.MouseEventHandler;
 }> = ({
     children,
     className = "btn",
@@ -21,6 +21,6 @@ export const Button: React.FC<{
     return <button
         className={className}
         disabled={isDisabled}
-        onClick={event => { !isDisabled && onClick && onClick(event) }}
-    >{children}</button>
-}
+        onClick={event => { !isDisabled && onClick && onClick(event); }}
+    >{children}</button>;
+};

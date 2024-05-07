@@ -47,7 +47,7 @@ export const PageSend: React.FC = () =>
             setErrMsg(null);
             setChosenBalance(undefined);
             setChosenAmount("");
-        }
+        };
         resetState();
     }, [currAcct, suiClient]);
 
@@ -108,7 +108,7 @@ export const PageSend: React.FC = () =>
 
     const error = errMsg ?? errBalances ?? errorCoinMetas ?? null;
 
-    return <div id='page-content'>
+    return <div id="page-content">
 
     <h1>Create one link</h1>
 
@@ -164,15 +164,15 @@ export const PageSend: React.FC = () =>
 
                 return <>
                 <div>
-                    <input type='text' inputMode='numeric' pattern={`^[0-9]*\\.?[0-9]{0,${coinMeta.decimals}}$`}
+                    <input type="text" inputMode="numeric" pattern={`^[0-9]*\\.?[0-9]{0,${coinMeta.decimals}}$`}
                         value={chosenAmount} disabled={inProgress}
-                        onChange={e => { setChosenAmount(e.target.validity.valid ? e.target.value : chosenAmount) }}
-                        onKeyDown={e => { if (e.key === "Enter" && !disableSendBtn) { createLink(chosenBalance.coinType, amountWithDec) } }}
-                        placeholder='enter amount'
+                        onChange={e => { setChosenAmount(e.target.validity.valid ? e.target.value : chosenAmount); }}
+                        onKeyDown={e => { if (e.key === "Enter" && !disableSendBtn) { createLink(chosenBalance.coinType, amountWithDec); } }}
+                        placeholder="enter amount"
                     />
                 </div>
 
-                <div className='tight'>
+                <div className="tight">
                     <p>
                         Your balance: {formatBigInt(BigInt(chosenBalance.totalBalance), coinMeta.decimals, "compact")} {coinMeta.symbol}
                     </p>
@@ -182,17 +182,17 @@ export const PageSend: React.FC = () =>
                 </div>
 
                 {amountErr &&
-                <div className='error-box'>
+                <div className="error-box">
                     Error: {amountErr}
                 </div>}
 
                 <Button
                     disabled={disableSendBtn}
-                    onClick={() => { createLink(chosenBalance.coinType, amountWithDec)}}
+                    onClick={() => { createLink(chosenBalance.coinType, amountWithDec);}}
                 >CREATE LINK</Button>
                 </>;
             })()}
-        </>
+        </>;
     })()}
 
     <ErrorBox err={error} />

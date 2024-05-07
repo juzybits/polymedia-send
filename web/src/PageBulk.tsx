@@ -61,7 +61,7 @@ export const PageBulk: React.FC = () =>
             setPendingLinks(undefined);
             setAllowCreate(false);
             setCreateResult(undefined);
-        }
+        };
         resetState();
     }, [currAcct, suiClient]);
 
@@ -169,7 +169,7 @@ export const PageBulk: React.FC = () =>
 
     const error = errBalances ?? errorCoinMetas ?? null;
 
-    return <div id='page-content' >
+    return <div id="page-content" >
 
     <h1>Create multiple links</h1>
 
@@ -238,7 +238,7 @@ export const PageBulk: React.FC = () =>
                         />
                         </div>
 
-                        <div className='tight'>
+                        <div className="tight">
                             <p>
                                 Your balance: {formatBigInt(BigInt(chosenBalance.totalBalance), coinMeta.decimals, "compact")} {coinMeta.symbol}
                             </p>
@@ -248,18 +248,18 @@ export const PageBulk: React.FC = () =>
                         </div>
 
                         {linkGroupsErr &&
-                        <div className='error-box'>
+                        <div className="error-box">
                             Error: {linkGroupsErr}
                         </div>}
 
                         <Button
-                            onClick={() => { prepareLinks(chosenBalance.coinType, coinMeta, linkGroups) }}
+                            onClick={() => { prepareLinks(chosenBalance.coinType, coinMeta, linkGroups); }}
                             disabled={disableSendBtn}
                         >
                             PREVIEW LINKS
                         </Button>
 
-                        {linkGroups.length > 0 && <div className='tight'>
+                        {linkGroups.length > 0 && <div className="tight">
                             <p><b>Summary:</b></p>
                             {linkGroups.map((lg, idx) => <p key={idx}>
                                 {lg.count} link{lg.count > 1 ? "s" : ""} with {formatNumber(lg.value, "compact")} {coinMeta.symbol}
@@ -267,7 +267,7 @@ export const PageBulk: React.FC = () =>
                         </div>}
                     </>;
                 })()}
-            </>
+            </>;
         }
 
         // with pendingLinks
@@ -283,10 +283,10 @@ export const PageBulk: React.FC = () =>
                 value={allLinksStr}
                 disabled={inProgress}
                 style={{overflowWrap: "normal", width: "400px", textAlign: "left"}}
-                onClick={(e: React.MouseEvent<HTMLTextAreaElement>) => { e.currentTarget.select() }}
+                onClick={(e: React.MouseEvent<HTMLTextAreaElement>) => { e.currentTarget.select(); }}
             />
 
-            <div className='btn-group'>
+            <div className="btn-group">
                 <Button onClick={async () => {
                     try {
                         await navigator.clipboard.writeText(allLinksStr);
@@ -324,12 +324,12 @@ export const PageBulk: React.FC = () =>
                 }
 
                 return <>
-                    <Button onClick={() => { createLinks(pendingLinks) }}>
+                    <Button onClick={() => { createLinks(pendingLinks); }}>
                         🚀 CREATE LINKS
                     </Button>
 
                     {createResult?.errMsg &&
-                    <div className='error-box'>{createResult.errMsg}</div>}
+                    <div className="error-box">{createResult.errMsg}</div>}
                 </>;
             })()}
         </>;
@@ -343,14 +343,14 @@ export const PageBulk: React.FC = () =>
 /* Types */
 
 type PendingLinks = {
-    links: ZkSendLinkBuilder[],
-    coinMeta: CoinMetadata,
-    txb?: TransactionBlock, // contract-less
+    links: ZkSendLinkBuilder[];
+    coinMeta: CoinMetadata;
+    txb?: TransactionBlock; // contract-less
 };
 
 type CreateResult = {
-    resp: SuiTransactionBlockResponse|null,
-    errMsg: string|null,
+    resp: SuiTransactionBlockResponse|null;
+    errMsg: string|null;
 };
 
 type LinkGroup = {
