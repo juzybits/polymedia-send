@@ -12,8 +12,8 @@ dependencies:
     specifier: ^0.52.0
     version: 0.52.0(svelte@4.2.16)(typescript@5.4.5)
   '@polymedia/coinmeta-react':
-    specifier: ^0.0.1
-    version: 0.0.1(react@18.3.1)
+    specifier: ^0.0.2
+    version: 0.0.2(react@18.3.1)
   '@polymedia/suits':
     specifier: ^0.0.41
     version: 0.0.41(svelte@4.2.16)(typescript@5.4.5)
@@ -935,17 +935,17 @@ packages:
       fastq: 1.17.1
     dev: true
 
-  /@polymedia/coinmeta-react@0.0.1(react@18.3.1):
-    resolution: {integrity: sha512-dSrifNBL+huWcg+sAGanfatwvI+uaNDaCOfM4i3StABf2vE/Yqb7TLKk95HSQ4qmdPKI3ofYoe8ePzmnAyGKHg==}
+  /@polymedia/coinmeta-react@0.0.2(react@18.3.1):
+    resolution: {integrity: sha512-NsNte/KesnhYAJfRemx+9uQkQwt6YDZ2TZ4iWf8LcYafQht3gSnZBqtVjPsP2Lv4u1B6SEBSqVwqyNbC6xgkhg==}
     peerDependencies:
       react: '18'
     dependencies:
-      '@polymedia/coinmeta': 0.0.1
+      '@polymedia/coinmeta': 0.0.2
       react: 18.3.1
     dev: false
 
-  /@polymedia/coinmeta@0.0.1:
-    resolution: {integrity: sha512-1rn/0F80CkjuCVPL2u5PClUhWyffTbspxcKKf+D+jRFo9Xi+Sls0Vw+6VZZrewZiTHDK6e+nz773tYDqWERdaw==}
+  /@polymedia/coinmeta@0.0.2:
+    resolution: {integrity: sha512-dExxaZ0BGjRKjT0qf+YLCYBXH8nerqdKiUNkbFHhJ/0UjEhnHe+x15rfzdMAaOWkKJzDmDB6SHKfXefAXFWnHw==}
     dev: false
 
   /@polymedia/suits@0.0.41(svelte@4.2.16)(typescript@5.4.5):

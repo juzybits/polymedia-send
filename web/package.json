@@ -26,7 +26,7 @@
     "dependencies": {
         "@mysten/dapp-kit": "^0.12.12",
         "@mysten/sui.js": "^0.52.0",
-        "@polymedia/coinmeta-react": "^0.0.1",
+        "@polymedia/coinmeta-react": "^0.0.2",
         "@polymedia/suits": "^0.0.41",
         "@polymedia/webutils": "^0.0.51",
         "@tanstack/react-query": "^5.35.1",
