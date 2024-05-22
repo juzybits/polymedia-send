@@ -15,7 +15,6 @@ import { ReactNode, useState } from "react";
 import { BrowserRouter, Link, Outlet, Route, Routes, useLocation } from "react-router-dom";
 import { PageBulk } from "./PageBulk";
 import { PageClaim } from "./PageClaim";
-import { PageHistory } from "./PageHistory";
 import { PageHome } from "./PageHome";
 import { PageNotFound } from "./PageNotFound";
 import { PageSend } from "./PageSend";
@@ -32,7 +31,7 @@ export const AppRouter: React.FC = () => {
                 <Route path="/send" element={<PageSend />} />
                 <Route path="/bulk" element={<PageBulk />} />
                 <Route path="/claim" element={<PageClaim />} />
-                <Route path="/history" element={<PageHistory />} />
+                {/* <Route path="/history" element={<PageHistory />} /> */}
                 <Route path="*" element={<PageNotFound />} />
             </Route>
         </Routes>
