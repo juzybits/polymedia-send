@@ -192,10 +192,6 @@ const Nav: React.FC<{
             Bulk create
         </Link>
 
-        <Link to="/history" className={selected("/history")} onClick={onClick}>
-            History
-        </Link>
-
         <div className="divider" />
 
         <BtnNetwork appContext={app} />
