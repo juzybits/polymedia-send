@@ -215,6 +215,91 @@ export class ZkSendLinkBuilder {
 
 		return coins.data;
 	}
+
+	/* Start of Polymedia code */
+	/**
+	 * Create multiple `ZkSendLinkBuilder` with a single `TransactionBlock`,
+	 * and making as few RPC calls as possible.
+	 *
+	 * @param coinType the type of coin that will be sent to the links
+	 * @param coinAmounts the amounts of coin that will be sent to each link
+	 * @param newLinkBuilder options to instantiate a new `ZkSendLinkBuilder`
+	 */
+	static async createMultiSendLinks(
+		coinType: string,
+		coinAmounts: bigint[],
+		options: ZkSendLinkBuilderOptions,
+	): Promise<[TransactionBlock, ZkSendLinkBuilder[]]> {
+		const txb = new TransactionBlock();
+
+		// find a Coin<coinType> to fund all links
+		let fundingCoin: TransactionObjectInput;
+		if (coinType === SUI_COIN_TYPE || coinType === SUI_TYPE_ARG) {
+			fundingCoin = txb.gas;
+		} else {
+			// merge all coins into one
+			const [firstCoin, ...otherCoins] = await new ZkSendLinkBuilder(options).#getCoinsByType(coinType);
+			if (otherCoins.length > 0) {
+				txb.mergeCoins(firstCoin.coinObjectId, otherCoins.map(c => c.coinObjectId));
+			}
+			fundingCoin = firstCoin.coinObjectId;
+		}
+
+		// create a link for each amount
+		const links: ZkSendLinkBuilder[] = [];
+		let gasEstimateFromDryRun: bigint|undefined = undefined;
+		for (const amount of coinAmounts) {
+			const link = new ZkSendLinkBuilder(options);
+			link.addClaimableBalance(coinType, amount);
+			if (typeof gasEstimateFromDryRun === "undefined") {
+				gasEstimateFromDryRun = await link.#estimateClaimGasFee();
+			}
+			link.#createMultiSendTransaction(txb, gasEstimateFromDryRun, fundingCoin);
+			links.push(link);
+		}
+
+		return [ txb, links ];
+	}
+
+	/**
+	 * A modified version of `createSendTransaction()` that doesn't make any RPC calls,
+	 * as it doesn't need to estimate the gas or find a coin to pay for the transaction.
+	 *
+	 * @param txb a reusable TransactionBlock that is used by `createMultiSendLinks()` to create many links
+	 * @param gasEstimateFromDryRun to avoid calling `this.#estimateClaimGasFee()` and `SuiClient.dryRunTransactionBlock()`
+	 * @param fundingCoinId to avoid calling `this.#getCoinsByType` and `SuiClient.getCoins()`
+	 *
+	 * @see createSendTransaction
+	 */
+	#createMultiSendTransaction(
+		txb: TransactionBlock,
+		gasEstimateFromDryRun: bigint,
+		fundingCoin: TransactionObjectInput,
+	) {
+		const baseGasAmount = gasEstimateFromDryRun * 2n;
+		// Ensure that rounded gas is not less than the calculated gas
+		const gasWithBuffer = baseGasAmount + 1013n;
+		// Ensure that gas amount ends in 987
+		const roundedGasAmount = gasWithBuffer - (gasWithBuffer % 1000n) - 13n;
+
+		const address = this.#keypair.toSuiAddress();
+		const objectsToTransfer = [...this.#objects].map((id) => txb.object(id));
+		const [gas] = txb.splitCoins(txb.gas, [roundedGasAmount]);
+		objectsToTransfer.push(gas);
+
+		txb.setSenderIfNotSet(this.#sender);
+
+		for (const amount of this.#balances.values()) {
+			const [sendCoin] = txb.splitCoins(txb.object(fundingCoin), [amount]);
+			objectsToTransfer.push(sendCoin);
+		}
+
+		txb.transferObjects(objectsToTransfer, address);
+
+		return txb;
+	}
+
+	/* End of Polymedia code */
 }
 
 export type ZkSendLinkOptions = {
