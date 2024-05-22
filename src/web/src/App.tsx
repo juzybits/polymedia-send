@@ -18,7 +18,7 @@ import { PageClaim } from "./PageClaim";
 import { PageHome } from "./PageHome";
 import { PageNotFound } from "./PageNotFound";
 import { PageSend } from "./PageSend";
-import "./styles/shared.app.less";
+import "./styles/.shared.app.less";
 
 /* App router */
 

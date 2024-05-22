@@ -6,7 +6,7 @@ This file is shared by the following Polymedia projects:
 */
 
 @import "../../node_modules/normalize.css/normalize.css";
-@import "./shared.constants.less";
+@import "./.shared.constants.less";
 
 /* Resets */
 
@@ -175,6 +175,7 @@ nav {
         .network-options {
             position: absolute;
             width: 100%;
+            padding-top: 0.5rem;
             .network-option {
                 padding-top: 0.5rem;
                 padding-bottom: 0.5rem;
@@ -188,9 +189,12 @@ nav {
 }
 
 #page-content {
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     margin: 0 auto;
-    max-width: 800px;
+    max-width: 600px;
+    text-align: center;
     h1, h2, h3  {
         padding-bottom: @space;
         font-weight: 500;
@@ -220,6 +224,7 @@ nav {
         }
     }
     .btn {
+        display: inline-block;
         background-color: @color-blue-4;
         border-radius: @radius;
         color: white;
@@ -351,16 +356,6 @@ nav {
             }
         }
     }
-
-    .error-box {
-        margin-top: @space;
-        margin-bottom: @space;
-        &, * {
-            color: rgb(255, 115, 115);
-            overflow-wrap: anywhere;
-            font-size: @text-size;
-        }
-    }
 }
 
 /* Mobile */
@@ -429,25 +424,23 @@ nav {
 .rainbow {
     background: linear-gradient(
         90deg,
-        rgba(255, 0, 0, 1) 0%,
-        rgba(255, 154, 0, 1) 10%,
-        rgba(208, 222, 33, 1) 20%,
-        rgba(79, 220, 74, 1) 30%,
-        rgba(63, 218, 216, 1) 40%,
-        rgba(47, 201, 226, 1) 50%,
-        rgb(33, 133, 246) 60%,
-        rgb(116, 46, 255) 70%,
-        rgb(198, 42, 255) 80%,
-        rgba(251, 7, 217, 1) 90%,
-        rgba(255, 0, 0, 1) 100%
+        #ff0000 0%,
+        #ffc200 10%,
+        #bfff00 20%,
+        #00ff32 30%,
+        #00ffb1 40%,
+        #43fffe 50%,
+        #3b9cff 60%,
+        #6463ff 70%,
+        #da40ff 80%,
+        #ff00b6 90%,
+        #ff0000 100%
     );
-    font-style: italic;
     font-weight: 800;
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
-
 
 .modal-background {
     padding: 0;
@@ -462,4 +455,42 @@ nav {
         color: @color-text;
         font-size: 1.5em;
     }
+}
+
+.error-box, .okay-box {
+    margin-top: @space;
+    margin-bottom: @space;
+    &, * {
+        overflow-wrap: anywhere;
+        font-size: @text-size;
+    }
+}
+
+.error-box {
+    &, * {
+        color: @color-text-red;
+    }
+}
+.okay-box {
+    &, * {
+        color: @color-text-green;
+    }
+}
+
+/* Utility classes */
+
+.break-word {
+    overflow-wrap: break-word;
+}
+.break-all {
+    word-break: break-all;
+}
+.text-red, .text-red * {
+    color: @color-text-red;
+}
+.text-orange, .text-orange * {
+    color: @color-text-orange;
+}
+.text-green, .text-green * {
+    color: @color-text-green;
 }
