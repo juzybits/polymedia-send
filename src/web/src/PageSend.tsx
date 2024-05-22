@@ -11,10 +11,7 @@ import { LogInToContinue } from "./lib/LogInToContinue";
 import { SelectCoin } from "./lib/SelectCoin";
 import { useCoinBalances } from "./lib/useCoinBalances";
 import { useIsSupportedWallet } from "./lib/useIsSupportedWallet";
-import { useZkBagContract } from "./lib/useZkBagContract";
-import { ZkSendLinkBuilder } from "./lib/zksend/builder";
-
-const SEND_MODE = () => "contract-based";
+import { ZkSendLinkBuilder } from "./lib/zksend";
 
 export const PageSend: React.FC = () =>
 {
@@ -24,9 +21,8 @@ export const PageSend: React.FC = () =>
     const suiClient = useSuiClient();
     const { mutateAsync: signTransactionBlock } = useSignTransactionBlock();
 
-    const { inProgress, setInProgress, network, setModalContent } = useOutletContext<AppContext>();
+    const { inProgress, setInProgress, setModalContent } = useOutletContext<AppContext>();
     const isSupportedWallet = useIsSupportedWallet();
-    const zkBagContract = useZkBagContract();
 
     const [ errMsg, setErrMsg ] = useState<string|null>(null);
     const [ chosenBalance, setChosenBalance ] = useState<CoinBalance>(); // dropdown
@@ -62,12 +58,11 @@ export const PageSend: React.FC = () =>
             const link = new ZkSendLinkBuilder({
                 host: window.location.origin,
                 path: "/claim",
+                // mist?: number;
                 // keypair?: Keypair;
-                network: network,
                 client: suiClient,
                 sender: currAcct.address,
                 // redirect?: ZkSendLinkRedirect;
-                contract: SEND_MODE() === "contract-based" ? zkBagContract : null,
             });
 
             link.addClaimableBalance(coinType, amountWithDec);

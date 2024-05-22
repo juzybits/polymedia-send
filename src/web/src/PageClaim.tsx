@@ -6,8 +6,7 @@ import { useLocation, useOutletContext } from "react-router-dom";
 import { AppContext } from "./App";
 import { Button } from "./lib/Button";
 import { ErrorBox } from "./lib/ErrorBox";
-import { useZkBagContract } from "./lib/useZkBagContract";
-import { ZkSendLink } from "./lib/zksend/claim";
+import { ZkSendLink } from "./lib/zksend";
 
 type BalancesType = {
     coinType: string;
@@ -24,8 +23,7 @@ export const PageClaim: React.FC = () =>
     const suiClient = useSuiClient();
     const { mutate: disconnect } = useDisconnectWallet();
 
-    const { inProgress, setInProgress, openConnectModal, network, setModalContent } = useOutletContext<AppContext>();
-    const zkBagContract = useZkBagContract();
+    const { inProgress, setInProgress, openConnectModal, setModalContent } = useOutletContext<AppContext>();
 
     const [ errMsg, setErrMsg ] = useState<string|null>(null);
     const [ link, setLink ] = useState<ZkSendLink>(); // loaded on init
@@ -45,7 +43,7 @@ export const PageClaim: React.FC = () =>
                 const link = await loadZkSendLink();
                 setLink(link);
 
-                const balances =  loadClaimableBalances(link);
+                const balances = await loadClaimableBalances(link);
                 setClaimableBalances(balances);
             } catch(err) {
                 setErrMsg(String(err));
@@ -53,18 +51,14 @@ export const PageClaim: React.FC = () =>
         };
         const loadZkSendLink = async (): Promise<ZkSendLink> => {
             const link = await ZkSendLink.fromUrl(createdLinkUrl ?? window.location.href, {
-                claimApi: "/proxy",
                 client: suiClient,
-                network,
-                host: window.location.origin,
-                path: "/claim",
-                contract: zkBagContract,
             });
             return link;
         };
-        const loadClaimableBalances = (link: ZkSendLink): BalancesType => {
-            const assets = link.assets;
-            return (!assets || link.claimed === true) ? [] : assets.balances;
+        const loadClaimableBalances = async (link: ZkSendLink): Promise<BalancesType> => {
+            const assets = await link.listClaimableAssets("0x123"); // address doesn't matter
+            const balances = assets.balances.filter(bal => bal.amount > 0);
+            return balances;
         };
         initialize();
     }, [suiClient]);
@@ -109,7 +103,6 @@ export const PageClaim: React.FC = () =>
     };
 
     const linkUrl = createdLinkUrl ?? window.location.href; // TODO include network if not mainnet
-    const isContractLess = !linkUrl.includes("#$");
     return <div id="page-content">
 
     <ErrorBox err={errMsg ?? errorCoinMetas} />
@@ -128,15 +121,13 @@ export const PageClaim: React.FC = () =>
                 </Button>
                 {copyMsg && <div>{copyMsg}</div>}
 
-                {isContractLess && <>
-                    <p>
-                        <u><b>Save your link before leaving this page</b></u>
-                    </p>
+                <p>
+                    <u><b>Save your link before leaving this page</b></u>
+                </p>
 
-                    <p>
-                        We don't store claim links. If you don't share or save your link before leaving this page, the assets will be lost.
-                    </p>
-                </>}
+                <p>
+                    We don't store claim links. If you don't share or save your link before leaving this page, the assets will be lost.
+                </p>
             </div>;
         }
 

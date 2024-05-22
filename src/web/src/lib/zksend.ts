@@ -1,5 +1,14 @@
-// Copyright (c) Mysten Labs, Inc.
-// SPDX-License-Identifier: Apache-2.0
+/*
+This is a fork from the original contract-less zkSend by Mysten Labs.
+
+It adds functions to support bulk link creation:
+ZkSendLinkBuilder.createMultiSendLinks()
+ZkSendLinkBuilder.#createMultiSendTransaction()
+
+Original code:
+cd <sui_repo>
+git show 4a73a4b472~1:./sdk/zksend/src/links.ts
+*/
 
 import { getFullnodeUrl, SuiClient } from "@mysten/sui.js/client";
 import type { CoinStruct, ObjectOwner, SuiObjectChange } from "@mysten/sui.js/client";

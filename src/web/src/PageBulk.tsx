@@ -12,16 +12,10 @@ import { LogInToContinue } from "./lib/LogInToContinue";
 import { SelectCoin } from "./lib/SelectCoin";
 import { useCoinBalances } from "./lib/useCoinBalances";
 import { useIsSupportedWallet } from "./lib/useIsSupportedWallet";
-import { useZkBagContract } from "./lib/useZkBagContract";
-import { ZkSendLinkBuilder, ZkSendLinkBuilderOptions } from "./lib/zksend/builder";
-
-// Note: the code below supports both contract-based and contract-less bulk link creation.
-// The app currently uses contract-less zkSend for bulk links, because the `listCreatedLinks()`
-// function in @mysten/zksend doesn't fully support them: it only returns the 1st link in the batch.
+import { ZkSendLinkBuilder, ZkSendLinkBuilderOptions } from "./lib/zksend";
 
 /* Constants */
 
-const SEND_MODE = () => "contract-less";
 const MAX_LINKS = 300;
 const MIME_CSV = "text/csv;charset=utf-8;";
 
@@ -33,9 +27,8 @@ export const PageBulk: React.FC = () =>
     const suiClient = useSuiClient();
     const { mutateAsync: signTransactionBlock } = useSignTransactionBlock();
 
-    const { inProgress, setInProgress, network, setModalContent } = useOutletContext<AppContext>();
+    const { inProgress, setInProgress, setModalContent } = useOutletContext<AppContext>();
     const isSupportedWallet = useIsSupportedWallet();
-    const zkBagContract = useZkBagContract();
 
     const [ chosenBalance, setChosenBalance ] = useState<CoinBalance>(); // dropdown
     const [ chosenAmounts, setChosenAmounts ] = useState<string>(""); // textarea
@@ -76,52 +69,27 @@ export const PageBulk: React.FC = () =>
         const options: ZkSendLinkBuilderOptions = {
             host: window.location.origin,
             path: "/claim",
+            // mist?: number;
             // keypair?: Keypair;
-            network: network,
             client: suiClient,
             sender: currAcct.address,
             // redirect?: ZkSendLinkRedirect;
-            // contract?: ZkBagContractOptions | null;
         };
 
-        if (SEND_MODE() === "contract-based") {
-            options.contract = zkBagContract;
+        const amounts = linkGroups.flatMap(lg => Array<bigint>(lg.count).fill(
+            convertNumberToBigInt(lg.value, coinMeta.decimals)
+        ));
 
-            const links: ZkSendLinkBuilder[] = [];
-            for (const group of linkGroups) {
-                for (let i = 0; i < group.count; i++) {
-                    const link = new ZkSendLinkBuilder(options);
-                    link.addClaimableBalance(
-                        coinType,
-                        convertNumberToBigInt(group.value, coinMeta.decimals),
-                    );
-                    links.push(link);
-                }
-            }
+        const [ txb, links ] = await ZkSendLinkBuilder.createMultiSendLinks(
+            coinType,
+            amounts,
+            options,
+        );
 
-            setPendingLinks({ links, coinMeta });
+        setPendingLinks({ links, coinMeta, txb });
 
-            for (const link of links) {
-                console.debug(link.getLink());
-            }
-        } else {
-            options.contract = null;
-
-            const amounts = linkGroups.flatMap(lg => Array<bigint>(lg.count).fill(
-                convertNumberToBigInt(lg.value, coinMeta.decimals)
-            ));
-
-            const [ txb, links ] = await ZkSendLinkBuilder.createMultiSendLinks(
-                coinType,
-                amounts,
-                options,
-            );
-
-            setPendingLinks({ links, coinMeta, txb });
-
-            for (const link of links) {
-                console.debug(link.getLink());
-            }
+        for (const link of links) {
+            console.debug(link.getLink());
         }
     };
 
@@ -130,14 +98,7 @@ export const PageBulk: React.FC = () =>
 
         setInProgress(true);
         try {
-            const txb = pendingLinks.txb ?? // contract-less
-                await ZkSendLinkBuilder.createLinks({ // contract-based
-                    // transactionBlock?: TransactionBlock;
-                    client: suiClient,
-                    network,
-                    links: pendingLinks.links,
-                    contract: zkBagContract,
-                });
+            const txb = pendingLinks.txb;
 
             const signedTxb = await signTransactionBlock({
                 transactionBlock: txb,
@@ -345,7 +306,7 @@ export const PageBulk: React.FC = () =>
 type PendingLinks = {
     links: ZkSendLinkBuilder[];
     coinMeta: CoinMetadata;
-    txb?: TransactionBlock; // contract-less
+    txb: TransactionBlock;
 };
 
 type CreateResult = {
