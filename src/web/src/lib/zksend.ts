@@ -1,13 +1,13 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { getFullnodeUrl, SuiClient } from '@mysten/sui.js/client';
-import type { CoinStruct, ObjectOwner, SuiObjectChange } from '@mysten/sui.js/client';
-import { decodeSuiPrivateKey } from '@mysten/sui.js/cryptography';
-import type { Keypair, Signer } from '@mysten/sui.js/cryptography';
-import { Ed25519Keypair } from '@mysten/sui.js/keypairs/ed25519';
-import type { TransactionObjectInput } from '@mysten/sui.js/transactions';
-import { TransactionBlock } from '@mysten/sui.js/transactions';
+import { getFullnodeUrl, SuiClient } from "@mysten/sui.js/client";
+import type { CoinStruct, ObjectOwner, SuiObjectChange } from "@mysten/sui.js/client";
+import { decodeSuiPrivateKey } from "@mysten/sui.js/cryptography";
+import type { Keypair, Signer } from "@mysten/sui.js/cryptography";
+import { Ed25519Keypair } from "@mysten/sui.js/keypairs/ed25519";
+import type { TransactionObjectInput } from "@mysten/sui.js/transactions";
+import { TransactionBlock } from "@mysten/sui.js/transactions";
 import {
 	fromB64,
 	normalizeStructTag,
@@ -16,14 +16,14 @@ import {
 	parseStructTag,
 	SUI_TYPE_ARG,
 	toB64,
-} from '@mysten/sui.js/utils';
+} from "@mysten/sui.js/utils";
 
-interface ZkSendLinkRedirect {
+type ZkSendLinkRedirect = {
 	url: string;
 	name?: string;
-}
+};
 
-export interface ZkSendLinkBuilderOptions {
+export type ZkSendLinkBuilderOptions = {
 	host?: string;
 	path?: string;
 	mist?: number;
@@ -31,30 +31,25 @@ export interface ZkSendLinkBuilderOptions {
 	client?: SuiClient;
 	sender: string;
 	redirect?: ZkSendLinkRedirect;
-}
-
-export interface ZkSendLinkOptions {
-	keypair?: Keypair;
-	client?: SuiClient;
-}
+};
 
 const DEFAULT_ZK_SEND_LINK_OPTIONS = {
-	host: 'https://zksend.com',
-	path: '/claim',
-	client: new SuiClient({ url: getFullnodeUrl('mainnet') }),
+	host: "https://zksend.com",
+	path: "/claim",
+	client: new SuiClient({ url: getFullnodeUrl("mainnet") }),
 };
 
 const SUI_COIN_TYPE = normalizeStructTag(SUI_TYPE_ARG);
-const SUI_COIN_OBJECT_TYPE = normalizeStructTag('0x2::coin::Coin<0x2::sui::SUI>');
+const SUI_COIN_OBJECT_TYPE = normalizeStructTag("0x2::coin::Coin<0x2::sui::SUI>");
 
-interface CreateZkSendLinkOptions {
+type CreateZkSendLinkOptions = {
 	transactionBlock?: TransactionBlock;
 	calculateGas?: (options: {
 		balances: Map<string, bigint>;
 		objects: TransactionObjectInput[];
 		gasEstimateFromDryRun: bigint;
 	}) => Promise<bigint> | bigint;
-}
+};
 
 export class ZkSendLinkBuilder {
 	#host: string;
@@ -103,9 +98,9 @@ export class ZkSendLinkBuilder {
 		link.hash = toB64(decodeSuiPrivateKey(this.#keypair.getSecretKey()).secretKey);
 
 		if (this.#redirect) {
-			link.searchParams.set('redirect_url', this.#redirect.url);
+			link.searchParams.set("redirect_url", this.#redirect.url);
 			if (this.#redirect.name) {
-				link.searchParams.set('name', this.#redirect.name);
+				link.searchParams.set("name", this.#redirect.name);
 			}
 		}
 
@@ -222,20 +217,20 @@ export class ZkSendLinkBuilder {
 	}
 }
 
-export interface ZkSendLinkOptions {
+export type ZkSendLinkOptions = {
 	keypair?: Keypair;
 	client?: SuiClient;
-}
+};
 export class ZkSendLink {
 	#client: SuiClient;
 	#keypair: Keypair;
 	#initiallyOwnedObjects = new Set<string>();
-	#ownedObjects: Array<{
+	#ownedObjects: {
 		objectId: string;
 		version: string;
 		digest: string;
 		type: string;
-	}> = [];
+	}[] = [];
 	#gasCoin?: CoinStruct;
 	#hasSui = false;
 	#creatorAddress?: string;
@@ -248,7 +243,7 @@ export class ZkSendLink {
 		this.#keypair = keypair;
 	}
 
-	static async fromUrl(url: string, options?: Omit<ZkSendLinkOptions, 'keypair'>) {
+	static async fromUrl(url: string, options?: Omit<ZkSendLinkOptions, "keypair">) {
 		const parsed = new URL(url);
 		const keypair = Ed25519Keypair.fromSecretKey(fromB64(parsed.hash.slice(1)));
 
@@ -304,13 +299,13 @@ export class ZkSendLink {
 		});
 
 		dryRun.objectChanges.forEach((objectChange) => {
-			if ('objectType' in objectChange) {
+			if ("objectType" in objectChange) {
 				const type = parseStructTag(objectChange.objectType);
 
 				if (
-					type.address === normalizeSuiAddress('0x2') &&
-					type.module === 'coin' &&
-					type.name === 'Coin'
+					type.address === normalizeSuiAddress("0x2") &&
+					type.module === "coin" &&
+					type.name === "Coin"
 				) {
 					return;
 				}
@@ -336,7 +331,7 @@ export class ZkSendLink {
 		},
 	) {
 		return this.#client.signAndExecuteTransactionBlock({
-			transactionBlock: await this.createClaimTransaction(address, options),
+			transactionBlock: this.createClaimTransaction(address, options),
 			signer: this.#keypair,
 		});
 	}
@@ -434,7 +429,7 @@ export class ZkSendLink {
 		const address = this.#keypair.toSuiAddress();
 		const result = await this.#client.queryTransactionBlocks({
 			limit: 1,
-			order: 'ascending',
+			order: "ascending",
 			filter: {
 				ToAddress: address,
 			},
@@ -457,13 +452,13 @@ export class ZkSendLink {
 function ownedAfterChange(
 	objectChange: SuiObjectChange,
 	address: string,
-): objectChange is Extract<SuiObjectChange, { type: 'created' | 'transferred' | 'mutated' }> {
-	if (objectChange.type === 'transferred' && isOwner(objectChange.recipient, address)) {
+): objectChange is Extract<SuiObjectChange, { type: "created" | "transferred" | "mutated" }> {
+	if (objectChange.type === "transferred" && isOwner(objectChange.recipient, address)) {
 		return true;
 	}
 
 	if (
-		(objectChange.type === 'created' || objectChange.type === 'mutated') &&
+		(objectChange.type === "created" || objectChange.type === "mutated") &&
 		isOwner(objectChange.owner, address)
 	) {
 		return true;
@@ -475,8 +470,8 @@ function ownedAfterChange(
 function isOwner(owner: ObjectOwner, address: string): owner is { AddressOwner: string } {
 	return (
 		owner &&
-		typeof owner === 'object' &&
-		'AddressOwner' in owner &&
+		typeof owner === "object" &&
+		"AddressOwner" in owner &&
 		normalizeSuiAddress(owner.AddressOwner) === address
 	);
 }
