@@ -1,7 +1,7 @@
 import { CoinBalance, CoinMetadata } from "@mysten/sui.js/client";
 import { useEffect, useRef, useState } from "react";
 import { ReactSetter } from "../App";
-import { useClickOutside } from "@polymedia/webutils";
+import { useClickOutside } from "@polymedia/suitcase-react";
 
 export const SelectCoin: React.FC<{
     userBalances: CoinBalance[];

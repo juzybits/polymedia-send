@@ -1,6 +1,6 @@
 import { useCurrentAccount, useDisconnectWallet, useSuiClient } from "@mysten/dapp-kit";
 import { useCoinMetas } from "@polymedia/coinmeta-react";
-import { formatBigInt, shortenSuiAddress, validateAndNormalizeSuiAddress } from "@polymedia/suits";
+import { formatBigInt, shortenSuiAddress, validateAndNormalizeSuiAddress } from "@polymedia/suitcase-core";
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useOutletContext } from "react-router-dom";
 import { AppContext } from "./App";

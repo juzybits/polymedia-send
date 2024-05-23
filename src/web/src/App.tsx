@@ -8,8 +8,8 @@ import {
 } from "@mysten/dapp-kit";
 import "@mysten/dapp-kit/dist/index.css";
 import { getFullnodeUrl } from "@mysten/sui.js/client";
-import { shortenSuiAddress } from "@polymedia/suits";
-import { LinkExternal, Modal, NetworkSelector, loadNetwork } from "@polymedia/webutils";
+import { shortenSuiAddress } from "@polymedia/suitcase-core";
+import { LinkExternal, Modal, NetworkSelector, loadNetwork } from "@polymedia/suitcase-react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactNode, useState } from "react";
 import { BrowserRouter, Link, Outlet, Route, Routes, useLocation } from "react-router-dom";

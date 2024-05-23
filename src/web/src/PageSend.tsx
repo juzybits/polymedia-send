@@ -1,7 +1,7 @@
 import { useCurrentAccount, useSignTransactionBlock, useSuiClient } from "@mysten/dapp-kit";
 import { CoinBalance } from "@mysten/sui.js/client";
 import { useCoinMetas } from "@polymedia/coinmeta-react";
-import { convertNumberToBigInt, formatBigInt, formatNumber } from "@polymedia/suits";
+import { convertNumberToBigInt, formatBigInt, formatNumber } from "@polymedia/suitcase-core";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { AppContext } from "./App";
