@@ -2,42 +2,23 @@
 
 Send any coin with Sui zkSend, and create zkSend links in bulk.
 
-![Polymedia Send](./web/public/img/open-graph.webp)
+![Polymedia Send](./src/web/public/img/open-graph.webp)
 
-## Development
+## How it works, from the user perspective
 
-```
-cd web/
-pnpm install
-pnpm dev
-```
+📤 The sender adds coins to a zkSend link, then shares the link with the recipient via email / DM / etc.
 
-Then visit http://localhost:1234
+📥 The recipient visits the link and clicks a button to claim the assets... without signing a transaction... or even connecting their wallet... and it's all non-custodial!
 
-`pnpm dev` starts both the Vite dev server on port 1234 (with hot reloading), and the CloudFlare Pages Function on port 8787 (without hot reloading).
+## How it works, under the hood
 
-## Overview
+📤 Sender:<br/>
+\- Creates a one-off Sui keypair for the zkSend link.<br/>
+\- Sends the assets to the keypair's address, plus a tiny bit of SUI to pay for the claim tx fees.<br/>
+\- Generates a link back to the webapp such that the URL includes the keypair's secret key.<br/>
 
-This is a serverless app built with React, TypeScript, and Vite.
-
-However there is 1 server-side component: an API to sponsor claim transactions which is run by Mysten Labs on `https://zksend.com/api`.
-
-To void CORS errors, we use a CloudFlare Pages Function (a serverless platform similar to AWS Lambda) to proxy requests to the API endpoint.
-
-### Key files and directories:
-
-```
-web/
-├── index.html            The initial HTML. Loads _init.tsx.
-├── src/
-│   ├── _init.tsx         Bootstraps React. Loads App.tsx.
-│   ├── App.tsx           Bootstraps router, Sui providers, and the app. Loads a Page*.tsx.
-│   ├── Page*.tsx         Each page has its own .tsx file
-│   ├── lib/              Helpers, hooks, components
-│   │   └── zksend/       Fork from @mysten/zksend to support contract-less bulk link creation
-│   └── styles/           CSS (LESS)
-├── public/               Images and other static assets
-└── functions/            CloudFlare Pages Functions (serverless workers)
-    └── proxy/
-        └── [[path]].ts   A proxy to https://zksend.com/api to avoid CORS errors
-```
+📥 Recipient:<br/>
+\- Reconstructs the one-off keypair from the secret key found in the URL.<br/>
+\- Looks for assets under that public address, and shows them to the user.<br/>
+\- Sends the assets to a user-chosen address by submitting a tx from the keypair.<br/>
+\- Any remaining SUI in the keypair is returned to the creator of the link.<br/>
