@@ -1,6 +1,6 @@
-import { useCurrentAccount, useSignTransactionBlock, useSuiClient } from "@mysten/dapp-kit";
-import { CoinBalance, CoinMetadata, SuiTransactionBlockResponse } from "@mysten/sui.js/client";
-import { TransactionBlock } from "@mysten/sui.js/transactions";
+import { useCurrentAccount, useSignTransaction, useSuiClient } from "@mysten/dapp-kit";
+import { CoinBalance, CoinMetadata, SuiTransactionBlockResponse } from "@mysten/sui/client";
+import { Transaction } from "@mysten/sui/transactions";
 import { useCoinMetas } from "@polymedia/coinmeta-react";
 import { convertNumberToBigInt, formatBigInt, formatNumber } from "@polymedia/suitcase-core";
 import { useEffect, useMemo, useState } from "react";
@@ -25,7 +25,7 @@ export const PageBulk: React.FC = () =>
 {
     const currAcct = useCurrentAccount();
     const suiClient = useSuiClient();
-    const { mutateAsync: signTransactionBlock } = useSignTransactionBlock();
+    const { mutateAsync: signTransaction } = useSignTransaction();
 
     const { inProgress, setInProgress, setModalContent } = useOutletContext<AppContext>();
     const isSupportedWallet = useIsSupportedWallet();
@@ -80,13 +80,13 @@ export const PageBulk: React.FC = () =>
             convertNumberToBigInt(lg.value, coinMeta.decimals)
         ));
 
-        const [ txb, links ] = await ZkSendLinkBuilder.createMultiSendLinks(
+        const [ tx, links ] = await ZkSendLinkBuilder.createMultiSendLinks(
             coinType,
             amounts,
             options,
         );
 
-        setPendingLinks({ links, coinMeta, txb });
+        setPendingLinks({ links, coinMeta, tx });
 
         for (const link of links) {
             console.debug(link.getLink());
@@ -98,17 +98,17 @@ export const PageBulk: React.FC = () =>
 
         setInProgress(true);
         try {
-            const txb = pendingLinks.txb;
+            const tx = pendingLinks.tx;
 
-            const signedTxb = await signTransactionBlock({
-                transactionBlock: txb,
+            const signedTx = await signTransaction({
+                transaction: tx,
             });
 
             setModalContent("⏳ Creating links...");
 
             const resp = await suiClient.executeTransactionBlock({
-                transactionBlock: signedTxb.transactionBlockBytes,
-                signature: signedTxb.signature,
+                transactionBlock: signedTx.bytes,
+                signature: signedTx.signature,
                 options: { showEffects: true },
             });
             console.debug("resp:", resp);
@@ -262,7 +262,6 @@ export const PageBulk: React.FC = () =>
 
                 <Button onClick={() => {
                     const filename = `zksend_${symbol}_${count}_links_${getCurrentDate()}.csv`;
-                    // const csvRows = txbAndLinks.links.map(link => [link.getLink()]);
                     downloadFile(filename, allLinksStr, MIME_CSV);
                     setAllowCreate(true);
                 }}>
@@ -306,7 +305,7 @@ export const PageBulk: React.FC = () =>
 type PendingLinks = {
     links: ZkSendLinkBuilder[];
     coinMeta: CoinMetadata;
-    txb: TransactionBlock;
+    tx: Transaction;
 };
 
 type CreateResult = {

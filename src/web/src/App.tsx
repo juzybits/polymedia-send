@@ -7,7 +7,7 @@ import {
     useDisconnectWallet,
 } from "@mysten/dapp-kit";
 import "@mysten/dapp-kit/dist/index.css";
-import { getFullnodeUrl } from "@mysten/sui.js/client";
+import { getFullnodeUrl } from "@mysten/sui/client";
 import { shortenSuiAddress } from "@polymedia/suitcase-core";
 import { LinkExternal, Modal, NetworkSelector, loadNetwork } from "@polymedia/suitcase-react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";

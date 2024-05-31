@@ -1,5 +1,5 @@
 import { useCurrentAccount } from "@mysten/dapp-kit";
-import { CoinBalance, SuiClient } from "@mysten/sui.js/client";
+import { CoinBalance, SuiClient } from "@mysten/sui/client";
 import { useEffect, useState } from "react";
 
 export const useCoinBalances = (

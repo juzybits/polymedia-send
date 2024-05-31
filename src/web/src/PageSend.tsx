@@ -1,5 +1,5 @@
-import { useCurrentAccount, useSignTransactionBlock, useSuiClient } from "@mysten/dapp-kit";
-import { CoinBalance } from "@mysten/sui.js/client";
+import { useCurrentAccount, useSignTransaction, useSuiClient } from "@mysten/dapp-kit";
+import { CoinBalance } from "@mysten/sui/client";
 import { useCoinMetas } from "@polymedia/coinmeta-react";
 import { convertNumberToBigInt, formatBigInt, formatNumber } from "@polymedia/suitcase-core";
 import { useEffect, useMemo, useState } from "react";
@@ -19,7 +19,7 @@ export const PageSend: React.FC = () =>
 
     const currAcct = useCurrentAccount();
     const suiClient = useSuiClient();
-    const { mutateAsync: signTransactionBlock } = useSignTransactionBlock();
+    const { mutateAsync: signTransaction } = useSignTransaction();
 
     const { inProgress, setInProgress, setModalContent } = useOutletContext<AppContext>();
     const isSupportedWallet = useIsSupportedWallet();
@@ -67,17 +67,17 @@ export const PageSend: React.FC = () =>
 
             link.addClaimableBalance(coinType, amountWithDec);
 
-            const txb = await link.createSendTransaction();
+            const tx = await link.createSendTransaction();
 
-            const signedTxb = await signTransactionBlock({
-                transactionBlock: txb,
+            const signedTx = await signTransaction({
+                transaction: tx,
             });
 
             setModalContent("⏳ Creating link...");
 
             const resp = await suiClient.executeTransactionBlock({
-                transactionBlock: signedTxb.transactionBlockBytes,
-                signature: signedTxb.signature,
+                transactionBlock: signedTx.bytes,
+                signature: signedTx.signature,
                 options: { showEffects: true },
             });
             console.debug("resp:", resp);
