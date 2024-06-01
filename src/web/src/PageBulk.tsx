@@ -50,7 +50,6 @@ export const PageBulk: React.FC = () =>
             setInProgress(false);
             setChosenBalance(undefined);
             setChosenAmounts("");
-            // setChosenAmounts('1x11 2x22 3x33');
             setPendingLinks(undefined);
             setAllowCreate(false);
             setCreateResult(undefined);
@@ -192,10 +191,7 @@ export const PageBulk: React.FC = () =>
                             value={chosenAmounts}
                             disabled={inProgress}
                             style={{width: "400px"}}
-                            onChange={e => {
-                                const newValue = e.target.value.replace(/\./g, "");
-                                setChosenAmounts(newValue);
-                            }}
+                            onChange={e => { setChosenAmounts(e.target.value); }}
                         />
                         </div>
 
@@ -320,7 +316,7 @@ type LinkGroup = {
 
 /* Functions */
 
-const linksAmountsPattern = /(\d+)\s*[xX*]\s*(\d+)/gi;
+const linksAmountsPattern = /(\d+)\s*[xX*]\s*(\d+(\.\d+)?)/gi;
 
 function parseLinkGroups(input: string): LinkGroup[] {
     const linkGroups: LinkGroup[] = [];
@@ -328,7 +324,7 @@ function parseLinkGroups(input: string): LinkGroup[] {
     let match;
     while ((match = linksAmountsPattern.exec(input)) !== null) {
         const count = parseInt(match[1]);
-        const value = parseInt(match[2]);
+        const value = parseFloat(match[2]);
         linkGroups.push({ count, value });
     }
 
