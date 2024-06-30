@@ -1,7 +1,7 @@
 {
     "private": true,
     "version": "0.0.0",
-    "name": "polymedia-send-monorepo",
+    "name": "@polymedia/send-monorepo",
     "author": "@juzybits (https://polymedia.app)",
     "homepage": "https://send.polymedia.app",
     "description": "Send any coin with Sui zkSend, and create zkSend links in bulk",
