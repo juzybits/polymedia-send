@@ -9,7 +9,7 @@ import {
 import "@mysten/dapp-kit/dist/index.css";
 import { getFullnodeUrl } from "@mysten/sui/client";
 import { shortenSuiAddress } from "@polymedia/suitcase-core";
-import { LinkExternal, Modal, NetworkSelector, loadNetwork } from "@polymedia/suitcase-react";
+import { LinkExternal, Modal, NetworkSelector, isLocalhost, loadNetwork } from "@polymedia/suitcase-react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactNode, useState } from "react";
 import { BrowserRouter, Link, Outlet, Route, Routes, useLocation } from "react-router-dom";
@@ -41,12 +41,15 @@ export const AppRouter: React.FC = () => {
 
 /* Sui providers + network config */
 
-const supportedNetworks = ["mainnet", "testnet"] as const;
+const supportedNetworks = isLocalhost()
+    ? ["mainnet", "testnet", "devnet"] as const
+    : ["mainnet", "testnet"] as const;
 export type NetworkName = typeof supportedNetworks[number];
 
 const { networkConfig } = createNetworkConfig({
+    mainnet: { url: getFullnodeUrl("mainnet") },
     testnet: { url: getFullnodeUrl("testnet") },
-    mainnet: { url: "https://mainnet.suiet.app" },
+    devnet: { url: getFullnodeUrl("devnet") },
 });
 
 const queryClient = new QueryClient();
