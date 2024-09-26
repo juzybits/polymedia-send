@@ -1,4 +1,5 @@
 import { useCurrentAccount, useDisconnectWallet, useSuiClient } from "@mysten/dapp-kit";
+import { normalizeStructTag } from "@mysten/sui/utils";
 import { useCoinMetas } from "@polymedia/coinmeta-react";
 import { formatBalance, shortenAddress, validateAndNormalizeAddress } from "@polymedia/suitcase-core";
 import { useEffect, useMemo, useState } from "react";
@@ -169,7 +170,7 @@ export const PageClaim: React.FC = () =>
 
             <div>
             {claimableBalances.map(bal => {
-                const coinMeta = coinMetas.get(bal.coinType);
+                const coinMeta = coinMetas.get(normalizeStructTag(bal.coinType));
                 if (!coinMeta) {
                     return null;
                 }

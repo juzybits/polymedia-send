@@ -128,7 +128,9 @@ const App: React.FC<{
 
         <BtnMenu appContext={appContext} />
 
-        <Modal content={modalContent} />
+        <Modal>
+            {modalContent}
+        </Modal>
 
         <ConnectModal
             trigger={<></>}

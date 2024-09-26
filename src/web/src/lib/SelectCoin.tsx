@@ -1,7 +1,8 @@
 import { CoinBalance, CoinMetadata } from "@mysten/sui/client";
+import { normalizeStructTag } from "@mysten/sui/utils";
+import { useClickOutside } from "@polymedia/suitcase-react";
 import { useEffect, useRef, useState } from "react";
 import { ReactSetter } from "../App";
-import { useClickOutside } from "@polymedia/suitcase-react";
 
 export const SelectCoin: React.FC<{
     userBalances: CoinBalance[];
@@ -41,7 +42,7 @@ export const SelectCoin: React.FC<{
     //     fud.length && setChosenBalance(fud[0]);
     }, []);
 
-    const chosenCoinMeta = chosenBalance && coinMetas.get(chosenBalance.coinType);
+    const chosenCoinMeta = chosenBalance && coinMetas.get(normalizeStructTag(chosenBalance.coinType));
     const chosenCoinSymbol = chosenBalance && (chosenCoinMeta?.symbol ?? chosenBalance.coinType.split("::")[2]);
 
     return <div>
@@ -66,7 +67,7 @@ export const SelectCoin: React.FC<{
             }
             return <div className="dropdown-options">
                 {foundBalances.map(bal => {
-                const coinMeta = coinMetas.get(bal.coinType);
+                const coinMeta = coinMetas.get(normalizeStructTag(bal.coinType));
                 const coinSymbol = coinMeta?.symbol ?? bal.coinType.split("::")[2];
                 return (
                 <div className="dropdown-option" key={bal.coinType}

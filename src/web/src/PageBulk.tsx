@@ -1,6 +1,7 @@
 import { useCurrentAccount, useSignTransaction, useSuiClient } from "@mysten/dapp-kit";
 import { CoinBalance, CoinMetadata, SuiTransactionBlockResponse } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
+import { normalizeStructTag } from "@mysten/sui/utils";
 import { useCoinMetas } from "@polymedia/coinmeta-react";
 import { formatBalance, formatNumber, stringToBalance } from "@polymedia/suitcase-core";
 import { useEffect, useMemo, useState } from "react";
@@ -43,7 +44,7 @@ export const PageBulk: React.FC = () =>
     // get the CoinMetadata for each coin type
     const { coinMetas, errorCoinMetas } = useCoinMetas(suiClient, allCoinTypes);
     // pick the CoinMetadata for selected balance
-    const coinMeta = (!chosenBalance || !coinMetas) ? null : coinMetas.get(chosenBalance.coinType);
+    const coinMeta = (!chosenBalance || !coinMetas) ? null : coinMetas.get(normalizeStructTag(chosenBalance.coinType));
 
     useEffect(() => {
         const resetState = () => {
