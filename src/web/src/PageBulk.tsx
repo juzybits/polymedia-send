@@ -250,7 +250,7 @@ export const PageBulk: React.FC = () =>
                         await navigator.clipboard.writeText(allLinksStr);
                         // showCopyMessage('👍 Link copied');
                         setAllowCreate(true);
-                    } catch (error) {
+                    } catch (_error) {
                         // showCopyMessage("❌ Oops, didn't work. Please copy the page URL manually."); // TODO
                     }
                 }}>

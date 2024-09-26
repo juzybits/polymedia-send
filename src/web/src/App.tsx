@@ -157,7 +157,7 @@ const Header: React.FC<{
 }) =>
 {
     return <header>
-        <Link to="/" onClick={e => { app.inProgress ? e.preventDefault() : undefined; }}>
+        <Link to="/" onClick={e => { app.inProgress && e.preventDefault(); }}>
             <h1>
                 <img alt="polymedia" src="https://assets.polymedia.app/img/all/logo-nomargin-transparent-512x512.webp" className="logo" />
                 Send

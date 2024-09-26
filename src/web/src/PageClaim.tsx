@@ -98,7 +98,7 @@ export const PageClaim: React.FC = () =>
         try {
             await navigator.clipboard.writeText(linkUrl);
             showCopyMessage("👍 Link copied");
-        } catch (error) {
+        } catch (_error) {
             showCopyMessage("❌ Oops, didn't work. Please copy the page URL manually.");
         }
     };
