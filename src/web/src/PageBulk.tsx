@@ -2,7 +2,7 @@ import { useCurrentAccount, useSignTransaction, useSuiClient } from "@mysten/dap
 import { CoinBalance, CoinMetadata, SuiTransactionBlockResponse } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
 import { useCoinMetas } from "@polymedia/coinmeta-react";
-import { convertNumberToBigInt, formatBalance, formatNumber } from "@polymedia/suitcase-core";
+import { formatBalance, formatNumber, stringToBalance } from "@polymedia/suitcase-core";
 import { useEffect, useMemo, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { AppContext } from "./App";
@@ -76,7 +76,7 @@ export const PageBulk: React.FC = () =>
         };
 
         const amounts = linkGroups.flatMap(lg => Array<bigint>(lg.count).fill(
-            convertNumberToBigInt(lg.value, coinMeta.decimals)
+            stringToBalance(String(lg.value), coinMeta.decimals)
         ));
 
         const [ tx, links ] = await ZkSendLinkBuilder.createMultiSendLinks(
@@ -175,7 +175,7 @@ export const PageBulk: React.FC = () =>
                         if (totalLinks > MAX_LINKS) {
                             return `You can create up to ${MAX_LINKS} links at once`;
                         }
-                        const totalValueWithDec = convertNumberToBigInt(totalValue, coinMeta.decimals);
+                        const totalValueWithDec = stringToBalance(String(totalValue), coinMeta.decimals);
                         const userBalanceWithDec = BigInt(chosenBalance.totalBalance);
                         if (totalValueWithDec > userBalanceWithDec) {
                             return "Not enough balance";

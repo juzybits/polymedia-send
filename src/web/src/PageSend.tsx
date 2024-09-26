@@ -1,7 +1,7 @@
 import { useCurrentAccount, useSignTransaction, useSuiClient } from "@mysten/dapp-kit";
 import { CoinBalance } from "@mysten/sui/client";
 import { useCoinMetas } from "@polymedia/coinmeta-react";
-import { convertNumberToBigInt, formatBalance, formatNumber } from "@polymedia/suitcase-core";
+import { formatBalance, stringToBalance } from "@polymedia/suitcase-core";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { AppContext } from "./App";
@@ -139,13 +139,13 @@ export const PageSend: React.FC = () =>
                 }
 
                 // Validate amount
-                const amountNum = chosenAmount === "." ? 0 : Number(chosenAmount);
-                const amountWithDec = convertNumberToBigInt(amountNum, coinMeta.decimals);
+                const amountStr = chosenAmount === "." ? "0" : chosenAmount;
+                const amountWithDec = stringToBalance(amountStr, coinMeta.decimals);
                 const amountErr = (() => {
                     if (chosenAmount === "" || chosenAmount === ".") {
                         return "";
                     }
-                    if (amountNum === 0) {
+                    if (amountWithDec === 0n) {
                         return "Amount can't be 0";
                     }
                     const userBalanceWithDec = BigInt(chosenBalance.totalBalance);
@@ -172,7 +172,7 @@ export const PageSend: React.FC = () =>
                         Your balance: {formatBalance(BigInt(chosenBalance.totalBalance), coinMeta.decimals, "compact")} {coinMeta.symbol}
                     </p>
                     <p>
-                        Amount to send: {formatNumber(amountNum, "compact")} {coinMeta.symbol}
+                        Amount to send: {formatBalance(amountWithDec, coinMeta.decimals, "compact")} {coinMeta.symbol}
                     </p>
                 </div>
 
