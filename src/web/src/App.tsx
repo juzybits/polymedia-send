@@ -8,7 +8,7 @@ import {
 } from "@mysten/dapp-kit";
 import "@mysten/dapp-kit/dist/index.css";
 import { getFullnodeUrl } from "@mysten/sui/client";
-import { shortenSuiAddress } from "@polymedia/suitcase-core";
+import { shortenAddress } from "@polymedia/suitcase-core";
 import { LinkExternal, Modal, NetworkSelector, isLocalhost, loadNetwork } from "@polymedia/suitcase-react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactNode, useState } from "react";
@@ -233,7 +233,7 @@ const BtnConnect: React.FC<{
             app.setShowMobileNav(false);
     };
 
-    const text = currAcct ? shortenSuiAddress(currAcct.address, 3, 3) : "LOG IN";
+    const text = currAcct ? shortenAddress(currAcct.address, 3, 3) : "LOG IN";
 
     return <button
         className="btn-connect"
@@ -263,10 +263,10 @@ const Footer: React.FC = () =>
 {
     return <footer>
         <div id="icons">
-            <LinkExternal href="https://polymedia.app" follow={true}>
+            <LinkExternal html={{href: "https://polymedia.app"}}>
                 <img alt="polymedia" src="https://assets.polymedia.app/img/all/logo-nomargin-transparent-512x512.webp" className="icon" />
             </LinkExternal>
-            <LinkExternal href="https://github.com/juzybits/polymedia-send" follow={true}>
+            <LinkExternal html={{href: "https://github.com/juzybits/polymedia-send"}}>
                 <GitHubLogo />
             </LinkExternal>
         </div>

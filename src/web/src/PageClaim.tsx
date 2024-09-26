@@ -1,6 +1,6 @@
 import { useCurrentAccount, useDisconnectWallet, useSuiClient } from "@mysten/dapp-kit";
 import { useCoinMetas } from "@polymedia/coinmeta-react";
-import { formatBigInt, shortenSuiAddress, validateAndNormalizeSuiAddress } from "@polymedia/suitcase-core";
+import { formatBalance, shortenAddress, validateAndNormalizeAddress } from "@polymedia/suitcase-core";
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useOutletContext } from "react-router-dom";
 import { AppContext } from "./App";
@@ -132,8 +132,8 @@ export const PageClaim: React.FC = () =>
         }
 
         const claimAddress = currAcct ? currAcct.address : chosenAddress;
-        const normalizedAddress = validateAndNormalizeSuiAddress(claimAddress);
-        const shortAddress = shortenSuiAddress(normalizedAddress);
+        const normalizedAddress = validateAndNormalizeAddress(claimAddress);
+        const shortAddress = shortenAddress(normalizedAddress);
 
         // claim was successful
         if (claimSuccessful) {
@@ -173,7 +173,7 @@ export const PageClaim: React.FC = () =>
                 if (!coinMeta) {
                     return null;
                 }
-                const claimableBalancePretty = formatBigInt(bal.amount, coinMeta.decimals, "compact");
+                const claimableBalancePretty = formatBalance(bal.amount, coinMeta.decimals, "compact");
                 return <div key={bal.coinType}>
                     <img src={coinMeta.iconUrl ?? ""} height="80"
                         style={{borderRadius: "1rem", marginTop: "1rem"}}  />

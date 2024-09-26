@@ -2,7 +2,7 @@ import { useCurrentAccount, useSignTransaction, useSuiClient } from "@mysten/dap
 import { CoinBalance, CoinMetadata, SuiTransactionBlockResponse } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
 import { useCoinMetas } from "@polymedia/coinmeta-react";
-import { convertNumberToBigInt, formatBigInt, formatNumber } from "@polymedia/suitcase-core";
+import { convertNumberToBigInt, formatBalance, formatNumber } from "@polymedia/suitcase-core";
 import { useEffect, useMemo, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { AppContext } from "./App";
@@ -197,7 +197,7 @@ export const PageBulk: React.FC = () =>
 
                         <div className="tight">
                             <p>
-                                Your balance: {formatBigInt(BigInt(chosenBalance.totalBalance), coinMeta.decimals, "compact")} {coinMeta.symbol}
+                                Your balance: {formatBalance(BigInt(chosenBalance.totalBalance), coinMeta.decimals, "compact")} {coinMeta.symbol}
                             </p>
                             <p>
                                 Total amount to send: {formatNumber(totalValue, "compact")} {coinMeta.symbol}

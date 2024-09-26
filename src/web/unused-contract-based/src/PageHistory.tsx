@@ -1,6 +1,6 @@
 import { useCurrentAccount, useSignTransactionBlock, useSuiClient } from "@mysten/dapp-kit";
 import { useCoinMetas } from "@polymedia/coinmeta-react";
-import { formatBigInt } from "@polymedia/suitcase-core";
+import { formatBalance } from "@polymedia/suitcase-core";
 import { useEffect, useMemo, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { AppContext } from "./App";
@@ -134,7 +134,7 @@ export const PageHistory: React.FC = () =>
                     if (!meta) {
                         return "Loading...";
                     }
-                    return formatBigInt(bal.amount, meta.decimals, "compact") + " " + meta.symbol;
+                    return formatBalance(bal.amount, meta.decimals, "compact") + " " + meta.symbol;
                 }),
             };
 
