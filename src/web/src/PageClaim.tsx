@@ -34,7 +34,7 @@ export const PageClaim: React.FC = () =>
     const allCoinTypes = useMemo(() =>
         claimableBalances?.map(bal => bal.coinType)
     , [claimableBalances]);
-    const { coinMetas, isLoadingCoinMetas, errorCoinMetas }
+    const { coinMetas, errorCoinMetas }
         = useCoinMetas(suiClient, allCoinTypes);
 
     useEffect(() => {
@@ -144,7 +144,7 @@ export const PageClaim: React.FC = () =>
         }
 
         // assets are loading
-        if (!link || !claimableBalances || isLoadingCoinMetas) {
+        if (!link || !claimableBalances || !coinMetas) {
             if (errMsg) {
                 return null; // something went wrong on load
             }

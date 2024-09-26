@@ -41,9 +41,9 @@ export const PageBulk: React.FC = () =>
     // extract the coin types from the user balances
     const allCoinTypes = useMemo(() => userBalances?.map(bal => bal.coinType), [userBalances]);
     // get the CoinMetadata for each coin type
-    const { coinMetas, isLoadingCoinMetas, errorCoinMetas } = useCoinMetas(suiClient, allCoinTypes);
+    const { coinMetas, errorCoinMetas } = useCoinMetas(suiClient, allCoinTypes);
     // pick the CoinMetadata for selected balance
-    const coinMeta = !chosenBalance ? null : coinMetas.get(chosenBalance.coinType);
+    const coinMeta = (!chosenBalance || !coinMetas) ? null : coinMetas.get(chosenBalance.coinType);
 
     useEffect(() => {
         const resetState = () => {
@@ -150,20 +150,20 @@ export const PageBulk: React.FC = () =>
 
         if (!pendingLinks) {
             return <>
-                <SelectCoin
+                {coinMetas && <SelectCoin
                     userBalances={userBalances}
                     chosenBalance={chosenBalance}
                     coinMetas={coinMetas}
                     setChosenBalance={setChosenBalance}
                     inProgress={inProgress}
-                />
+                />}
 
                 {(() => {
                     if (!chosenBalance) {
                         return null;
                     }
 
-                    if (isLoadingCoinMetas || !coinMeta) {
+                    if (!coinMetas || !coinMeta) {
                         return <p>Loading coin info...</p>;
                     }
 
